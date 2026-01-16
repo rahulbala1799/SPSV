@@ -42,9 +42,9 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 gap-4">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <Image
               src="/logo.png"
               alt="SPSV Mastery Class Dublin Logo"
@@ -55,51 +55,43 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
             />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop Navigation - Show only 3 items, rest in menu */}
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
             <a
               href="/"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
             >
               Home
             </a>
             <a
               href="/timetable"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
             >
               Timetable
             </a>
             <a
               href="/test-guide"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
             >
               Test Guide
             </a>
+            {/* More menu button for desktop */}
             <button
-              onClick={() => scrollToSection('features')}
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap flex items-center gap-1"
             >
-              Why Choose Us
-            </button>
-            <button
-              onClick={() => scrollToSection('testimonials')}
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
-            >
-              Success Stories
-            </button>
-            <button
-              onClick={() => scrollToSection('contact')}
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
-            >
-              Contact
+              More
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
           </nav>
 
           {/* Desktop CTA Buttons */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <a
               href="tel:+353892100704"
-              className="px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors"
+              className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
             >
               Call Us
             </a>
@@ -107,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
               href="https://wa.me/353892100704"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
             >
               WhatsApp
             </a>
@@ -119,6 +111,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 const event = new CustomEvent('openEnrollmentFromHeader');
                 window.dispatchEvent(event);
               }}
+              className="text-sm lg:text-base whitespace-nowrap"
             >
               Enroll Now
             </Button>
@@ -134,50 +127,66 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
           </button>
         </div>
 
-        {/* Mobile Collapsible Menu */}
+        {/* Collapsible Menu - Mobile and Desktop */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="border-t border-gray-200 py-4">
             <nav className="flex flex-col gap-4">
-              <a
-                href="/"
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </a>
-              <a
-                href="/timetable"
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Timetable
-              </a>
-              <a
-                href="/test-guide"
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Test Guide
-              </a>
+              {/* Show Home, Timetable, Test Guide only if on mobile (they're already visible on desktop) */}
+              <div className="md:hidden flex flex-col gap-4">
+                <a
+                  href="/"
+                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </a>
+                <a
+                  href="/timetable"
+                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Timetable
+                </a>
+                <a
+                  href="/test-guide"
+                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Test Guide
+                </a>
+              </div>
+              
+              {/* Additional menu items for both mobile and desktop */}
               <button
-                onClick={() => scrollToSection('features')}
+                onClick={() => {
+                  scrollToSection('features');
+                  setIsMenuOpen(false);
+                }}
                 className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
               >
                 Why Choose Us
               </button>
               <button
-                onClick={() => scrollToSection('testimonials')}
+                onClick={() => {
+                  scrollToSection('testimonials');
+                  setIsMenuOpen(false);
+                }}
                 className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
               >
                 Success Stories
               </button>
               <button
-                onClick={() => scrollToSection('contact')}
+                onClick={() => {
+                  scrollToSection('contact');
+                  setIsMenuOpen(false);
+                }}
                 className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
               >
                 Contact
               </button>
-              <div className="flex flex-col gap-3 pt-2 border-t border-gray-200">
+              
+              {/* CTA buttons - only show on mobile */}
+              <div className="md:hidden flex flex-col gap-3 pt-2 border-t border-gray-200">
                 <a
                   href="tel:+353892100704"
                   className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
