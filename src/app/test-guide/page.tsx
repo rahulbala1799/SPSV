@@ -224,6 +224,15 @@ export default function TestGuidePage() {
 
           {/* Course Contents - Area Knowledge */}
           <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
+            <div className="mb-8 flex justify-center">
+              <Image
+                src="/course-content.png"
+                alt="Course Content"
+                width={800}
+                height={400}
+                className="rounded-2xl shadow-xl object-contain w-full max-w-4xl"
+              />
+            </div>
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <FaMapMarkedAlt className="text-green-600 text-2xl" />
