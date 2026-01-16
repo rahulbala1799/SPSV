@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
 import { FaPhone, FaCreditCard, FaIdCard, FaFileAlt, FaCheckCircle, FaBook, FaMapMarkedAlt, FaClock, FaEuroSign, FaCalendarAlt, FaCertificate } from 'react-icons/fa';
@@ -12,6 +13,16 @@ export default function TestGuidePage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-8 flex justify-center">
+            <Image
+              src="/testguide.png"
+              alt="SPSV Test Guide"
+              width={600}
+              height={400}
+              className="rounded-2xl shadow-2xl object-contain"
+              priority
+            />
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">SPSV Test Guide</h1>
           <p className="text-xl text-green-100 max-w-3xl mx-auto">
             Everything you need to know about the SPSV Skills Test, course contents, and requirements
