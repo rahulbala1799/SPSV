@@ -36,18 +36,31 @@ export default function SPSVManualPage() {
     loadManualContent().then((sections) => {
       // Map sections to chapters with questions
       const mappedChapters = sections.map((section: any) => {
-        const chapterId = section.title.toLowerCase()
+        let chapterId = section.title.toLowerCase()
           .replace('chapter ', 'chapter-')
           .replace(':', '')
           .replace(/\s+/g, '-')
           .replace(/[^a-z0-9-]/g, '');
         
+        // Normalize chapter IDs to match question data
+        if (chapterId === 'welcome') chapterId = 'welcome';
+        else if (chapterId === 'terminology') chapterId = 'terminology';
+        else if (chapterId.startsWith('chapter-1')) chapterId = 'chapter-1';
+        else if (chapterId.startsWith('chapter-2')) chapterId = 'chapter-2';
+        else if (chapterId.startsWith('chapter-3')) chapterId = 'chapter-3';
+        else if (chapterId.startsWith('chapter-4')) chapterId = 'chapter-4';
+        else if (chapterId.startsWith('chapter-5')) chapterId = 'chapter-5';
+        else if (chapterId.startsWith('chapter-6')) chapterId = 'chapter-6';
+        else if (chapterId.startsWith('chapter-7')) chapterId = 'chapter-7';
+        else if (chapterId.startsWith('chapter-8')) chapterId = 'chapter-8';
+        else if (chapterId.startsWith('chapter-9')) chapterId = 'chapter-9';
+        else if (chapterId.startsWith('chapter-10')) chapterId = 'chapter-10';
+        else if (chapterId.startsWith('chapter-11')) chapterId = 'chapter-11';
+        else if (chapterId === 'appendices') chapterId = 'appendices';
+        
         // Find questions for this chapter
         const chapterQuestions = manualQuestions.find(
-          q => q.chapterId === chapterId || 
-          (chapterId === 'welcome' && q.chapterId === 'welcome') ||
-          (chapterId === 'terminology' && q.chapterId === 'terminology') ||
-          (chapterId === 'appendices' && q.chapterId === 'appendices')
+          q => q.chapterId === chapterId
         )?.questions || [];
 
         return {
