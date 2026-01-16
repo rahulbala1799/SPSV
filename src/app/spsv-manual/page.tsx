@@ -87,6 +87,9 @@ export default function SPSVManualPage() {
         counts[chId] = Object.keys(chData.questions || {}).length;
       });
       setAnsweredCounts(counts);
+      
+      // DO NOT restore expanded state - let users control it manually
+      // Only restore question answers, not UI state
     }
   }, []);
 
@@ -144,7 +147,11 @@ export default function SPSVManualPage() {
   };
 
   const handleChapterClick = (chapterId: string) => {
-    setExpandedChapters(prev => new Set(prev).add(chapterId));
+    setExpandedChapters(prev => {
+      const newSet = new Set(prev);
+      newSet.add(chapterId);
+      return newSet;
+    });
     setActiveChapter(chapterId);
     setTimeout(() => {
       const element = chapterRefs.current[chapterId];
