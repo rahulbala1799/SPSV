@@ -7,6 +7,7 @@ export interface ButtonProps {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
+  disabled?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -16,6 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   type = 'button',
   className = '',
+  disabled = false,
 }) => {
   const baseStyles = 'font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
   
@@ -30,12 +32,15 @@ export const Button: React.FC<ButtonProps> = ({
     medium: 'px-6 py-3 text-base',
     large: 'px-8 py-4 text-lg',
   };
+
+  const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : '';
   
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      disabled={disabled}
+      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${className}`}
     >
       {children}
     </button>
