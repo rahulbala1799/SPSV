@@ -108,7 +108,11 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
             <Button
               variant="primary"
               size="medium"
-              onClick={handleEnroll}
+              onClick={() => {
+                // Dispatch event to open enrollment modal
+                const event = new CustomEvent('openEnrollmentFromHeader');
+                window.dispatchEvent(event);
+              }}
             >
               Enroll Now
             </Button>
@@ -180,7 +184,11 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 <Button
                   variant="primary"
                   size="medium"
-                  onClick={handleEnroll}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    const event = new CustomEvent('openEnrollmentFromHeader');
+                    window.dispatchEvent(event);
+                  }}
                   className="w-full"
                 >
                   Enroll Now

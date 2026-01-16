@@ -42,3 +42,7 @@ export { Header } from './Header';
 export type { HeaderProps } from './Header';
 
 export { TimetableModal } from './TimetableModal';
+
+export { EnrollmentModal } from './EnrollmentModal';
+
+export { CoursesModal } from './CoursesModal';

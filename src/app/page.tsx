@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FaChalkboardTeacher, FaBook, FaBullseye, FaBuilding, FaMapMarkedAlt, FaBookOpen } from 'react-icons/fa';
 import { Header } from '@/components/Header';
@@ -7,13 +8,35 @@ import { Hero } from '@/components/Hero';
 import { Form, FormField } from '@/components/Form';
 import { CourseFeature, Feature } from '@/components/CourseFeature';
 import { Testimonial, TestimonialItem } from '@/components/Testimonial';
+import { EnrollmentModal } from '@/components/EnrollmentModal';
+import { CoursesModal } from '@/components/CoursesModal';
 import { Button } from '@/components/Button';
 
 export default function Home() {
+  const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
+  const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
+
   const handleEnrollment = (data: Record<string, string>) => {
     console.log('Enrollment data:', data);
     // Handle enrollment submission
   };
+
+  // Listen for enrollment modal trigger from courses modal and header
+  React.useEffect(() => {
+    const handleOpenEnrollment = () => {
+      setIsCoursesModalOpen(false);
+      setIsEnrollmentModalOpen(true);
+    };
+    const handleOpenEnrollmentFromHeader = () => {
+      setIsEnrollmentModalOpen(true);
+    };
+    window.addEventListener('openEnrollment', handleOpenEnrollment);
+    window.addEventListener('openEnrollmentFromHeader', handleOpenEnrollmentFromHeader);
+    return () => {
+      window.removeEventListener('openEnrollment', handleOpenEnrollment);
+      window.removeEventListener('openEnrollmentFromHeader', handleOpenEnrollmentFromHeader);
+    };
+  }, []);
 
   const enrollmentFields: FormField[] = [
     {
@@ -170,6 +193,8 @@ export default function Home() {
         subtitle="Join SPSV Mastery Class Dublin and pass your taxi driver test with confidence. Expert tutors, proven methods, 95% pass rate."
         primaryCTA="Enroll Now"
         secondaryCTA="View Courses"
+        onPrimaryClick={() => setIsEnrollmentModalOpen(true)}
+        onSecondaryClick={() => setIsCoursesModalOpen(true)}
       />
 
       {/* Preparation Section */}
@@ -398,6 +423,16 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Modals */}
+      <EnrollmentModal
+        isOpen={isEnrollmentModalOpen}
+        onClose={() => setIsEnrollmentModalOpen(false)}
+      />
+      <CoursesModal
+        isOpen={isCoursesModalOpen}
+        onClose={() => setIsCoursesModalOpen(false)}
+      />
 
       {/* Contact & Location */}
       <section id="contact" className="py-16 px-4 bg-gray-900 text-white">
