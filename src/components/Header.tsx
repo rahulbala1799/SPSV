@@ -69,6 +69,12 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
             >
               Timetable
             </a>
+            <a
+              href="/test-guide"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+            >
+              Test Guide
+            </a>
             <button
               onClick={() => scrollToSection('features')}
               className="text-gray-700 hover:text-green-600 transition-colors font-medium"
@@ -145,6 +151,13 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 onClick={() => setIsMenuOpen(false)}
               >
                 Timetable
+              </a>
+              <a
+                href="/test-guide"
+                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Test Guide
               </a>
               <button
                 onClick={() => scrollToSection('features')}
