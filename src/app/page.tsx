@@ -57,7 +57,7 @@ export default function Home() {
       name: 'phone',
       label: 'Phone Number',
       type: 'tel',
-      placeholder: '+353 89 210 0704',
+      placeholder: '+353 89 493 4222',
       required: true,
     },
   ];
@@ -397,13 +397,13 @@ export default function Home() {
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg mb-6">
                 <p className="text-sm text-green-100 mb-2">Contact us now:</p>
                 <a 
-                  href="tel:+353892100704" 
+                  href="tel:+353894934222" 
                   className="text-xl font-bold text-white hover:text-green-100 transition-colors block mb-2"
                 >
-                  +353 89 210 0704
+                  +353 89 493 4222
                 </a>
                 <a 
-                  href="https://wa.me/353892100704" 
+                  href="https://wa.me/353894934222" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-green-100 hover:text-white transition-colors underline"
@@ -460,8 +460,8 @@ export default function Home() {
               <div className="text-4xl mb-4">📞</div>
               <h3 className="text-xl font-bold mb-2">Call Us</h3>
               <p className="text-gray-400">
-                <a href="tel:+353892100704" className="hover:text-white transition-colors">
-                  +353 89 210 0704
+                <a href="tel:+353894934222" className="hover:text-white transition-colors">
+                  +353 89 493 4222
                 </a>
                 <br />
                 Mon-Fri: 9AM-6PM
@@ -472,7 +472,7 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-2">WhatsApp Us</h3>
               <p className="text-gray-400">
                 <a 
-                  href="https://wa.me/353892100704" 
+                  href="https://wa.me/353894934222" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
@@ -509,13 +509,13 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+353892100704"
+              href="tel:+353894934222"
               className="bg-white text-green-700 hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors text-lg text-center"
             >
               Get Class Information
             </a>
-            <a
-              href="https://wa.me/353892100704"
+                <a 
+                  href="https://wa.me/353894934222"
               target="_blank"
               rel="noopener noreferrer"
               className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-700 transition-colors text-lg text-center"

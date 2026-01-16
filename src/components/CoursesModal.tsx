@@ -117,8 +117,8 @@ export const CoursesModal: React.FC<CoursesModalProps> = ({ isOpen, onClose }) =
                 Courses start on the <strong>1st of each month</strong>. Maximum 20 students per time slot.
               </p>
               <p className="text-gray-700 text-sm">
-                Contact us at <a href="tel:+353892100704" className="text-green-600 font-semibold hover:underline">+353 89 210 0704</a> or 
-                <a href="https://wa.me/353892100704" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold hover:underline ml-1">WhatsApp</a> to enroll.
+                Contact us at <a href="tel:+353894934222" className="text-green-600 font-semibold hover:underline">+353 89 493 4222</a> or 
+                <a href="https://wa.me/353894934222" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold hover:underline ml-1">WhatsApp</a> to enroll.
               </p>
             </div>
           </div>

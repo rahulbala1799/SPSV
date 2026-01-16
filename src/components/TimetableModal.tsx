@@ -345,14 +345,14 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
               <p className="text-xs sm:text-sm text-gray-600 mb-2">Contact us to enroll:</p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center">
                 <a
-                  href="tel:+353892100704"
+                  href="tel:+353894934222"
                   className="text-base sm:text-lg font-bold text-green-600 hover:text-green-700 transition-colors"
                 >
-                  +353 89 210 0704
+                  +353 89 493 4222
                 </a>
                 <span className="hidden sm:inline text-gray-400">|</span>
                 <a
-                  href="https://wa.me/353892100704"
+                  href="https://wa.me/353894934222"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs sm:text-sm text-green-600 hover:text-green-700 transition-colors underline"
@@ -369,7 +369,7 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
                 Close
               </button>
               <a
-                href="tel:+353892100704"
+                href="tel:+353894934222"
                 className="px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center text-sm sm:text-base"
               >
                 Call to Enroll

@@ -96,13 +96,13 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <a
-              href="tel:+353892100704"
+              href="tel:+353894934222"
               className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
             >
               Call Us
             </a>
             <a
-              href="https://wa.me/353892100704"
+              href="https://wa.me/353894934222"
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
@@ -201,14 +201,14 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
               {/* CTA buttons - only show on mobile */}
               <div className="md:hidden flex flex-col gap-3 pt-2 border-t border-gray-200">
                 <a
-                  href="tel:+353892100704"
+                  href="tel:+353894934222"
                   className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Call: +353 89 210 0704
+                  Call: +353 89 493 4222
                 </a>
                 <a
-                  href="https://wa.me/353892100704"
+                  href="https://wa.me/353894934222"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
