@@ -46,3 +46,8 @@ export { TimetableModal } from './TimetableModal';
 export { EnrollmentModal } from './EnrollmentModal';
 
 export { CoursesModal } from './CoursesModal';
+
+export { ChapterSection } from './manual/ChapterSection';
+export { ChapterQuestions } from './manual/ChapterQuestions';
+export { ProgressTracker } from './manual/ProgressTracker';
+export { TableOfContents } from './manual/TableOfContents';

@@ -75,6 +75,12 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
             >
               Test Guide
             </a>
+            <a
+              href="/spsv-manual"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
+            >
+              Official Manual
+            </a>
             {/* More menu button for desktop */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -147,13 +153,20 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   Timetable
                 </a>
-                <a
-                  href="/test-guide"
-                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Test Guide
-                </a>
+              <a
+                href="/test-guide"
+                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Test Guide
+              </a>
+              <a
+                href="/spsv-manual"
+                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Official Manual
+              </a>
               </div>
               
               {/* Additional menu items for both mobile and desktop */}

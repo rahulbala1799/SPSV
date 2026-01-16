@@ -1,0 +1,114 @@
+{
+  "welcome": {
+    "chapterTitle": "Welcome",
+    "pageRange": {
+      "start": 7,
+      "end": 7
+    },
+    "questions": []
+  },
+  "terminology": {
+    "chapterTitle": "Terminology",
+    "pageRange": {
+      "start": 8,
+      "end": 12
+    },
+    "questions": []
+  },
+  "chapter-1-the-spsv-industry": {
+    "chapterTitle": "Chapter 1: The SPSV industry",
+    "pageRange": {
+      "start": 13,
+      "end": 25
+    },
+    "questions": []
+  },
+  "chapter-2-spsv-driver-licensing": {
+    "chapterTitle": "Chapter 2: SPSV driver licensing",
+    "pageRange": {
+      "start": 27,
+      "end": 42
+    },
+    "questions": []
+  },
+  "chapter-3-choosing-a-vehicle-to-use-as-an-spsv": {
+    "chapterTitle": "Chapter 3: Choosing a vehicle to use as an SPSV",
+    "pageRange": {
+      "start": 44,
+      "end": 54
+    },
+    "questions": []
+  },
+  "chapter-4-vehicle-licensing": {
+    "chapterTitle": "Chapter 4: Vehicle licensing",
+    "pageRange": {
+      "start": 55,
+      "end": 79
+    },
+    "questions": []
+  },
+  "chapter-5-working-as-an-spsv-operator": {
+    "chapterTitle": "Chapter 5: Working as an SPSV operator",
+    "pageRange": {
+      "start": 80,
+      "end": 102
+    },
+    "questions": []
+  },
+  "chapter-6-finding-your-way-around": {
+    "chapterTitle": "Chapter 6: Finding your way around",
+    "pageRange": {
+      "start": 104,
+      "end": 115
+    },
+    "questions": []
+  },
+  "chapter-7-fares": {
+    "chapterTitle": "Chapter 7: Fares",
+    "pageRange": {
+      "start": 117,
+      "end": 126
+    },
+    "questions": []
+  },
+  "chapter-8-delivering-customer-satisfaction": {
+    "chapterTitle": "Chapter 8: Delivering customer satisfaction",
+    "pageRange": {
+      "start": 127,
+      "end": 152
+    },
+    "questions": []
+  },
+  "chapter-9-your-spsv-business": {
+    "chapterTitle": "Chapter 9: Your SPSV business",
+    "pageRange": {
+      "start": 153,
+      "end": 173
+    },
+    "questions": []
+  },
+  "chapter-10-staying-safe": {
+    "chapterTitle": "Chapter 10: Staying safe",
+    "pageRange": {
+      "start": 174,
+      "end": 195
+    },
+    "questions": []
+  },
+  "chapter-11-preparing-for-your-test": {
+    "chapterTitle": "Chapter 11: Preparing for your test",
+    "pageRange": {
+      "start": 197,
+      "end": 207
+    },
+    "questions": []
+  },
+  "appendices": {
+    "chapterTitle": "Appendices",
+    "pageRange": {
+      "start": 209,
+      "end": 221
+    },
+    "questions": []
+  }
+}
