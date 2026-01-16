@@ -211,6 +211,352 @@ export default function TestGuidePage() {
             </div>
           </div>
 
+          {/* Course Contents - Area Knowledge */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <FaMapMarkedAlt className="text-green-600 text-2xl" />
+              </div>
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Area Knowledge Course Contents</h2>
+                <p className="text-gray-600 mt-2">Comprehensive Dublin area knowledge topics covered in our course</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Routes */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Main Routes to Dublin City</h3>
+                <p className="text-sm text-gray-600 mb-2">10 routes to Dublin city centre + street names</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">11</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Places of Interest */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Interesting Places in Dublin</h3>
+                <p className="text-sm text-gray-600 mb-2">Hotels, pubs, restaurants, hospitals, etc.</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">90</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Road Markings */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Road Markings</h3>
+                <p className="text-sm text-gray-600 mb-2">Colour of roads in a map</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">8</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Places on Squares */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Places of Interest on Squares</h3>
+                <p className="text-sm text-gray-600 mb-2">Hotels, colleges, etc.</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">13</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Circular Roads */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">North & South Circular Roads</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin circular routes</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">28</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Train Stations */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Train Stations</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin train stations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">7</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Residential Areas */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Residential Areas</h3>
+                <p className="text-sm text-gray-600 mb-2">Adjoining residential areas</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">63</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Hotels */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Dublin Hotels</h3>
+                <p className="text-sm text-gray-600 mb-2">Comprehensive hotel locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">192</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Hospitals */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Dublin Hospitals</h3>
+                <p className="text-sm text-gray-600 mb-2">Hospital locations and details</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">52</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Other Known Places */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Other Known Places</h3>
+                <p className="text-sm text-gray-600 mb-2">Various landmarks and locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">32</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Churches and Cathedrals */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Churches & Cathedrals</h3>
+                <p className="text-sm text-gray-600 mb-2">Religious sites in Dublin</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">15</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
+              </div>
+
+              {/* Libraries */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Libraries</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin library locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">19</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Art Galleries */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Art Galleries</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin art galleries</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">21</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Museums */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Museums</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin museum locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">28</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Schools */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Schools</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin school locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">60</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Parks, Gardens & Cemeteries */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Parks, Gardens & Cemeteries</h3>
+                <p className="text-sm text-gray-600 mb-2">Green spaces and memorial sites</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">30</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Embassies */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Embassies</h3>
+                <p className="text-sm text-gray-600 mb-2">Embassy locations in Dublin</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">15</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Sports Grounds */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Sports Grounds</h3>
+                <p className="text-sm text-gray-600 mb-2">Sports venues in Dublin</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">33</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Night Clubs & Pubs */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Night Clubs & Pubs</h3>
+                <p className="text-sm text-gray-600 mb-2">Entertainment venues</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">96</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Restaurants */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Restaurants</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin restaurant locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">55</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Cinemas */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Cinemas</h3>
+                <p className="text-sm text-gray-600 mb-2">Cinema locations in Dublin</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">12</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Casinos */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Casinos</h3>
+                <p className="text-sm text-gray-600 mb-2">Casino locations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">23</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* One Way Streets */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">One Way Streets</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin one-way street navigation</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">127</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* DART Stations */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">DART Stations</h3>
+                <p className="text-sm text-gray-600 mb-2">Dublin Area Rapid Transit stations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">26</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Pedestrianised Streets */}
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Pedestrianised Streets</h3>
+                <p className="text-sm text-gray-600 mb-2">Walking-only areas in Dublin</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-700">37</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Course Contents - Industry Knowledge */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <FaBook className="text-blue-600 text-2xl" />
+              </div>
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Industry Knowledge Course Contents</h2>
+                <p className="text-gray-600 mt-2">Comprehensive SPSV industry knowledge topics covered in our course</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Basic Industry Knowledge */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Basic SPSV Industry Knowledge</h3>
+                <p className="text-sm text-gray-600 mb-2">Fundamental SPSV regulations and requirements</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">98</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Vehicle */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Vehicle</h3>
+                <p className="text-sm text-gray-600 mb-2">Vehicle requirements and specifications</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">52</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Hire & Fares */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Hire & Fares</h3>
+                <p className="text-sm text-gray-600 mb-2">Pricing structures and hire regulations</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">54</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Customer Satisfaction */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Customer Satisfaction</h3>
+                <p className="text-sm text-gray-600 mb-2">Service standards and customer care</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">66</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Business */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Business</h3>
+                <p className="text-sm text-gray-600 mb-2">Business operations and management</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">17</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+
+              {/* Health and Safety */}
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Health and Safety</h3>
+                <p className="text-sm text-gray-600 mb-2">Safety regulations and protocols</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">41</span>
+                  <span className="text-sm text-gray-600">questions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* At the Test Centre */}
           <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
             <div className="flex items-center gap-4 mb-6">
