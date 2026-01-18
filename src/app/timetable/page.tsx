@@ -21,14 +21,24 @@ export default function TimetablePage() {
 
   const generateTimeSlots = (): TimeSlot[] => {
     const today = new Date();
+    const currentYear = today.getFullYear();
+    // If we're past February 1st this year, use next year
+    const enrollmentYear = (today.getMonth() > 1 || (today.getMonth() === 1 && today.getDate() > 1)) 
+      ? currentYear + 1 
+      : currentYear;
+    
+    // Enrollment date is 1st February
+    const enrollmentDate = new Date(enrollmentYear, 1, 1); // February is month 1 (0-indexed)
+    const endDate = new Date(enrollmentYear, 2, 0); // Last day of February (month 2, day 0 = last day of previous month)
+    
     const slots: TimeSlot[] = [];
     
     slots.push({
       id: 'morning',
       time: '09:30 - 12:30',
       label: 'Morning Class',
-      startDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
-      endDate: new Date(today.getTime() + 37 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
+      startDate: enrollmentDate.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
+      endDate: endDate.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
       status: 'available',
     });
 
@@ -36,8 +46,8 @@ export default function TimetablePage() {
       id: 'afternoon',
       time: '14:30 - 17:00',
       label: 'Afternoon Class',
-      startDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
-      endDate: new Date(today.getTime() + 37 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
+      startDate: enrollmentDate.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
+      endDate: endDate.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
       status: 'available',
     });
 

@@ -21,11 +21,14 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
   // Generate calendar for the month
   const generateCalendar = () => {
     const today = new Date();
-    const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
+    // If we're past February 1st this year, use next year
+    const enrollmentYear = (today.getMonth() > 1 || (today.getMonth() === 1 && today.getDate() > 1)) 
+      ? currentYear + 1 
+      : currentYear;
     
-    // Get first day of next month (enrollment date)
-    const enrollmentDate = new Date(currentYear, currentMonth + 1, 1);
+    // Enrollment date is 1st February
+    const enrollmentDate = new Date(enrollmentYear, 1, 1); // February is month 1 (0-indexed)
     const startDate = new Date(enrollmentDate);
     const endDate = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth() + 1, 0);
     
@@ -41,8 +44,8 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
     const totalDays = endDate.getDate();
     const lastWeekStart = Math.floor(totalDays * 0.7); // Last 30% of days
 
-    for (let i = 1; i <= totalDays; i++) {
-      const date = new Date(currentYear, currentMonth + 1, i);
+                  for (let i = 1; i <= totalDays; i++) {
+      const date = new Date(enrollmentYear, 1, i); // February is month 1 (0-indexed)
       const dayOfWeek = date.getDay();
 
       // Skip weekends (Saturday = 6, Sunday = 0) and Fridays (5)

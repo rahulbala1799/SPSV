@@ -22,11 +22,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
 
   if (!isOpen) return null;
 
-  // Get next enrollment date (1st of next month)
+  // Get enrollment date (1st February)
   const getNextEnrollmentDate = () => {
     const today = new Date();
-    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-    return nextMonth.toLocaleDateString('en-IE', { 
+    const currentYear = today.getFullYear();
+    // If we're past February 1st this year, use next year
+    const enrollmentYear = (today.getMonth() > 1 || (today.getMonth() === 1 && today.getDate() > 1)) 
+      ? currentYear + 1 
+      : currentYear;
+    const enrollmentDate = new Date(enrollmentYear, 1, 1); // February is month 1 (0-indexed)
+    return enrollmentDate.toLocaleDateString('en-IE', { 
       day: 'numeric', 
       month: 'long', 
       year: 'numeric' 
@@ -81,7 +86,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                 <p className="text-sm text-gray-600 mb-1">Next Enrollment Date</p>
                 <p className="text-xl font-bold text-green-700">{getNextEnrollmentDate()}</p>
-                <p className="text-xs text-gray-500 mt-1">All courses start on the 1st of each month</p>
+                <p className="text-xs text-gray-500 mt-1">Course starts on 1st February</p>
               </div>
 
               {/* Personal Information */}

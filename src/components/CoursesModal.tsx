@@ -115,7 +115,7 @@ export const CoursesModal: React.FC<CoursesModalProps> = ({ isOpen, onClose }) =
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
               <h4 className="font-bold text-gray-900 mb-2">Enrollment Information</h4>
               <p className="text-gray-700 text-sm mb-3">
-                Courses start on the <strong>1st of each month</strong>. Maximum 6 people per batch.
+                Course starts on <strong>1st February</strong>. Maximum 6 people per batch.
               </p>
               <p className="text-gray-700 text-sm">
                 Contact us at <a href="tel:+353894934222" className="text-green-600 font-semibold hover:underline">+353 89 493 4222</a> or 
