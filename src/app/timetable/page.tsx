@@ -25,7 +25,7 @@ export default function TimetablePage() {
     
     slots.push({
       id: 'morning',
-      time: '07:00 - 08:00',
+      time: '09:30 - 12:30',
       label: 'Morning Class',
       startDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
       endDate: new Date(today.getTime() + 37 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -34,17 +34,8 @@ export default function TimetablePage() {
 
     slots.push({
       id: 'afternoon',
-      time: '12:00 - 13:00',
+      time: '14:30 - 17:00',
       label: 'Afternoon Class',
-      startDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
-      endDate: new Date(today.getTime() + 37 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
-      status: 'available',
-    });
-
-    slots.push({
-      id: 'evening',
-      time: '19:00 - 20:00',
-      label: 'Evening Class',
       startDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
       endDate: new Date(today.getTime() + 37 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }),
       status: 'available',
@@ -75,11 +66,11 @@ export default function TimetablePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Available Class Times</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              All courses run for 1 month. Select the time slot that works best for your schedule.
+              All courses run for 1 month, Monday to Thursday. Maximum 6 people per batch. Select the time slot that works best for your schedule.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
             {timeSlots.map((slot) => (
               <div
                 key={slot.id}
@@ -172,17 +163,16 @@ export default function TimetablePage() {
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  <span className="text-gray-700">Morning: 07:00 - 08:00</span>
+                  <span className="text-gray-700">Morning: 09:30 - 12:30 (Mon-Thu)</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  <span className="text-gray-700">Afternoon: 12:00 - 13:00</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  <span className="text-gray-700">Evening: 19:00 - 20:00</span>
+                  <span className="text-gray-700">Afternoon: 14:30 - 17:00 (Mon-Thu)</span>
                 </li>
               </ul>
+              <p className="text-sm text-gray-600 mt-4">
+                <strong>Batch Size:</strong> Maximum 6 people per batch
+              </p>
             </div>
 
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">

@@ -125,12 +125,12 @@ export default function Home() {
     {
       icon: '👥',
       title: 'Small Class Sizes',
-      description: 'Maximum 12 students per class ensuring personalized attention and interactive learning.',
+      description: 'Maximum 6 people per batch ensuring personalized attention and interactive learning.',
     },
     {
       icon: '📅',
       title: 'Flexible Scheduling',
-      description: 'Multiple class times available throughout the week including evenings and weekends.',
+      description: 'Two time slots available Monday to Thursday: Morning (09:30-12:30) and Afternoon (14:30-17:00).',
     },
     {
       icon: '🎓',

@@ -96,8 +96,9 @@ export const CoursesModal: React.FC<CoursesModalProps> = ({ isOpen, onClose }) =
                   <FaCalendarAlt className="text-green-600 text-xl mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Schedule</h4>
-                    <p className="text-gray-700">5 days per week (Monday to Friday)</p>
-                    <p className="text-sm text-gray-600 mt-1">Morning: 07:00 - 08:00 | Afternoon: 12:00 - 13:00 | Evening: 19:00 - 20:00</p>
+                    <p className="text-gray-700">4 days per week (Monday to Thursday)</p>
+                    <p className="text-sm text-gray-600 mt-1">Morning: 09:30 - 12:30 | Afternoon: 14:30 - 17:00</p>
+                    <p className="text-sm text-gray-600 mt-1"><strong>Batch Size:</strong> Maximum 6 people per batch</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
@@ -114,7 +115,7 @@ export const CoursesModal: React.FC<CoursesModalProps> = ({ isOpen, onClose }) =
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
               <h4 className="font-bold text-gray-900 mb-2">Enrollment Information</h4>
               <p className="text-gray-700 text-sm mb-3">
-                Courses start on the <strong>1st of each month</strong>. Maximum 20 students per time slot.
+                Courses start on the <strong>1st of each month</strong>. Maximum 6 people per batch.
               </p>
               <p className="text-gray-700 text-sm">
                 Contact us at <a href="tel:+353894934222" className="text-green-600 font-semibold hover:underline">+353 89 493 4222</a> or 

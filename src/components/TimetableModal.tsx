@@ -45,13 +45,13 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
       const date = new Date(currentYear, currentMonth + 1, i);
       const dayOfWeek = date.getDay();
 
-      // Skip weekends (Saturday = 6, Sunday = 0)
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
+      // Skip weekends (Saturday = 6, Sunday = 0) and Fridays (5)
+      if (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6) {
         days.push({
           date,
           day: i,
           type: 'weekend',
-          label: 'Weekend',
+          label: dayOfWeek === 5 ? 'Friday' : 'Weekend',
         });
         continue;
       }
@@ -221,13 +221,13 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
                     const date = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth(), i);
                     const dayOfWeek = date.getDay();
 
-                    if (dayOfWeek === 0 || dayOfWeek === 6) {
-                      // Weekend
+                    if (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6) {
+                      // Weekend and Friday
                       calendarDays.push({
                         date,
                         day: i,
                         type: 'weekend',
-                        label: 'Weekend',
+                        label: dayOfWeek === 5 ? 'Friday' : 'Weekend',
                       });
                     } else {
                       weekCount++;
