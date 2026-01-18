@@ -29,7 +29,10 @@ export default function TimetablePage() {
     
     // Enrollment date is 1st February
     const enrollmentDate = new Date(enrollmentYear, 1, 1); // February is month 1 (0-indexed)
-    const endDate = new Date(enrollmentYear, 2, 0); // Last day of February (month 2, day 0 = last day of previous month)
+    // Course runs for 16 days (Monday-Thursday only)
+    // Calculate end date: start date + 15 days (since start date is day 1)
+    const endDate = new Date(enrollmentDate);
+    endDate.setDate(endDate.getDate() + 15);
     
     const slots: TimeSlot[] = [];
     
@@ -76,7 +79,7 @@ export default function TimetablePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Available Class Times</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              All courses run for 1 month, Monday to Thursday. Maximum 6 people per batch. Select the time slot that works best for your schedule.
+              All courses run for 16 days, Monday to Thursday. Maximum 6 people per batch. Select the time slot that works best for your schedule.
             </p>
           </div>
 
@@ -136,7 +139,7 @@ export default function TimetablePage() {
 
                   <div className="mt-8 pt-6 border-t border-gray-200">
                     <p className="text-sm text-gray-600 mb-4 text-center">
-                      Course Duration: <span className="font-semibold text-gray-900">1 Month</span>
+                      Course Duration: <span className="font-semibold text-gray-900">16 Days</span>
                     </p>
                     {slot.status === 'available' ? (
                       <Button
@@ -202,7 +205,7 @@ export default function TimetablePage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <FaCheckCircle className="text-green-600" />
-                  <span className="text-gray-700">1 month comprehensive course</span>
+                  <span className="text-gray-700">16 days comprehensive course</span>
                 </li>
               </ul>
             </div>

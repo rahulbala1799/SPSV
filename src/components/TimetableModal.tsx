@@ -30,7 +30,10 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
     // Enrollment date is 1st February
     const enrollmentDate = new Date(enrollmentYear, 1, 1); // February is month 1 (0-indexed)
     const startDate = new Date(enrollmentDate);
-    const endDate = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth() + 1, 0);
+    // Course runs for 16 days (Monday-Thursday only)
+    // Calculate end date: start date + 15 days (since start date is day 1)
+    const endDate = new Date(enrollmentDate);
+    endDate.setDate(endDate.getDate() + 15);
     
     const days: Array<{
       date: Date;
@@ -41,40 +44,40 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
 
     let dayCount = 0;
     let weekCount = 0;
-    const totalDays = endDate.getDate();
-    const lastWeekStart = Math.floor(totalDays * 0.7); // Last 30% of days
+    const courseDays = 16; // Total course days (Monday-Thursday only)
+    const lastWeekStart = Math.floor(courseDays * 0.7); // Last 30% of days
 
-                  for (let i = 1; i <= totalDays; i++) {
-      const date = new Date(enrollmentYear, 1, i); // February is month 1 (0-indexed)
-      const dayOfWeek = date.getDay();
+    // Generate 16 days starting from enrollment date (Monday-Thursday only)
+    let currentDate = new Date(enrollmentDate);
+    let daysAdded = 0;
+    
+    while (daysAdded < courseDays) {
+      const dayOfWeek = currentDate.getDay();
 
       // Skip weekends (Saturday = 6, Sunday = 0) and Fridays (5)
       if (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6) {
-        days.push({
-          date,
-          day: i,
-          type: 'weekend',
-          label: dayOfWeek === 5 ? 'Friday' : 'Weekend',
-        });
+        currentDate.setDate(currentDate.getDate() + 1);
         continue;
       }
 
+      // This is a class day (Monday-Thursday)
       weekCount++;
       dayCount++;
+      daysAdded++;
 
       // Last 30% of course days: Questions and Area Knowledge
       if (weekCount > lastWeekStart) {
         if (weekCount % 2 === 0) {
           days.push({
-            date,
-            day: i,
+            date: new Date(currentDate),
+            day: currentDate.getDate(),
             type: 'questions',
             label: 'Practice Questions',
           });
         } else {
           days.push({
-            date,
-            day: i,
+            date: new Date(currentDate),
+            day: currentDate.getDate(),
             type: 'area',
             label: 'Area Knowledge',
           });
@@ -83,20 +86,23 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
         // First 70%: Alternate between Industry and Area Knowledge
         if (dayCount % 2 === 1) {
           days.push({
-            date,
-            day: i,
+            date: new Date(currentDate),
+            day: currentDate.getDate(),
             type: 'industry',
             label: 'Industry Knowledge',
           });
         } else {
           days.push({
-            date,
-            day: i,
+            date: new Date(currentDate),
+            day: currentDate.getDate(),
             type: 'area',
             label: 'Area Knowledge',
           });
         }
       }
+
+      // Move to next day
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
     return { days, enrollmentDate, startDate, endDate };
@@ -168,13 +174,13 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
                 })}
               </p>
               <p className="text-xs sm:text-sm text-gray-600 mt-2">
-                Course runs for 1 month from this date
+                Course runs for 16 days (Monday-Thursday) from this date
               </p>
             </div>
 
             {/* Timetable Calendar */}
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Monthly Timetable</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Course Timetable (16 Days)</h3>
               
               {/* Calendar Header - Days of Week */}
               <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
@@ -196,14 +202,14 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
                     label: string;
                   }> = [];
 
-                  // Get first day of month and what day of week it falls on
-                  const firstDay = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth(), 1);
+                  // Get first day of course and what day of week it falls on
+                  const firstDay = new Date(enrollmentDate);
                   const firstDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
                   
                   // Adjust to Monday = 0
                   const startOffset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
 
-                  // Add empty cells for days before the first day of month
+                  // Add empty cells for days before the first day of course
                   for (let i = 0; i < startOffset; i++) {
                     calendarDays.push({
                       date: null,
@@ -213,65 +219,74 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
                     });
                   }
 
-                  // Add all days from the month
-                  const lastDay = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth() + 1, 0);
+                  // Add all 16 course days (Monday-Thursday only)
+                  const courseDays = 16;
                   let dayCount = 0;
                   let weekCount = 0;
-                  const totalDays = lastDay.getDate();
-                  const lastWeekStart = Math.floor(totalDays * 0.7);
+                  const lastWeekStart = Math.floor(courseDays * 0.7);
+                  
+                  let currentDate = new Date(enrollmentDate);
+                  let daysAdded = 0;
 
-                  for (let i = 1; i <= totalDays; i++) {
-                    const date = new Date(enrollmentDate.getFullYear(), enrollmentDate.getMonth(), i);
-                    const dayOfWeek = date.getDay();
+                  while (daysAdded < courseDays) {
+                    const dayOfWeek = currentDate.getDay();
 
+                    // Skip weekends and Fridays
                     if (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6) {
-                      // Weekend and Friday
+                      currentDate.setDate(currentDate.getDate() + 1);
+                      // Add empty cell for skipped days
                       calendarDays.push({
-                        date,
-                        day: i,
-                        type: 'weekend',
-                        label: dayOfWeek === 5 ? 'Friday' : 'Weekend',
+                        date: null,
+                        day: null,
+                        type: 'empty',
+                        label: '',
                       });
-                    } else {
-                      weekCount++;
-                      dayCount++;
+                      continue;
+                    }
 
-                      if (weekCount > lastWeekStart) {
-                        // Last 30%: Questions and Area Knowledge
-                        if (weekCount % 2 === 0) {
-                          calendarDays.push({
-                            date,
-                            day: i,
-                            type: 'questions',
-                            label: 'Practice Questions',
-                          });
-                        } else {
-                          calendarDays.push({
-                            date,
-                            day: i,
-                            type: 'area',
-                            label: 'Area Knowledge',
-                          });
-                        }
+                    // This is a class day (Monday-Thursday)
+                    weekCount++;
+                    dayCount++;
+                    daysAdded++;
+
+                    if (weekCount > lastWeekStart) {
+                      // Last 30%: Questions and Area Knowledge
+                      if (weekCount % 2 === 0) {
+                        calendarDays.push({
+                          date: new Date(currentDate),
+                          day: currentDate.getDate(),
+                          type: 'questions',
+                          label: 'Practice Questions',
+                        });
                       } else {
-                        // First 70%: Alternate Industry and Area Knowledge
-                        if (dayCount % 2 === 1) {
-                          calendarDays.push({
-                            date,
-                            day: i,
-                            type: 'industry',
-                            label: 'Industry Knowledge',
-                          });
-                        } else {
-                          calendarDays.push({
-                            date,
-                            day: i,
-                            type: 'area',
-                            label: 'Area Knowledge',
-                          });
-                        }
+                        calendarDays.push({
+                          date: new Date(currentDate),
+                          day: currentDate.getDate(),
+                          type: 'area',
+                          label: 'Area Knowledge',
+                        });
+                      }
+                    } else {
+                      // First 70%: Alternate Industry and Area Knowledge
+                      if (dayCount % 2 === 1) {
+                        calendarDays.push({
+                          date: new Date(currentDate),
+                          day: currentDate.getDate(),
+                          type: 'industry',
+                          label: 'Industry Knowledge',
+                        });
+                      } else {
+                        calendarDays.push({
+                          date: new Date(currentDate),
+                          day: currentDate.getDate(),
+                          type: 'area',
+                          label: 'Area Knowledge',
+                        });
                       }
                     }
+
+                    // Move to next day
+                    currentDate.setDate(currentDate.getDate() + 1);
                   }
 
                   return calendarDays.map((day, index) => {

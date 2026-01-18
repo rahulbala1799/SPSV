@@ -89,7 +89,7 @@ export const CoursesModal: React.FC<CoursesModalProps> = ({ isOpen, onClose }) =
                   <FaClock className="text-green-600 text-xl mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Duration</h4>
-                    <p className="text-gray-700">1 month comprehensive course</p>
+                    <p className="text-gray-700">16 days comprehensive course</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
