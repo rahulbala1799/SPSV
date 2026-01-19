@@ -17,6 +17,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, role } = inviteSchema.parse(body)
 
+    // Only SUPER_ADMIN and ADMIN can create admins
+    if (role === 'ADMIN' && admin.role !== 'SUPER_ADMIN' && admin.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Only Super Admin and Admin can create admin users' },
+        { status: 403 }
+      )
+    }
+
+    // Only SUPER_ADMIN can create SUPER_ADMIN
+    if (role === 'SUPER_ADMIN' && admin.role !== 'SUPER_ADMIN') {
+      return NextResponse.json(
+        { error: 'Only Super Admin can create Super Admin users' },
+        { status: 403 }
+      )
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }

@@ -7,7 +7,7 @@ declare module 'next-auth' {
       id: string
       email: string
       name?: string | null
-      role: string
+      role: 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
     }
   }
 
@@ -15,7 +15,7 @@ declare module 'next-auth' {
     id: string
     email: string
     name?: string | null
-    role: string
+    role: 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
   }
 }
 
@@ -61,7 +61,7 @@ export interface User {
   id: string
   email: string
   name?: string | null
-  role: 'ADMIN' | 'STUDENT'
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
   createdAt: Date
   emailVerified?: Date | null
 }
@@ -71,7 +71,7 @@ export interface Invitation {
   id: string
   email: string
   token: string
-  role: 'ADMIN' | 'STUDENT'
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
   expiresAt: Date
   acceptedAt?: Date | null
   createdAt: Date

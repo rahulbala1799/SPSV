@@ -18,67 +18,68 @@ model User {
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
-  invitations   Invitation[] @relation("InvitedBy")
-  progress      ChapterProgress[]
+
+  invitations     Invitation[]      @relation("InvitedBy")
+  progress        ChapterProgress[]
   questionAnswers QuestionAnswer[]
-  
+
   @@map("users")
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
   STUDENT
 }
 
 model Invitation {
-  id            String   @id @default(cuid())
-  email         String
-  token         String   @unique
-  invitedBy     String
-  role          Role     @default(STUDENT)
-  expiresAt     DateTime
-  acceptedAt    DateTime?
-  createdAt     DateTime @default(now())
-  
-  inviter       User     @relation("InvitedBy", fields: [invitedBy], references: [id])
-  
-  @@map("invitations")
+  id         String    @id @default(cuid())
+  email      String
+  token      String    @unique
+  invitedBy  String
+  role       Role      @default(STUDENT)
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  inviter User @relation("InvitedBy", fields: [invitedBy], references: [id])
+
   @@index([token])
   @@index([email])
+  @@map("invitations")
 }
 
 model ChapterProgress {
-  id            String   @id @default(cuid())
-  userId        String
-  chapterId     String
-  chapterTitle  String
-  isCompleted   Boolean  @default(false)
-  completedAt   DateTime?
-  lastAccessed  DateTime @default(now())
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("chapter_progress")
+  id           String    @id @default(cuid())
+  userId       String
+  chapterId    String
+  chapterTitle String
+  isCompleted  Boolean   @default(false)
+  completedAt  DateTime?
+  lastAccessed DateTime  @default(now())
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, chapterId])
   @@index([userId])
+  @@map("chapter_progress")
 }
 
 model QuestionAnswer {
-  id            String   @id @default(cuid())
-  userId        String
-  chapterId     String
-  questionId    String
+  id             String   @id @default(cuid())
+  userId         String
+  chapterId      String
+  questionId     String
   selectedAnswer String
-  isCorrect     Boolean
-  answeredAt    DateTime @default(now())
-  
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("question_answers")
+  isCorrect      Boolean
+  answeredAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId, chapterId])
   @@index([userId])
+  @@map("question_answers")
 }

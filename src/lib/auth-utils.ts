@@ -16,8 +16,20 @@ export async function requireAuth() {
 
 export async function requireAdmin() {
   const user = await requireAuth()
-  if (user.role !== "ADMIN") {
+  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
     redirect("/dashboard")
   }
   return user
+}
+
+export async function requireSuperAdmin() {
+  const user = await requireAuth()
+  if (user.role !== "SUPER_ADMIN") {
+    redirect("/dashboard")
+  }
+  return user
+}
+
+export function canCreateAdmin(userRole: string): boolean {
+  return userRole === "SUPER_ADMIN" || userRole === "ADMIN"
 }

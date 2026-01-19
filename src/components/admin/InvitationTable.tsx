@@ -77,11 +77,13 @@ export function InvitationTable({ invitations }: InvitationTableProps) {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      invitation.role === 'ADMIN'
+                      invitation.role === 'SUPER_ADMIN'
+                        ? 'bg-red-100 text-red-800'
+                        : invitation.role === 'ADMIN'
                         ? 'bg-purple-100 text-purple-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {invitation.role}
+                      {invitation.role === 'SUPER_ADMIN' ? 'Super Admin' : invitation.role}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -6,6 +6,7 @@ import { z } from 'zod'
 const acceptInviteSchema = z.object({
   name: z.string().min(2),
   password: z.string().min(8),
+  confirmPassword: z.string().optional(),
 })
 
 // GET - Validate invitation token

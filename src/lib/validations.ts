@@ -16,7 +16,7 @@ export const acceptInviteSchema = z.object({
 
 export const inviteUserSchema = z.object({
   email: z.string().email('Invalid email address'),
-  role: z.enum(['ADMIN', 'STUDENT']).default('STUDENT'),
+  role: z.enum(['SUPER_ADMIN', 'ADMIN', 'STUDENT']).default('STUDENT'),
 })
 
 export const updateProgressSchema = z.object({

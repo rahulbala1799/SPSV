@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   Dashboard
                 </Link>
-                {session.user.role === 'ADMIN' && (
+                {(session.user.role === 'ADMIN' || session.user.role === 'SUPER_ADMIN') && (
                   <Link
                     href="/admin"
                     className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"

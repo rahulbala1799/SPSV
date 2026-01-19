@@ -1,11 +1,11 @@
-import { requireAdmin } from '@/lib/auth-utils'
+import { requireAdmin, canCreateAdmin } from '@/lib/auth-utils'
 import { prisma } from '@/lib/prisma'
 import { UserTable } from '@/components/admin/UserTable'
 import { InvitationTable } from '@/components/admin/InvitationTable'
 import { InviteUserModal } from '@/components/admin/InviteUserModal'
 
 export default async function AdminDashboardPage() {
-  await requireAdmin()
+  const currentUser = await requireAdmin()
 
   const [users, invitations] = await Promise.all([
     prisma.user.findMany({
@@ -44,8 +44,11 @@ export default async function AdminDashboardPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
           <p className="text-gray-600">Manage users and invitations</p>
+          {currentUser.role === 'SUPER_ADMIN' && (
+            <p className="text-sm text-red-600 font-medium mt-1">🔴 Super Admin Mode</p>
+          )}
         </div>
-        <InviteUserModal />
+        {canCreateAdmin(currentUser.role) && <InviteUserModal />}
       </div>
 
       {/* Stats */}

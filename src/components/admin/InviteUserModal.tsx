@@ -1,17 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { FaPlus, FaTimes } from 'react-icons/fa'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
 
 export function InviteUserModal() {
+  const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState<'ADMIN' | 'STUDENT'>('STUDENT')
+  const [role, setRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  const userRole = session?.user?.role || 'STUDENT'
+  const canCreateAdmin = userRole === 'SUPER_ADMIN' || userRole === 'ADMIN'
+  const canCreateSuperAdmin = userRole === 'SUPER_ADMIN'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,13 +115,21 @@ export function InviteUserModal() {
                   </label>
                   <select
                     value={role}
-                    onChange={(e) => setRole(e.target.value as 'ADMIN' | 'STUDENT')}
+                    onChange={(e) => setRole(e.target.value as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     disabled={loading}
                   >
                     <option value="STUDENT">Student</option>
-                    <option value="ADMIN">Admin</option>
+                    {canCreateAdmin && <option value="ADMIN">Admin</option>}
+                    {canCreateSuperAdmin && <option value="SUPER_ADMIN">Super Admin</option>}
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {canCreateSuperAdmin 
+                      ? 'You can create Super Admin, Admin, and Student users'
+                      : canCreateAdmin
+                      ? 'You can create Admin and Student users'
+                      : 'You can only create Student users'}
+                  </p>
                 </div>
 
                 <div className="flex gap-3 pt-4">
