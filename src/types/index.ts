@@ -19,12 +19,8 @@ declare module 'next-auth' {
   }
 }
 
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string
-    role: string
-  }
-}
+// NextAuth v5 doesn't use separate JWT module
+// JWT types are handled internally
 
 // Chapter types
 export interface Chapter {
