@@ -13,15 +13,9 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "STUDENT",
-      },
-    },
-  },
+  // Don't add role to Better Auth's user table
+  // We manage roles in our own users table (plural)
+  // Better Auth handles authentication, we handle authorization
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_VERCEL_URL 
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL || process.env.NEXT_PUBLIC_APP_URL}` 
     : process.env.VERCEL_URL
