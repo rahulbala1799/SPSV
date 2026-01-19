@@ -1,19 +1,12 @@
 'use client'
 
 import { StackProvider } from '@stackframe/stack'
-
-const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID
-const publishableClientKey = process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
-
-if (!projectId) {
-  throw new Error('NEXT_PUBLIC_STACK_PROJECT_ID is not set')
-}
+import { stackServerApp } from './stack'
 
 export function StackAuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <StackProvider
-      projectId={projectId}
-      publishableClientKey={publishableClientKey}
+      app={stackServerApp}
       urls={{
         signIn: '/login',
         signUp: '/signup',

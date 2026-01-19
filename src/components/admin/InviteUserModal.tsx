@@ -8,7 +8,7 @@ import { Button } from '@/components/Button'
 
 export function InviteUserModal() {
   const user = useUser()
-  const userRole = user?.clientMetadata?.role || user?.serverMetadata?.role || 'STUDENT'
+  const userRole = (user?.clientMetadata as any)?.role || 'STUDENT'
   const [isOpen, setIsOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT')

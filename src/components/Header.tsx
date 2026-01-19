@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
   const stackApp = useStackApp();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  const userRole = user?.clientMetadata?.role || user?.serverMetadata?.role || 'STUDENT';
+  const userRole = (user?.clientMetadata as any)?.role || 'STUDENT';
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
