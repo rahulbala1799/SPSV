@@ -12,6 +12,7 @@ if (!projectId) {
 const stackClientApp = new StackClientApp({
   projectId,
   publishableClientKey: publishableClientKey || undefined,
+  tokenStore: 'cookie',
 })
 
 export function StackAuthProvider({ children }: { children: React.ReactNode }) {
