@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 const inviteSchema = z.object({
   email: z.string().email(),
-  role: z.enum(['ADMIN', 'STUDENT']).default('STUDENT'),
+  role: z.enum(['SUPER_ADMIN', 'ADMIN', 'STUDENT']).default('STUDENT'),
 })
 
 // POST - Create invitation
@@ -17,18 +17,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, role } = inviteSchema.parse(body)
 
-    // Only SUPER_ADMIN and ADMIN can create admins
-    if (role === 'ADMIN' && admin.role !== 'SUPER_ADMIN' && admin.role !== 'ADMIN') {
+    const adminRole = admin.role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
+
+    // Only SUPER_ADMIN can create SUPER_ADMIN
+    if (role === 'SUPER_ADMIN' && adminRole !== 'SUPER_ADMIN') {
       return NextResponse.json(
-        { error: 'Only Super Admin and Admin can create admin users' },
+        { error: 'Only Super Admin can create Super Admin users' },
         { status: 403 }
       )
     }
 
-    // Only SUPER_ADMIN can create SUPER_ADMIN
-    if (role === 'SUPER_ADMIN' && admin.role !== 'SUPER_ADMIN') {
+    // Only SUPER_ADMIN and ADMIN can create admins
+    if (role === 'ADMIN' && adminRole !== 'SUPER_ADMIN' && adminRole !== 'ADMIN') {
       return NextResponse.json(
-        { error: 'Only Super Admin can create Super Admin users' },
+        { error: 'Only Super Admin and Admin can create admin users' },
         { status: 403 }
       )
     }

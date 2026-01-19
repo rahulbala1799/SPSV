@@ -7,26 +7,27 @@ async function main() {
   const email = process.env.ADMIN_EMAIL || 'admin@spsv-dublin.ie'
   const password = process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!'
   const name = process.env.ADMIN_NAME || 'Admin User'
-  const role = (process.env.ADMIN_ROLE || 'ADMIN').toUpperCase() as 'SUPER_ADMIN' | 'ADMIN'
+  const roleInput = (process.env.ADMIN_ROLE || 'ADMIN').toUpperCase()
 
   // Validate role
-  if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
+  if (roleInput !== 'SUPER_ADMIN' && roleInput !== 'ADMIN') {
     console.error('❌ Invalid role. Must be SUPER_ADMIN or ADMIN')
     process.exit(1)
   }
 
+  const role = roleInput as 'SUPER_ADMIN' | 'ADMIN'
   const hashedPassword = await bcrypt.hash(password, 12)
 
   const admin = await prisma.user.upsert({
     where: { email },
     update: {
-      role, // Update role if user exists
+      role: role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT', // Update role if user exists
     },
     create: {
       email,
       name,
       password: hashedPassword,
-      role,
+      role: role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT',
       emailVerified: new Date(),
     }
   })

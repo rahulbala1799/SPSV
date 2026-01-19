@@ -45,22 +45,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+        token.role = (user as any).role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.role = token.role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
       }
       return session
-    },
-    async redirect({ url, baseUrl }) {
-      // Handle redirects properly for custom domains
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      if (new URL(url).origin === baseUrl) return url
-      return baseUrl
     }
   },
   pages: {
