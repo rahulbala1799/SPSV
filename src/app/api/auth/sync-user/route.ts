@@ -64,15 +64,23 @@ export async function POST(request: NextRequest) {
     if (existingUserByEmail || existingUserById) {
       // User exists - update to sync with Better Auth
       const userToUpdate = existingUserById || existingUserByEmail!
+      
+      // If IDs don't match, we need to handle that carefully
+      // For now, just update the existing user with Better Auth data
       const updatedUser = await prisma.user.update({
         where: { id: userToUpdate.id },
         data: {
-          id: authUser.id, // Sync the ID
           email: authUser.email,
           name: authUser.name || userToUpdate.name,
           emailVerified: authUser.emailVerified ? new Date() : null,
         },
       })
+
+      // If the ID doesn't match, we might need to create a new entry
+      // But for now, just update the existing one
+      if (userToUpdate.id !== authUser.id) {
+        console.warn(`User ID mismatch: users table has ${userToUpdate.id}, Better Auth has ${authUser.id}`)
+      }
 
       return NextResponse.json({
         success: true,
