@@ -29,6 +29,22 @@ export default function SignupPage() {
     }
 
     try {
+      // Check if user exists in our users table first
+      const checkResponse = await fetch('/api/users/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
+      })
+
+      if (checkResponse.ok) {
+        const checkData = await checkResponse.json()
+        if (checkData.exists) {
+          setError('User with this email already exists. Please sign in instead.')
+          setLoading(false)
+          return
+        }
+      }
+
       const result = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
@@ -36,9 +52,26 @@ export default function SignupPage() {
       })
       
       if (result.error) {
-        setError(result.error.message || 'Failed to create account')
+        // Check if error is about existing user
+        if (result.error.message?.toLowerCase().includes('already exists') || 
+            result.error.message?.toLowerCase().includes('user already exists')) {
+          setError('User with this email already exists. Please sign in instead.')
+        } else {
+          setError(result.error.message || 'Failed to create account')
+        }
         setLoading(false)
         return
+      }
+      
+      // Sync user to our users table
+      try {
+        await fetch('/api/auth/sync-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+      } catch (syncError) {
+        console.error('Sync error (non-fatal):', syncError)
+        // Don't fail signup if sync fails - user can still log in
       }
       
       // Successful signup - redirect to dashboard
