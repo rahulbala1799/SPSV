@@ -125,7 +125,12 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   WhatsApp
                 </a>
-                {/* Sign In link will be added when auth is reimplemented */}
+                <Link
+                  href="/login"
+                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
+                >
+                  Sign In
+                </Link>
                 <Button
                   variant="primary"
                   size="medium"
