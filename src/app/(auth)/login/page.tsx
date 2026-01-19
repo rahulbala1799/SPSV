@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useStackApp } from '@stackframe/stack'
 import { useRouter } from 'next/navigation'
 import { LoginForm } from '@/components/auth/LoginForm'
 
 export default function LoginPage() {
+  const stackApp = useStackApp()
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -15,33 +16,17 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const result = await signIn('credentials', {
+      await stackApp.signInWithCredential({
         email,
         password,
-        redirect: false,
       })
-
-      if (result?.error) {
-        console.error('Login error:', result.error)
-        setError(result.error === 'CredentialsSignin' 
-          ? 'Invalid email or password' 
-          : `Login failed: ${result.error}`)
-        setLoading(false)
-        return
-      }
-
-      if (result?.ok) {
-        // Successful login - redirect to dashboard
-        console.log('Login successful, redirecting...')
-        window.location.href = '/dashboard'
-      } else {
-        console.error('Login failed - no error, but not ok:', result)
-        setError('Login failed. Please try again.')
-        setLoading(false)
-      }
-    } catch (error) {
-      setError('An error occurred. Please try again.')
-    } finally {
+      
+      // Successful login - redirect to dashboard
+      router.push('/dashboard')
+      router.refresh()
+    } catch (error: any) {
+      console.error('Login error:', error)
+      setError(error?.message || 'Invalid email or password')
       setLoading(false)
     }
   }

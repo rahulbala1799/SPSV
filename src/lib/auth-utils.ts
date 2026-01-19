@@ -1,9 +1,19 @@
-import { auth } from "./auth"
+import { stackServerApp } from "./stack"
 import { redirect } from "next/navigation"
 
 export async function getCurrentUser() {
-  const session = await auth()
-  return session?.user
+  const user = await stackServerApp.getUser()
+  if (!user) return null
+  
+  // Get role from user metadata
+  const role = (user.clientMetadata?.role || user.serverMetadata?.role || 'STUDENT') as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
+  
+  return {
+    id: user.id,
+    email: user.primaryEmail,
+    name: user.displayName,
+    role,
+  }
 }
 
 export async function requireAuth() {

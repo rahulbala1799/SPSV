@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from './Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
+import { useStackApp, useUser } from '@stackframe/stack';
 import Link from 'next/link';
 
 export interface HeaderProps {
@@ -13,8 +13,11 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick }) => {
-  const { data: session } = useSession();
+  const user = useUser();
+  const stackApp = useStackApp();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const userRole = user?.clientMetadata?.role || user?.serverMetadata?.role || 'STUDENT';
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -98,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            {session ? (
+            {user ? (
               <>
                 <Link
                   href="/dashboard"
@@ -106,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   Dashboard
                 </Link>
-                {(session.user.role === 'ADMIN' || session.user.role === 'SUPER_ADMIN') && (
+                {(userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') && (
                   <Link
                     href="/admin"
                     className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
@@ -115,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                   </Link>
                 )}
                 <button
-                  onClick={() => nextAuthSignOut({ callbackUrl: '/' })}
+                  onClick={() => stackApp.signOut()}
                   className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm lg:text-base whitespace-nowrap"
                 >
                   Sign Out

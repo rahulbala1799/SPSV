@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { stackServerApp } from '@/lib/stack'
 import { z } from 'zod'
 
 const acceptInviteSchema = z.object({
@@ -87,16 +87,27 @@ export async function POST(
     const body = await request.json()
     const { name, password } = acceptInviteSchema.parse(body)
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    // Create user in Neon Auth
+    const stackUser = await stackServerApp.createUser({
+      primaryEmail: invitation.email,
+      displayName: name,
+      password,
+      clientMetadata: {
+        role: invitation.role,
+      },
+      serverMetadata: {
+        role: invitation.role,
+      },
+    })
 
-    // Create user
+    // Also create in our users table for progress tracking
     const user = await prisma.user.create({
       data: {
+        id: stackUser.id, // Use Neon Auth user ID
         email: invitation.email,
         name,
-        password: hashedPassword,
-        role: invitation.role,
+        password: '', // No password needed, Neon Auth handles it
+        role: invitation.role as any,
         invitedBy: invitation.invitedBy,
         invitedAt: new Date(),
         emailVerified: new Date(),

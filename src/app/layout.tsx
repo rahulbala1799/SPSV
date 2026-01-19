@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { SessionProvider } from '@/components/providers/SessionProvider';
+import { StackAuthProvider } from '@/lib/stack-client';
 import { ToastProvider } from '@/contexts/ToastContext';
 
 export const metadata: Metadata = {
@@ -21,11 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
+        <StackAuthProvider>
           <ToastProvider>
             {children}
           </ToastProvider>
-        </SessionProvider>
+        </StackAuthProvider>
       </body>
     </html>
   );
