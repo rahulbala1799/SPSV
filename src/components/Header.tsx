@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from './Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export interface HeaderProps {
@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                   </Link>
                 )}
                 <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
+                  onClick={() => nextAuthSignOut({ callbackUrl: '/' })}
                   className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm lg:text-base whitespace-nowrap"
                 >
                   Sign Out
