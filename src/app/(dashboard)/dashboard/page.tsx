@@ -1,4 +1,6 @@
 import { requireAuth } from '@/lib/auth-utils'
+
+export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { ChapterCard } from '@/components/dashboard/ChapterCard'
 import { DashboardStats } from '@/components/dashboard/DashboardStats'

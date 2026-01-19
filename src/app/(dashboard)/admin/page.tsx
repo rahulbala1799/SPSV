@@ -1,5 +1,7 @@
 import { requireAdmin, canCreateAdmin } from '@/lib/auth-utils'
 import { prisma } from '@/lib/prisma'
+
+export const dynamic = 'force-dynamic'
 import { UserTable } from '@/components/admin/UserTable'
 import { InvitationTable } from '@/components/admin/InvitationTable'
 import { InviteUserModal } from '@/components/admin/InviteUserModal'
