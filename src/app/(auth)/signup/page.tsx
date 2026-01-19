@@ -61,6 +61,7 @@ export default function SignupPage() {
             await fetch('/api/auth/sync-user', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: formData.email }),
             })
           } catch (syncError) {
             console.error('Sync error:', syncError)
@@ -78,6 +79,7 @@ export default function SignupPage() {
         const syncResponse = await fetch('/api/auth/sync-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email }),
         })
         if (!syncResponse.ok) {
           console.error('Sync failed but signup succeeded')

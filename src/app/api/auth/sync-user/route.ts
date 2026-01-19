@@ -8,23 +8,49 @@ export const dynamic = 'force-dynamic'
 /**
  * Sync Better Auth user to our users table
  * Called after successful signup to create/update user in our users table
+ * Can be called with email in body or will use current session
  */
 export async function POST(request: NextRequest) {
   try {
-    // Get the current session to find the user
+    const body = await request.json().catch(() => ({}))
+    let authUser: { id: string; email: string; name?: string | null; emailVerified?: boolean } | null = null
+
+    // Try to get user from session first
     const headersList = await headers()
     const session = await auth.api.getSession({
       headers: headersList as any,
-    })
+    }).catch(() => null)
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
+    if (session?.user) {
+      authUser = session.user
+    } else if (body.email) {
+      // If no session but email provided, find user in Better Auth's user table
+      const authUserRecord = await prisma.$queryRawUnsafe<Array<{
+        id: string
+        email: string
+        name: string | null
+        emailVerified: boolean
+      }>>(
+        `SELECT id, email, name, "emailVerified" FROM "user" WHERE email = $1 LIMIT 1`,
+        body.email
       )
+
+      if (authUserRecord && authUserRecord.length > 0) {
+        authUser = {
+          id: authUserRecord[0].id,
+          email: authUserRecord[0].email,
+          name: authUserRecord[0].name,
+          emailVerified: authUserRecord[0].emailVerified,
+        }
+      }
     }
 
-    const authUser = session.user
+    if (!authUser) {
+      return NextResponse.json(
+        { error: 'User not found. Please sign up first.' },
+        { status: 404 }
+      )
+    }
 
     // Check if user already exists in our users table (by email or ID)
     const existingUserByEmail = await prisma.user.findUnique({
