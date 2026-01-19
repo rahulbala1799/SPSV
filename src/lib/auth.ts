@@ -14,10 +14,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           if (!credentials?.email || !credentials?.password) {
             console.log('[Auth] Missing credentials')
-            throw new Error('Email and password are required')
+            return null
           }
 
           console.log(`[Auth] Attempting login for: ${credentials.email}`)
+
+          // Test Prisma connection
+          try {
+            await prisma.$connect()
+          } catch (connError) {
+            console.error('[Auth] Prisma connection failed:', connError)
+            // Continue anyway, might already be connected
+          }
 
           const user = await prisma.user.findUnique({
             where: { email: credentials.email as string }
@@ -25,10 +33,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!user) {
             console.log(`[Auth] User not found: ${credentials.email}`)
-            throw new Error('Invalid email or password')
+            return null
           }
 
-          console.log(`[Auth] User found: ${user.email}, checking password...`)
+          console.log(`[Auth] User found: ${user.email}, verifying password...`)
 
           const isPasswordValid = await bcrypt.compare(
             credentials.password as string,
@@ -37,7 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!isPasswordValid) {
             console.log(`[Auth] Invalid password for: ${credentials.email}`)
-            throw new Error('Invalid email or password')
+            return null
           }
 
           console.log(`[Auth] ✅ Successful login: ${user.email} (${user.role})`)
@@ -50,9 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         } catch (error) {
           console.error('[Auth] ❌ Error during authorization:', error)
           if (error instanceof Error) {
-            throw error
+            console.error('[Auth] Error message:', error.message)
+            console.error('[Auth] Error stack:', error.stack)
           }
-          throw new Error('Authentication failed')
+          return null
         }
       }
     })
