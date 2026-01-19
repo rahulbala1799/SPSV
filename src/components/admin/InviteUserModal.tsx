@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@stackframe/stack'
+import { useSession } from 'better-auth/react'
 import { FaPlus, FaTimes } from 'react-icons/fa'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
 
 export function InviteUserModal() {
-  const user = useUser()
-  const userRole = (user?.clientMetadata as any)?.role || 'STUDENT'
+  const { data: session } = useSession()
+  const user = session?.user
+  const userRole = (user?.role as any) || 'STUDENT'
   const [isOpen, setIsOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT')

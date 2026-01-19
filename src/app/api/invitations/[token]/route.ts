@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { stackServerApp } from '@/lib/stack'
+import { auth } from '@/lib/auth'
 import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
@@ -89,26 +89,40 @@ export async function POST(
     const body = await request.json()
     const { name, password } = acceptInviteSchema.parse(body)
 
-    // Create user in Neon Auth
-    const stackUser = await stackServerApp().createUser({
-      primaryEmail: invitation.email,
-      displayName: name,
-      password,
-      clientMetadata: {
-        role: invitation.role,
+    // Create user in Better Auth
+    const authResponse = await auth.api.signUpEmail({
+      body: {
+        email: invitation.email,
+        password,
+        name,
       },
-      serverMetadata: {
-        role: invitation.role,
-      },
+      headers: request.headers as any,
     })
 
-    // Also create in our users table for progress tracking
-    const user = await prisma.user.create({
-      data: {
-        id: stackUser.id, // Use Neon Auth user ID
+    if (!authResponse?.user) {
+      return NextResponse.json(
+        { error: 'Failed to create user account' },
+        { status: 500 }
+      )
+    }
+
+    // Better Auth creates its own user table, but we need to sync with our users table
+    // Update our users table to match Better Auth user
+    const user = await prisma.user.upsert({
+      where: { id: authResponse.user.id },
+      update: {
         email: invitation.email,
         name,
-        password: '', // No password needed, Neon Auth handles it
+        role: invitation.role as any,
+        invitedBy: invitation.invitedBy,
+        invitedAt: new Date(),
+        emailVerified: new Date(),
+      },
+      create: {
+        id: authResponse.user.id,
+        email: invitation.email,
+        name,
+        password: '', // Better Auth handles password
         role: invitation.role as any,
         invitedBy: invitation.invitedBy,
         invitedAt: new Date(),

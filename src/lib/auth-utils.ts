@@ -1,17 +1,27 @@
-import { getStackServerApp } from "./stack"
+import { auth } from "./auth"
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 
 export async function getCurrentUser() {
-  const user = await getStackServerApp().getUser()
-  if (!user) return null
+  const headersList = await headers()
+  const session = await auth.api.getSession({ 
+    headers: headersList as any 
+  })
   
-  // Get role from user metadata
-  const role = (user.clientMetadata?.role || user.serverMetadata?.role || 'STUDENT') as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
+  if (!session?.user) return null
+  
+  // Get role from our users table (Better Auth doesn't store custom fields in session)
+  const prisma = (await import("./prisma")).prisma
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id }
+  })
+  
+  const role = (dbUser?.role as any) || 'STUDENT'
   
   return {
-    id: user.id,
-    email: user.primaryEmail,
-    name: user.displayName,
+    id: session.user.id,
+    email: session.user.email,
+    name: session.user.name || '',
     role,
   }
 }

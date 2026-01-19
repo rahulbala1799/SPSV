@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from './Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useStackApp, useUser } from '@stackframe/stack';
+import { authClient } from '@/lib/auth-client';
+import { useSession } from 'better-auth/react';
 import Link from 'next/link';
 
 export interface HeaderProps {
@@ -13,11 +14,11 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick }) => {
-  const user = useUser();
-  const stackApp = useStackApp();
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  const userRole = (user?.clientMetadata as any)?.role || 'STUDENT';
+  const user = session?.user;
+  const userRole = (user?.role as any) || 'STUDENT';
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -118,7 +119,10 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                   </Link>
                 )}
                 <button
-                  onClick={() => stackApp.signOut()}
+                  onClick={async () => {
+                    await authClient.signOut();
+                    window.location.href = '/';
+                  }}
                   className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm lg:text-base whitespace-nowrap"
                 >
                   Sign Out

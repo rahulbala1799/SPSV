@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useStackApp } from '@stackframe/stack'
+import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
 
 export default function SignupPage() {
-  const stackApp = useStackApp()
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -30,12 +29,17 @@ export default function SignupPage() {
     }
 
     try {
-      // Sign up with email and password
-      // Note: displayName and metadata will be set later via admin or invitation system
-      await stackApp.signUpWithCredential({
+      const result = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
+        name: formData.name,
       })
+      
+      if (result.error) {
+        setError(result.error.message || 'Failed to create account')
+        setLoading(false)
+        return
+      }
       
       // Successful signup - redirect to dashboard
       router.push('/dashboard')

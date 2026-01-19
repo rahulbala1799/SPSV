@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useStackApp } from '@stackframe/stack'
+import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { LoginForm } from '@/components/auth/LoginForm'
 
 export default function LoginPage() {
-  const stackApp = useStackApp()
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -16,10 +15,16 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      await stackApp.signInWithCredential({
+      const result = await authClient.signIn.email({
         email,
         password,
       })
+      
+      if (result.error) {
+        setError(result.error.message || 'Invalid email or password')
+        setLoading(false)
+        return
+      }
       
       // Successful login - redirect to dashboard
       router.push('/dashboard')
