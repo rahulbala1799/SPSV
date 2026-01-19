@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Button } from './Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { authClient } from '@/lib/auth-client';
-import { useSession } from 'better-auth/react';
 import Link from 'next/link';
 
 export interface HeaderProps {
@@ -14,11 +13,26 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick }) => {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT');
   
   const user = session?.user;
-  const userRole = (user?.role as any) || 'STUDENT';
+  
+  // Fetch role from database
+  React.useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/users/${user.id}/role`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.role) setUserRole(data.role);
+        })
+        .catch(() => {
+          // Default to STUDENT if fetch fails
+          setUserRole('STUDENT');
+        });
+    }
+  }, [user?.id]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

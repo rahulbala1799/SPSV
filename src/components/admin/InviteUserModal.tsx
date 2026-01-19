@@ -1,15 +1,30 @@
 'use client'
 
-import { useState } from 'react'
-import { useSession } from 'better-auth/react'
+import { useState, useEffect } from 'react'
+import React from 'react'
+import { authClient } from '@/lib/auth-client'
 import { FaPlus, FaTimes } from 'react-icons/fa'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
 
 export function InviteUserModal() {
-  const { data: session } = useSession()
+  const { data: session } = authClient.useSession()
+  const [userRole, setUserRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT')
   const user = session?.user
-  const userRole = (user?.role as any) || 'STUDENT'
+  
+  // Fetch role from database
+  React.useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/users/${user.id}/role`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.role) setUserRole(data.role);
+        })
+        .catch(() => {
+          setUserRole('STUDENT');
+        });
+    }
+  }, [user?.id])
   const [isOpen, setIsOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'>('STUDENT')
