@@ -33,7 +33,8 @@ export async function GET(
       select: { role: true },
     })
 
-    const isAdmin = requestingUser?.role === 'ADMIN' || requestingUser?.role === 'SUPER_ADMIN'
+    const requestingUserRole = requestingUser?.role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT' | undefined
+    const isAdmin = requestingUserRole === 'ADMIN' || requestingUserRole === 'SUPER_ADMIN'
 
     // Users can only get their own role, admins can get any role
     if (requestingUserId !== targetUserId && !isAdmin) {
