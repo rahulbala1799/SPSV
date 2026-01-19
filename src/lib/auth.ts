@@ -14,8 +14,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           if (!credentials?.email || !credentials?.password) {
             console.log('[Auth] Missing credentials')
-            return null
+            throw new Error('Email and password are required')
           }
+
+          console.log(`[Auth] Attempting login for: ${credentials.email}`)
 
           const user = await prisma.user.findUnique({
             where: { email: credentials.email as string }
@@ -23,8 +25,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!user) {
             console.log(`[Auth] User not found: ${credentials.email}`)
-            return null
+            throw new Error('Invalid email or password')
           }
+
+          console.log(`[Auth] User found: ${user.email}, checking password...`)
 
           const isPasswordValid = await bcrypt.compare(
             credentials.password as string,
@@ -33,10 +37,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!isPasswordValid) {
             console.log(`[Auth] Invalid password for: ${credentials.email}`)
-            return null
+            throw new Error('Invalid email or password')
           }
 
-          console.log(`[Auth] Successful login: ${user.email} (${user.role})`)
+          console.log(`[Auth] ✅ Successful login: ${user.email} (${user.role})`)
           return {
             id: user.id,
             email: user.email,
@@ -44,8 +48,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: user.role,
           }
         } catch (error) {
-          console.error('[Auth] Error during authorization:', error)
-          return null
+          console.error('[Auth] ❌ Error during authorization:', error)
+          if (error instanceof Error) {
+            throw error
+          }
+          throw new Error('Authentication failed')
         }
       }
     })
