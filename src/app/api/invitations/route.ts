@@ -69,12 +69,13 @@ export async function POST(request: NextRequest) {
     expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
     // Create invitation
+    // Type assertion needed because Prisma Client may not have SUPER_ADMIN in generated types yet
     const invitation = await prisma.invitation.create({
       data: {
         email,
         token,
         invitedBy: admin.id,
-        role: role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT',
+        role: role as any, // Prisma schema has SUPER_ADMIN, but generated types may lag
         expiresAt,
       }
     })
