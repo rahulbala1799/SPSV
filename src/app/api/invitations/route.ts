@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         email,
         token,
         invitedBy: admin.id,
-        role,
+        role: role as 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT',
         expiresAt,
       }
     })
