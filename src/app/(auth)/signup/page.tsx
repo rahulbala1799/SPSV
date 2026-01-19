@@ -55,6 +55,16 @@ export default function SignupPage() {
         // Check if error is about existing user
         if (result.error.message?.toLowerCase().includes('already exists') || 
             result.error.message?.toLowerCase().includes('user already exists')) {
+          // User exists in Better Auth but maybe not in our users table
+          // Try to sync and then redirect to login
+          try {
+            await fetch('/api/auth/sync-user', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+            })
+          } catch (syncError) {
+            console.error('Sync error:', syncError)
+          }
           setError('User with this email already exists. Please sign in instead.')
         } else {
           setError(result.error.message || 'Failed to create account')
@@ -63,12 +73,15 @@ export default function SignupPage() {
         return
       }
       
-      // Sync user to our users table
+      // Sync user to our users table after successful signup
       try {
-        await fetch('/api/auth/sync-user', {
+        const syncResponse = await fetch('/api/auth/sync-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
         })
+        if (!syncResponse.ok) {
+          console.error('Sync failed but signup succeeded')
+        }
       } catch (syncError) {
         console.error('Sync error (non-fatal):', syncError)
         // Don't fail signup if sync fails - user can still log in
