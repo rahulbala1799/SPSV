@@ -76,18 +76,41 @@ export default function SignupPage() {
         // Check if error is about existing user in Better Auth
         if (result.error.message?.toLowerCase().includes('already exists') || 
             result.error.message?.toLowerCase().includes('user already exists')) {
-          // User exists in Better Auth but not in our users table
-          // Try to sync and then redirect to login
+          // User exists in Better Auth but might not have credential account
+          // Check if they have a credential account
           try {
-            await fetch('/api/auth/sync-user', {
+            const accountCheck = await fetch('/api/auth/check-credential-account', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email: formData.email }),
             })
-          } catch (syncError) {
-            console.error('Sync error:', syncError)
+            
+            if (accountCheck.ok) {
+              const accountData = await accountCheck.json()
+              if (!accountData.hasCredential) {
+                // User exists but no credential account - they need to contact support
+                setError('An account exists but is missing login credentials. Please contact support.')
+              } else {
+                // User exists with credential - tell them to sign in
+                setError('User with this email already exists. Please sign in instead.')
+              }
+            } else {
+              // Try to sync anyway
+              try {
+                await fetch('/api/auth/sync-user', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email: formData.email }),
+                })
+              } catch (syncError) {
+                console.error('Sync error:', syncError)
+              }
+              setError('User with this email already exists. Please sign in instead.')
+            }
+          } catch (checkError) {
+            console.error('Check credential error:', checkError)
+            setError('User with this email already exists. Please sign in instead.')
           }
-          setError('User with this email already exists. Please sign in instead.')
         } else {
           setError(result.error.message || 'Failed to create account')
         }
