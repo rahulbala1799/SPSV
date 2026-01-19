@@ -85,7 +85,8 @@ model QuestionAnswer {
 }
 
 // Better Auth tables (Better Auth manages these, but we need to define them for Prisma)
-model BetterAuthUser {
+// Note: Model names must match what Better Auth expects (lowercase: user, session, account, verification)
+model user {
   id            String    @id @default(cuid())
   email         String    @unique
   emailVerified Boolean   @default(false)
@@ -94,13 +95,11 @@ model BetterAuthUser {
   createdAt     DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  sessions BetterAuthSession[]
-  accounts BetterAuthAccount[]
-
-  @@map("user")
+  sessions session[]
+  accounts account[]
 }
 
-model BetterAuthSession {
+model session {
   id        String   @id @default(cuid())
   expiresAt DateTime
   token     String   @unique
@@ -110,13 +109,12 @@ model BetterAuthSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@map("session")
 }
 
-model BetterAuthAccount {
+model account {
   id                String  @id @default(cuid())
   accountId         String
   providerId        String
@@ -129,14 +127,13 @@ model BetterAuthAccount {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
   @@index([userId])
-  @@map("account")
 }
 
-model BetterAuthVerification {
+model verification {
   id         String   @id @default(cuid())
   identifier String
   value      String
@@ -145,5 +142,4 @@ model BetterAuthVerification {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, value])
-  @@map("verification")
 }
