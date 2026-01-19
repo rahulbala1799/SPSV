@@ -29,6 +29,13 @@ export const auth = betterAuth({
       : "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   basePath: "/api/auth",
+  trustedOrigins: [
+    "https://www.spsvmastery.com",
+    "https://spsvmastery.com",
+    "http://localhost:3000",
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+    ...(process.env.NEXT_PUBLIC_VERCEL_URL ? [`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`] : []),
+  ],
 })
 
 export type Session = typeof auth.$Infer.Session
