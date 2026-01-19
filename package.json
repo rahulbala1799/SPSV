@@ -11,13 +11,23 @@
     "figma:publish": "figma connect publish"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
     "next": "^14.2.5",
+    "next-auth": "^5.0.0-beta.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-icons": "^5.5.0"
+    "react-hook-form": "^7.71.1",
+    "react-icons": "^5.5.0",
+    "resend": "^6.4.2",
+    "tailwind-merge": "^3.4.0",
+    "zod": "^3.25.58"
   },
   "devDependencies": {
     "@figma/code-connect": "^1.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -26,6 +36,7 @@
     "eslint-config-next": "^14.2.5",
     "pdf-parse": "^2.2.2",
     "postcss": "^8.4.35",
+    "prisma": "^6.19.2",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3"
   }

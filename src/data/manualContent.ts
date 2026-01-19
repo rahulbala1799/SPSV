@@ -19,7 +19,103 @@ export interface ManualChapter {
 // For now, we'll create a structure that can be populated
 // In production, you'd import from the JSON file or fetch it
 
-export const manualChapters: ManualChapter[] = [
+// Export chapters in a format compatible with dashboard
+export interface Chapter {
+  id: string
+  title: string
+  pageRange?: { start: number; end: number }
+  summary?: string
+}
+
+export const manualChapters: Chapter[] = [
+  {
+    id: 'welcome',
+    title: 'Welcome',
+    pageRange: { start: 7, end: 7 },
+    summary: 'Welcome to The Official Manual for Operating in the SPSV Industry',
+  },
+  {
+    id: 'terminology',
+    title: 'Terminology',
+    pageRange: { start: 8, end: 12 },
+    summary: 'Key terms and definitions used in the SPSV industry',
+  },
+  {
+    id: 'chapter-1',
+    title: 'Chapter 1: The SPSV Industry',
+    pageRange: { start: 13, end: 36 },
+    summary: 'Overview of the SPSV industry and regulatory framework',
+  },
+  {
+    id: 'chapter-2',
+    title: 'Chapter 2: SPSV Driver Licensing',
+    pageRange: { start: 37, end: 44 },
+    summary: 'Requirements and process for obtaining an SPSV driver licence',
+  },
+  {
+    id: 'chapter-3',
+    title: 'Chapter 3: Choosing a Vehicle to Use as an SPSV',
+    pageRange: { start: 45, end: 71 },
+    summary: 'Vehicle standards and requirements for SPSV use',
+  },
+  {
+    id: 'chapter-4',
+    title: 'Chapter 4: Vehicle Licensing',
+    pageRange: { start: 72, end: 100 },
+    summary: 'Vehicle licensing requirements and categories',
+  },
+  {
+    id: 'chapter-5',
+    title: 'Chapter 5: Working as an SPSV Operator',
+    pageRange: { start: 101, end: 130 },
+    summary: 'Daily operations and requirements for SPSV operators',
+  },
+  {
+    id: 'chapter-6',
+    title: 'Chapter 6: Finding Your Way Around',
+    pageRange: { start: 131, end: 150 },
+    summary: 'Navigation, route planning, and area knowledge',
+  },
+  {
+    id: 'chapter-7',
+    title: 'Chapter 7: Fares',
+    pageRange: { start: 151, end: 170 },
+    summary: 'Fare structures, taximeters, and pricing regulations',
+  },
+  {
+    id: 'chapter-8',
+    title: 'Chapter 8: Delivering Customer Satisfaction',
+    pageRange: { start: 171, end: 190 },
+    summary: 'Customer service standards and best practices',
+  },
+  {
+    id: 'chapter-9',
+    title: 'Chapter 9: Your SPSV Business',
+    pageRange: { start: 191, end: 210 },
+    summary: 'Business planning and operations for SPSV operators',
+  },
+  {
+    id: 'chapter-10',
+    title: 'Chapter 10: Staying Safe',
+    pageRange: { start: 211, end: 220 },
+    summary: 'Safety regulations and practices for SPSV operators',
+  },
+  {
+    id: 'chapter-11',
+    title: 'Chapter 11: Preparing for Your Test',
+    pageRange: { start: 221, end: 230 },
+    summary: 'SPSV Driver Entry Test preparation and requirements',
+  },
+  {
+    id: 'appendices',
+    title: 'Appendices',
+    pageRange: { start: 231, end: 250 },
+    summary: 'Additional information including vehicle age rules and local area hackneys',
+  },
+]
+
+// Keep the old structure for backward compatibility
+export const manualChaptersFull: ManualChapter[] = [
   {
     chapterId: 'welcome',
     title: 'Welcome',

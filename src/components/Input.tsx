@@ -1,14 +1,9 @@
-import React from 'react';
+import React from 'react'
 
-export interface InputProps {
-  label?: string;
-  type?: 'text' | 'email' | 'tel' | 'number' | 'date';
-  placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  error?: string;
-  className?: string;
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string
+  error?: string
+  className?: string
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -20,6 +15,8 @@ export const Input: React.FC<InputProps> = ({
   required = false,
   error,
   className = '',
+  disabled,
+  ...props
 }) => {
   return (
     <div className={`w-full ${className}`}>
@@ -35,13 +32,19 @@ export const Input: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         required={required}
-        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-          error ? 'border-red-500' : 'border-gray-300'
+        disabled={disabled}
+        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
+          error 
+            ? 'border-red-500 bg-red-50' 
+            : disabled
+            ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+            : 'border-gray-300 hover:border-gray-400'
         }`}
+        {...props}
       />
       {error && (
         <p className="mt-1 text-sm text-red-500">{error}</p>
       )}
     </div>
-  );
-};
+  )
+}

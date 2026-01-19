@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from './Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { useSession, signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export interface HeaderProps {
   onEnrollClick?: () => void;
@@ -11,6 +13,7 @@ export interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick }) => {
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
@@ -95,32 +98,65 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            <a
-              href="tel:+353894934222"
-              className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
-            >
-              Call Us
-            </a>
-            <a
-              href="https://wa.me/353894934222"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
-            >
-              WhatsApp
-            </a>
-            <Button
-              variant="primary"
-              size="medium"
-              onClick={() => {
-                // Dispatch event to open enrollment modal
-                const event = new CustomEvent('openEnrollmentFromHeader');
-                window.dispatchEvent(event);
-              }}
-              className="text-sm lg:text-base whitespace-nowrap"
-            >
-              Enroll Now
-            </Button>
+            {session ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
+                >
+                  Dashboard
+                </Link>
+                {session.user.role === 'ADMIN' && (
+                  <Link
+                    href="/admin"
+                    className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm lg:text-base whitespace-nowrap"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  href="tel:+353894934222"
+                  className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
+                >
+                  Call Us
+                </a>
+                <a
+                  href="https://wa.me/353894934222"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
+                >
+                  WhatsApp
+                </a>
+                <Link
+                  href="/login"
+                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
+                >
+                  Sign In
+                </Link>
+                <Button
+                  variant="primary"
+                  size="medium"
+                  onClick={() => {
+                    // Dispatch event to open enrollment modal
+                    const event = new CustomEvent('openEnrollmentFromHeader');
+                    window.dispatchEvent(event);
+                  }}
+                  className="text-sm lg:text-base whitespace-nowrap"
+                >
+                  Enroll Now
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
