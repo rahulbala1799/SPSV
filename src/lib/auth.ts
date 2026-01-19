@@ -55,6 +55,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = token.role as string
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Handle redirects properly for custom domains
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     }
   },
   pages: {
@@ -64,4 +70,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true, // Required for Vercel and custom domains
 })

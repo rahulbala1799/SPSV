@@ -23,11 +23,17 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError('Invalid email or password')
+        setLoading(false)
         return
       }
 
-      router.push('/dashboard')
-      router.refresh()
+      if (result?.ok) {
+        // Successful login - redirect to dashboard
+        window.location.href = '/dashboard'
+      } else {
+        setError('Login failed. Please try again.')
+        setLoading(false)
+      }
     } catch (error) {
       setError('An error occurred. Please try again.')
     } finally {
