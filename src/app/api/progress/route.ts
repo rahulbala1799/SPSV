@@ -3,6 +3,8 @@ import { requireAuth } from '@/lib/auth-utils'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 const progressSchema = z.object({
   chapterId: z.string(),
   chapterTitle: z.string(),

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth-utils'
+
+export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
 import { z } from 'zod'

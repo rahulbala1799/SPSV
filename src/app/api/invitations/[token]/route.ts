@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { stackServerApp } from '@/lib/stack'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 const acceptInviteSchema = z.object({
   name: z.string().min(2),
   password: z.string().min(8),
