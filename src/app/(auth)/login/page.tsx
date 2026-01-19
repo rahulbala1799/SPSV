@@ -22,15 +22,20 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        console.error('Login error:', result.error)
+        setError(result.error === 'CredentialsSignin' 
+          ? 'Invalid email or password' 
+          : `Login failed: ${result.error}`)
         setLoading(false)
         return
       }
 
       if (result?.ok) {
         // Successful login - redirect to dashboard
+        console.log('Login successful, redirecting...')
         window.location.href = '/dashboard'
       } else {
+        console.error('Login failed - no error, but not ok:', result)
         setError('Login failed. Please try again.')
         setLoading(false)
       }
