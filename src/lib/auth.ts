@@ -19,14 +19,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           console.log(`[Auth] Attempting login for: ${credentials.email}`)
 
-          // Test Prisma connection
-          try {
-            await prisma.$connect()
-          } catch (connError) {
-            console.error('[Auth] Prisma connection failed:', connError)
-            // Continue anyway, might already be connected
-          }
-
           const user = await prisma.user.findUnique({
             where: { email: credentials.email as string }
           })

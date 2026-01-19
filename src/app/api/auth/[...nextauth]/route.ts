@@ -1,4 +1,6 @@
 import { handlers } from "@/lib/auth"
 
-export const GET = handlers.GET
-export const POST = handlers.POST
+// Ensure this runs in Node.js runtime (not Edge)
+export const runtime = 'nodejs'
+
+export const { GET, POST } = handlers
