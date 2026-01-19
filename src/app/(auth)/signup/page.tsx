@@ -30,16 +30,11 @@ export default function SignupPage() {
     }
 
     try {
+      // Sign up with email and password
+      // Note: displayName and metadata will be set later via admin or invitation system
       await stackApp.signUpWithCredential({
         email: formData.email,
         password: formData.password,
-        displayName: formData.name,
-        clientMetadata: {
-          role: 'STUDENT', // Default role
-        },
-        serverMetadata: {
-          role: 'STUDENT',
-        },
       })
       
       // Successful signup - redirect to dashboard

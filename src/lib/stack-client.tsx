@@ -2,15 +2,18 @@
 
 import { StackProvider } from '@stackframe/stack'
 
-if (!process.env.NEXT_PUBLIC_STACK_PROJECT_ID) {
+const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID
+const publishableClientKey = process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
+
+if (!projectId) {
   throw new Error('NEXT_PUBLIC_STACK_PROJECT_ID is not set')
 }
 
 export function StackAuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <StackProvider
-      projectId={process.env.NEXT_PUBLIC_STACK_PROJECT_ID}
-      publishableClientKey={process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY}
+      projectId={projectId}
+      publishableClientKey={publishableClientKey}
       urls={{
         signIn: '/login',
         signUp: '/signup',
