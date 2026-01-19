@@ -5,9 +5,8 @@ import { StackProvider, StackClientApp } from '@stackframe/stack'
 const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID
 const publishableClientKey = process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
 
-if (!projectId) {
-  throw new Error('NEXT_PUBLIC_STACK_PROJECT_ID is not set')
-}
+// Don't throw during build - will fail at runtime if not set
+// This allows the build to succeed even if env vars aren't set yet
 
 const stackClientApp = new StackClientApp({
   projectId,
