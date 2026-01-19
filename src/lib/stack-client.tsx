@@ -8,15 +8,12 @@ export function StackAuthProvider({ children }: { children: React.ReactNode }) {
     const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID
     const publishableClientKey = process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
 
-    // Use placeholder during build if env vars aren't set
-    // This will fail at runtime if env vars are still missing, which is expected
+    // During build, if env vars aren't set, return null and let it fail gracefully
+    // The app will work at runtime when env vars are properly set
     if (!projectId) {
-      // Return a minimal app instance that won't work but won't crash the build
-      return new StackClientApp({
-        projectId: 'placeholder',
-        publishableClientKey: publishableClientKey || undefined,
-        tokenStore: 'cookie',
-      } as any)
+      // Return null to prevent initialization during build
+      // This will cause a runtime error if env vars aren't set, which is expected
+      return null
     }
 
     return new StackClientApp({
@@ -25,6 +22,11 @@ export function StackAuthProvider({ children }: { children: React.ReactNode }) {
       tokenStore: 'cookie',
     })
   }, [])
+
+  // Only render provider if app is initialized
+  if (!stackClientApp) {
+    return <>{children}</>
+  }
 
   return (
     <StackProvider app={stackClientApp}>
