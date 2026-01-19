@@ -39,12 +39,33 @@ export default function SignupPage() {
       if (checkResponse.ok) {
         const checkData = await checkResponse.json()
         if (checkData.exists) {
-          setError('User with this email already exists. Please sign in instead.')
+          // User exists in our users table
+          // Check if they also exist in Better Auth
+          const authCheckResponse = await fetch('/api/auth/check-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email }),
+          })
+          
+          if (authCheckResponse.ok) {
+            const authCheckData = await authCheckResponse.json()
+            if (authCheckData.exists) {
+              // User exists in both - tell them to sign in
+              setError('User with this email already exists. Please sign in instead.')
+            } else {
+              // User exists in our table but not in Better Auth
+              // Link the Better Auth account to our existing user
+              setError('An account with this email exists but needs to be linked. Please contact support or try signing in.')
+            }
+          } else {
+            setError('User with this email already exists. Please sign in instead.')
+          }
           setLoading(false)
           return
         }
       }
 
+      // User doesn't exist in our table - proceed with signup
       const result = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
@@ -52,10 +73,10 @@ export default function SignupPage() {
       })
       
       if (result.error) {
-        // Check if error is about existing user
+        // Check if error is about existing user in Better Auth
         if (result.error.message?.toLowerCase().includes('already exists') || 
             result.error.message?.toLowerCase().includes('user already exists')) {
-          // User exists in Better Auth but maybe not in our users table
+          // User exists in Better Auth but not in our users table
           // Try to sync and then redirect to login
           try {
             await fetch('/api/auth/sync-user', {

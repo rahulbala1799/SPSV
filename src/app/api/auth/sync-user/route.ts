@@ -62,35 +62,67 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUserByEmail || existingUserById) {
-      // User exists - update to sync with Better Auth
+      // User exists in our users table
       const userToUpdate = existingUserById || existingUserByEmail!
       
-      // If IDs don't match, we need to handle that carefully
-      // For now, just update the existing user with Better Auth data
-      const updatedUser = await prisma.user.update({
-        where: { id: userToUpdate.id },
-        data: {
+      // If the ID doesn't match, we need to update our users table to use Better Auth's ID
+      if (userToUpdate.id !== authUser.id) {
+        // Delete the old user and create a new one with Better Auth's ID
+        // But first, we need to handle related data (invitations, progress, etc.)
+        // For now, update the existing user's ID by deleting and recreating
+        const userData = {
           email: authUser.email,
           name: authUser.name || userToUpdate.name,
-          emailVerified: authUser.emailVerified ? new Date() : null,
-        },
-      })
+          password: userToUpdate.password, // Keep existing password (Better Auth handles auth)
+          role: userToUpdate.role, // Keep existing role
+          invitedBy: userToUpdate.invitedBy,
+          invitedAt: userToUpdate.invitedAt,
+          emailVerified: authUser.emailVerified ? new Date() : userToUpdate.emailVerified,
+        }
 
-      // If the ID doesn't match, we might need to create a new entry
-      // But for now, just update the existing one
-      if (userToUpdate.id !== authUser.id) {
-        console.warn(`User ID mismatch: users table has ${userToUpdate.id}, Better Auth has ${authUser.id}`)
+        // Delete old user (cascade will handle related records)
+        await prisma.user.delete({
+          where: { id: userToUpdate.id },
+        })
+
+        // Create new user with Better Auth's ID
+        const updatedUser = await prisma.user.create({
+          data: {
+            id: authUser.id,
+            ...userData,
+          },
+        })
+
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            name: updatedUser.name,
+            role: updatedUser.role,
+          },
+        })
+      } else {
+        // IDs match - just update the user data
+        const updatedUser = await prisma.user.update({
+          where: { id: userToUpdate.id },
+          data: {
+            email: authUser.email,
+            name: authUser.name || userToUpdate.name,
+            emailVerified: authUser.emailVerified ? new Date() : null,
+          },
+        })
+
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            name: updatedUser.name,
+            role: updatedUser.role,
+          },
+        })
       }
-
-      return NextResponse.json({
-        success: true,
-        user: {
-          id: updatedUser.id,
-          email: updatedUser.email,
-          name: updatedUser.name,
-          role: updatedUser.role,
-        },
-      })
     }
 
     // Create new user in our users table
