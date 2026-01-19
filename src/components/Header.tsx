@@ -107,23 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   Dashboard
                 </Link>
-                {(userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') && (
-                  <Link
-                    href="/admin"
-                    className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
-                  >
-                    Admin
-                  </Link>
-                )}
-                <button
-                  onClick={async () => {
-                    await authClient.signOut();
-                    window.location.href = '/';
-                  }}
-                  className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm lg:text-base whitespace-nowrap"
-                >
-                  Sign Out
-                </button>
+                {/* Admin and sign out will be added when auth is reimplemented */}
               </>
             ) : (
               <>
@@ -141,12 +125,7 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 >
                   WhatsApp
                 </a>
-                <Link
-                  href="/login"
-                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
-                >
-                  Sign In
-                </Link>
+                {/* Sign In link will be added when auth is reimplemented */}
                 <Button
                   variant="primary"
                   size="medium"
