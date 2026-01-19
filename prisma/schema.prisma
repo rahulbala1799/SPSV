@@ -92,6 +92,7 @@ model user {
   emailVerified Boolean   @default(false)
   name          String?
   image         String?
+  password      String?   // Temporary: Better Auth adapter seems to expect this, but passwords should be in account table
   createdAt     DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 

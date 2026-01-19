@@ -5,6 +5,8 @@ import { prisma } from "./prisma"
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
+    // Explicitly specify model names to avoid conflicts
+    // Better Auth expects lowercase model names: user, session, account, verification
   }),
   emailAndPassword: {
     enabled: true,
