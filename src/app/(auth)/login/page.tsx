@@ -1,0 +1,129 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Input } from '@/components/Input'
+import { Button } from '@/components/Button'
+import Link from 'next/link'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
+
+  // Check for signup success message
+  useEffect(() => {
+    if (searchParams.get('signup') === 'success') {
+      setSuccess('Account created successfully! Please sign in.')
+    }
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Invalid email or password')
+        setLoading(false)
+        return
+      }
+
+      // Success - redirect to dashboard (or home for now)
+      // TODO: Add session management and redirect to dashboard
+      router.push('/')
+      router.refresh()
+    } catch (error: any) {
+      console.error('Login error:', error)
+      setError('Something went wrong. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-50 px-4 py-12">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+          <p className="text-gray-600">Sign in to access your course</p>
+        </div>
+
+        {success && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+            {success}
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            label="Email Address"
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="your.email@example.com"
+            required
+            disabled={loading}
+          />
+
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            placeholder="Enter your password"
+            required
+            disabled={loading}
+          />
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="large"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </Button>
+
+          <p className="text-center text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-green-600 hover:underline font-medium">
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  )
+}
