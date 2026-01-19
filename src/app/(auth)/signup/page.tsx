@@ -52,16 +52,16 @@ export default function SignupPage() {
             if (authCheckData.exists) {
               // User exists in both - tell them to sign in
               setError('User with this email already exists. Please sign in instead.')
-            } else {
-              // User exists in our table but not in Better Auth
-              // Link the Better Auth account to our existing user
-              setError('An account with this email exists but needs to be linked. Please contact support or try signing in.')
+              setLoading(false)
+              return
             }
+            // User exists in our table but NOT in Better Auth
+            // Allow signup to proceed - Better Auth will create the user
+            // Then we'll sync/link them in the sync step below
           } else {
-            setError('User with this email already exists. Please sign in instead.')
+            // Couldn't check Better Auth - proceed with signup
+            // If user exists in Better Auth, we'll handle it in the error below
           }
-          setLoading(false)
-          return
         }
       }
 
