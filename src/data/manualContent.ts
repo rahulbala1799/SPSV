@@ -155,6 +155,13 @@ For the most up-to-date information on changes in the industry, refer to NTA's i
 // Function to load full content from JSON
 export async function loadManualContent(): Promise<ManualChapter[]> {
   // In a real implementation, you'd fetch this from the JSON file
-  // For now, return the structure
-  return manualChapters;
+  // For now, return the structure - convert Chapter[] to ManualChapter[]
+  return manualChapters.map(ch => ({
+    chapterId: ch.id,
+    title: ch.title,
+    pageRange: ch.pageRange,
+    totalPages: ch.pageRange ? ch.pageRange.end - ch.pageRange.start + 1 : 0,
+    summary: ch.summary || '',
+    pages: [] // Pages would be loaded from JSON
+  }))
 }
