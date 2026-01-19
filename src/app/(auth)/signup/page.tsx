@@ -89,21 +89,25 @@ export default function SignupPage() {
           <Input
             label="Password"
             type="password"
+            name="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             placeholder="Create a password (min. 8 characters)"
             required
             disabled={loading}
+            autoComplete="new-password"
           />
 
           <Input
             label="Confirm Password"
             type="password"
+            name="confirmPassword"
             value={formData.confirmPassword}
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             placeholder="Confirm your password"
             required
             disabled={loading}
+            autoComplete="new-password"
           />
 
           <Button

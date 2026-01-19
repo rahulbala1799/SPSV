@@ -33,6 +33,13 @@ export const Input: React.FC<InputProps> = ({
         onChange={onChange}
         required={required}
         disabled={disabled}
+        autoComplete={
+          type === 'password' 
+            ? (props.name?.includes('confirm') || props.name?.includes('Confirm') ? 'new-password' : 'new-password')
+            : type === 'email'
+            ? 'email'
+            : props.autoComplete || 'off'
+        }
         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
           error 
             ? 'border-red-500 bg-red-50' 
