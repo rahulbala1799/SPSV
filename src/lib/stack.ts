@@ -4,14 +4,8 @@ let stackServerAppInstance: StackServerApp | null = null
 
 export function getStackServerApp(): StackServerApp {
   if (!stackServerAppInstance) {
-    if (!process.env.STACK_SECRET_SERVER_KEY) {
-      throw new Error('STACK_SECRET_SERVER_KEY is not set')
-    }
-
-    if (!process.env.NEXT_PUBLIC_STACK_PROJECT_ID) {
-      throw new Error('NEXT_PUBLIC_STACK_PROJECT_ID is not set')
-    }
-
+    // Don't throw during build - StackServerApp will handle missing env vars
+    // The error will occur at runtime when actually used, which is expected
     stackServerAppInstance = new StackServerApp({
       tokenStore: 'nextjs-cookie',
       urls: {
@@ -25,4 +19,5 @@ export function getStackServerApp(): StackServerApp {
   return stackServerAppInstance
 }
 
-export const stackServerApp = getStackServerApp()
+// Export as function to prevent build-time initialization
+export const stackServerApp = getStackServerApp

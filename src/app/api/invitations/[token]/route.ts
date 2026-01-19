@@ -90,7 +90,7 @@ export async function POST(
     const { name, password } = acceptInviteSchema.parse(body)
 
     // Create user in Neon Auth
-    const stackUser = await stackServerApp.createUser({
+    const stackUser = await stackServerApp().createUser({
       primaryEmail: invitation.email,
       displayName: name,
       password,

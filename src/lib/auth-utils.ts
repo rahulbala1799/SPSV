@@ -1,8 +1,8 @@
-import { stackServerApp } from "./stack"
+import { getStackServerApp } from "./stack"
 import { redirect } from "next/navigation"
 
 export async function getCurrentUser() {
-  const user = await stackServerApp.getUser()
+  const user = await getStackServerApp().getUser()
   if (!user) return null
   
   // Get role from user metadata
