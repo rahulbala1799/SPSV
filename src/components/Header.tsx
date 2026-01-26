@@ -224,34 +224,53 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
               
               {/* CTA buttons - only show on mobile */}
               <div className="md:hidden flex flex-col gap-3 pt-2 border-t border-gray-200">
-                <a
-                  href="tel:+353894934222"
-                  className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Call: +353 89 493 4222
-                </a>
-                <a
-                  href="https://wa.me/353894934222"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  WhatsApp Us
-                </a>
-                <Button
-                  variant="primary"
-                  size="medium"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    const event = new CustomEvent('openEnrollmentFromHeader');
-                    window.dispatchEvent(event);
-                  }}
-                  className="w-full"
-                >
-                  Enroll Now
-                </Button>
+                {user ? (
+                  <Link
+                    href="/dashboard"
+                    className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <a
+                      href="tel:+353894934222"
+                      className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Call: +353 89 493 4222
+                    </a>
+                    <a
+                      href="https://wa.me/353894934222"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      WhatsApp Us
+                    </a>
+                    <Link
+                      href="/login"
+                      className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Button
+                      variant="primary"
+                      size="medium"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        const event = new CustomEvent('openEnrollmentFromHeader');
+                        window.dispatchEvent(event);
+                      }}
+                      className="w-full"
+                    >
+                      Enroll Now
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
