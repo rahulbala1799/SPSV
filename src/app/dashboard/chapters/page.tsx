@@ -40,6 +40,11 @@ export default function ChaptersPage() {
     }
   }
 
+  useEffect(() => {
+    checkAccess()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const chapters: Chapter[] = [
     {
       id: 'southside-full',
