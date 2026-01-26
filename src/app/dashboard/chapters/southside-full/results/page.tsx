@@ -1,16 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheckCircle, FiX, FiAward, FiRotateCcw } from 'react-icons/fi'
 
-export default function SouthsideFullResultsPage() {
+function ResultsContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState<any>(null)
   const [questions, setQuestions] = useState<any[]>([])
   const [answers, setAnswers] = useState<Record<string, any>>({})
+  const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
   useEffect(() => {
     checkAccessAndLoad()
@@ -55,12 +57,29 @@ export default function SouthsideFullResultsPage() {
         setAnswers(answersMap)
       }
 
-      // Load questions with answers
-      const questionsResponse = await fetch('/api/chapters/chapter_southside_full/questions?includeAnswers=true')
+      // Get count from URL params
+      const count = searchParams.get('count') || 'all'
+      setQuestionCount(count as any)
+      
+      // Load questions with answers (same set that was used in quiz)
+      const queryParams = new URLSearchParams({
+        includeAnswers: 'true',
+        random: 'true'
+      })
+      if (count !== 'all') {
+        queryParams.set('count', count)
+      }
+      
+      const questionsResponse = await fetch(`/api/chapters/chapter_southside_full/questions?${queryParams.toString()}`)
       const questionsData = await questionsResponse.json()
 
       if (questionsResponse.ok) {
-        setQuestions(questionsData.questions)
+        // Filter to only show questions that were answered in this session
+        const answeredQuestionIds = Object.keys(answers)
+        const sessionQuestions = questionsData.questions.filter((q: any) => 
+          answeredQuestionIds.includes(q.id) || q.studentAnswer
+        )
+        setQuestions(sessionQuestions)
       }
     } catch (error) {
       console.error('Error loading results:', error)
@@ -256,5 +275,17 @@ export default function SouthsideFullResultsPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function SouthsideFullResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    }>
+      <ResultsContent />
+    </Suspense>
   )
 }

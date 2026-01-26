@@ -5,15 +5,27 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiTrendingUp, FiCheckCircle, FiClock, FiAward, FiBook } from 'react-icons/fi'
 
+interface ChapterProgress {
+  chapterId: string
+  chapterTitle: string
+  isCompleted: boolean
+  score: number | null
+  correctAnswers: number
+  totalQuestions: number
+  startedAt: string | null
+  completedAt: string | null
+}
+
 export default function ProgressPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [chapterProgress, setChapterProgress] = useState<ChapterProgress[]>([])
 
   useEffect(() => {
-    checkAccess()
+    checkAccessAndLoad()
   }, [])
 
-  const checkAccess = async () => {
+  const checkAccessAndLoad = async () => {
     try {
       const response = await fetch('/api/auth/me')
       const data = await response.json()
@@ -28,10 +40,34 @@ export default function ProgressPage() {
         return
       }
 
+      await loadChapterProgress()
       setLoading(false)
     } catch (error) {
       console.error('Error:', error)
       router.push('/login')
+    }
+  }
+
+  const loadChapterProgress = async () => {
+    try {
+      // Load Southside Full chapter progress
+      const response = await fetch('/api/chapters/chapter_southside_full/progress')
+      const data = await response.json()
+
+      if (response.ok && data.progress) {
+        setChapterProgress([{
+          chapterId: 'chapter_southside_full',
+          chapterTitle: 'Southside Full',
+          isCompleted: data.progress.isCompleted,
+          score: data.progress.score,
+          correctAnswers: data.progress.correctAnswers,
+          totalQuestions: data.progress.totalQuestions,
+          startedAt: data.progress.startedAt,
+          completedAt: data.progress.completedAt
+        }])
+      }
+    } catch (error) {
+      console.error('Error loading chapter progress:', error)
     }
   }
 
@@ -43,12 +79,17 @@ export default function ProgressPage() {
     )
   }
 
-  const overallProgress = 0
-  const totalChapters = 12
-  const completedChapters = 0
+  // Calculate stats from chapter progress
+  const totalChapters = 1 // Currently only Southside Full
+  const completedChapters = chapterProgress.filter(cp => cp.isCompleted).length
   const totalTests = 5
   const completedTests = 0
-  const averageScore = 0
+  const averageScore = chapterProgress.length > 0
+    ? Math.round(chapterProgress.reduce((sum, cp) => sum + (cp.score || 0), 0) / chapterProgress.length)
+    : 0
+  const overallProgress = totalChapters > 0
+    ? Math.round((completedChapters / totalChapters) * 100)
+    : 0
   const hoursStudied = 0
 
   return (
@@ -179,11 +220,65 @@ export default function ProgressPage() {
           </div>
         </div>
 
+        {/* Chapter Results */}
+        {chapterProgress.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h3 className="font-bold text-gray-900 mb-4">Chapter Results</h3>
+            <div className="space-y-4">
+              {chapterProgress.map((cp) => (
+                <Link
+                  key={cp.chapterId}
+                  href={`/dashboard/chapters/southside-full`}
+                  className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border-2 border-transparent hover:border-green-200"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">{cp.chapterTitle}</h4>
+                    {cp.isCompleted && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                        <FiCheckCircle className="w-3 h-3" />
+                        Completed
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                    <span>
+                      <span className="font-semibold text-gray-900">{cp.correctAnswers}</span> / {cp.totalQuestions} correct
+                    </span>
+                    {cp.score !== null && (
+                      <span className="font-semibold text-green-600">{cp.score}%</span>
+                    )}
+                  </div>
+                  {cp.score !== null && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all ${
+                          cp.score >= 80 ? 'bg-green-500' : cp.score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${cp.score}%` }}
+                      ></div>
+                    </div>
+                  )}
+                  {cp.startedAt && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      Started: {new Date(cp.startedAt).toLocaleDateString()}
+                      {cp.completedAt && ` • Completed: ${new Date(cp.completedAt).toLocaleDateString()}`}
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Recent Activity */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <h3 className="font-bold text-gray-900 mb-4">Recent Activity</h3>
           <div className="text-center py-8 text-gray-500">
-            <p>No activity yet. Start learning to see your progress!</p>
+            {chapterProgress.length === 0 ? (
+              <p>No activity yet. Start learning to see your progress!</p>
+            ) : (
+              <p>Keep practicing to see more activity here!</p>
+            )}
           </div>
         </div>
       </main>

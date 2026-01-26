@@ -10,6 +10,7 @@ export default function SouthsideFullChapterPage() {
   const [loading, setLoading] = useState(true)
   const [chapter, setChapter] = useState<any>(null)
   const [progress, setProgress] = useState<any>(null)
+  const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
   useEffect(() => {
     checkAccessAndLoad()
@@ -55,8 +56,23 @@ export default function SouthsideFullChapterPage() {
   }
 
   const handleStartChapter = () => {
-    router.push('/dashboard/chapters/southside-full/quiz')
+    const count = questionCount === 'all' ? 'all' : questionCount
+    router.push(`/dashboard/chapters/southside-full/quiz?count=${count}`)
   }
+
+  const totalQuestions = chapter?.totalQuestions || 20
+  const questionCountOptions = [
+    { value: 5, label: '5 Questions' },
+    { value: 10, label: '10 Questions' },
+    { value: 15, label: '15 Questions' },
+    { value: 20, label: '20 Questions' },
+    { value: 'all', label: `All ${totalQuestions} Questions` }
+  ].filter(opt => {
+    if (typeof opt.value === 'number') {
+      return opt.value <= totalQuestions
+    }
+    return true
+  })
 
   if (loading) {
     return (
@@ -146,6 +162,36 @@ export default function SouthsideFullChapterPage() {
               )}
             </div>
 
+            {/* Question Count Selector */}
+            {!isCompleted && (
+              <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  How many questions would you like to answer?
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {questionCountOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setQuestionCount(option.value)}
+                      className={`
+                        py-3 px-4 rounded-xl font-semibold transition-all
+                        ${
+                          questionCount === option.value
+                            ? 'bg-green-600 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }
+                      `}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-600 mt-4">
+                  Questions will be shown in random order
+                </p>
+              </div>
+            )}
+
             {/* Action Button */}
             <button
               onClick={handleStartChapter}
@@ -159,12 +205,12 @@ export default function SouthsideFullChapterPage() {
               ) : hasStarted ? (
                 <>
                   <FiPlay className="w-6 h-6" />
-                  <span>Continue Chapter</span>
+                  <span>Continue Practice</span>
                 </>
               ) : (
                 <>
                   <FiPlay className="w-6 h-6" />
-                  <span>Start Chapter</span>
+                  <span>Start Practice</span>
                 </>
               )}
             </button>

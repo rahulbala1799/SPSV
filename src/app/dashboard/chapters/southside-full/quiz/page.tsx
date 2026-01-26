@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi'
 import { MCQQuestion } from '@/components/chapters/MCQQuestion'
@@ -20,8 +20,9 @@ interface Question {
   }
 }
 
-export default function SouthsideFullQuizPage() {
+function QuizContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -29,6 +30,7 @@ export default function SouthsideFullQuizPage() {
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<string, boolean>>({})
   const [submitting, setSubmitting] = useState(false)
   const [progress, setProgress] = useState<any>(null)
+  const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
   useEffect(() => {
     checkAccessAndLoad()
@@ -59,7 +61,20 @@ export default function SouthsideFullQuizPage() {
 
   const loadQuestions = async () => {
     try {
-      const response = await fetch('/api/chapters/chapter_southside_full/questions?includeAnswers=true')
+      // Get count from URL params
+      const count = searchParams.get('count') || 'all'
+      setQuestionCount(count as any)
+      
+      // Build query string with random and count
+      const queryParams = new URLSearchParams({
+        includeAnswers: 'true',
+        random: 'true'
+      })
+      if (count !== 'all') {
+        queryParams.set('count', count)
+      }
+      
+      const response = await fetch(`/api/chapters/chapter_southside_full/questions?${queryParams.toString()}`)
       const data = await response.json()
 
       if (response.ok) {
@@ -176,22 +191,9 @@ export default function SouthsideFullQuizPage() {
   }
 
   const handleCompleteChapter = async () => {
-    try {
-      const response = await fetch('/api/chapters/chapter_southside_full/complete', {
-        method: 'POST'
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        router.push('/dashboard/chapters/southside-full/results')
-      } else {
-        alert(data.error || 'Failed to complete chapter')
-      }
-    } catch (error) {
-      console.error('Error completing chapter:', error)
-      alert('Failed to complete chapter. Please try again.')
-    }
+    // Navigate to results with question count
+    const count = questionCount === 'all' ? 'all' : questionCount.toString()
+    router.push(`/dashboard/chapters/southside-full/results?count=${count}`)
   }
 
   if (loading) {
@@ -284,5 +286,17 @@ export default function SouthsideFullQuizPage() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function SouthsideFullQuizPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    }>
+      <QuizContent />
+    </Suspense>
   )
 }

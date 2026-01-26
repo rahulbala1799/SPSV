@@ -21,12 +21,31 @@ export async function GET(
 
     const searchParams = request.nextUrl.searchParams
     const includeAnswers = searchParams.get('includeAnswers') === 'true'
+    const countParam = searchParams.get('count')
+    const randomize = searchParams.get('random') === 'true'
 
-    // Get questions
-    const questions = await prisma.question.findMany({
+    // Get all questions
+    let questions = await prisma.question.findMany({
       where: { chapterId: params.chapterId },
       orderBy: { questionNumber: 'asc' }
     })
+
+    // Randomize if requested
+    if (randomize) {
+      // Fisher-Yates shuffle algorithm
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]]
+      }
+    }
+
+    // Limit count if specified
+    if (countParam && countParam !== 'all') {
+      const count = parseInt(countParam, 10)
+      if (!isNaN(count) && count > 0) {
+        questions = questions.slice(0, Math.min(count, questions.length))
+      }
+    }
 
     // Get student answers if requested and user is a student
     let studentAnswers: Record<string, any> = {}
