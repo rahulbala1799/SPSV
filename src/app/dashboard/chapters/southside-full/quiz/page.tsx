@@ -62,8 +62,9 @@ function QuizContent() {
       setQuestionCount(count as any)
       
       // Build query string with random and count
+      // Don't include previous answers - start fresh each time
       const queryParams = new URLSearchParams({
-        includeAnswers: 'true',
+        includeAnswers: 'false', // Start fresh - don't show previous answers
         random: 'true'
       })
       if (count !== 'all') {
@@ -76,19 +77,10 @@ function QuizContent() {
       if (response.ok) {
         setQuestions(data.questions)
         
-        // Pre-populate answered questions
-        const answered: Record<string, boolean> = {}
-        const selected: Record<string, string> = {}
-        
-        data.questions.forEach((q: Question) => {
-          if (q.studentAnswer) {
-            answered[q.id] = true
-            selected[q.id] = q.studentAnswer.selectedAnswer
-          }
-        })
-        
-        setAnsweredQuestions(answered)
-        setSelectedAnswers(selected)
+        // Start fresh - don't pre-populate previous answers
+        // Each practice session is independent
+        setAnsweredQuestions({})
+        setSelectedAnswers({})
       }
     } catch (error) {
       console.error('Error loading questions:', error)
