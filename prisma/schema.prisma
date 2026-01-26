@@ -8,6 +8,7 @@ datasource db {
 }
 
 enum Role {
+  SUPER_ADMIN // Keep for compatibility with existing database
   ADMIN
   STUDENT
 }
@@ -26,6 +27,7 @@ model User {
   // Relation to student profile if user is a student
   studentProfile Student?
 
+  @@index([email])
   @@map("users")
 }
 
