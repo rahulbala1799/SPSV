@@ -71,6 +71,11 @@ export default function StudentDashboard() {
     }
   }
 
+  useEffect(() => {
+    checkStudentAccess()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
