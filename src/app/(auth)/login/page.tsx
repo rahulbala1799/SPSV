@@ -51,7 +51,7 @@ function LoginForm() {
       }
 
       // Success - redirect based on user role
-      if (data.user.role === 'ADMIN') {
+      if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
         router.push('/admin')
       } else {
         router.push('/')

@@ -5,7 +5,7 @@ export interface SessionUser {
   id: string
   email: string
   name: string | null
-  role: 'ADMIN' | 'STUDENT'
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'STUDENT'
 }
 
 /**
@@ -44,15 +44,15 @@ export async function getCurrentUser(request: NextRequest): Promise<SessionUser 
 }
 
 /**
- * Check if user is admin
+ * Check if user is admin (includes SUPER_ADMIN)
  */
 export async function isAdmin(request: NextRequest): Promise<boolean> {
   const user = await getCurrentUser(request)
-  return user?.role === 'ADMIN'
+  return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN'
 }
 
 /**
- * Verify admin access - throws error if not admin
+ * Verify admin access - throws error if not admin (includes SUPER_ADMIN)
  */
 export async function requireAdmin(request: NextRequest): Promise<SessionUser> {
   const user = await getCurrentUser(request)
@@ -61,7 +61,7 @@ export async function requireAdmin(request: NextRequest): Promise<SessionUser> {
     throw new Error('Unauthorized - Please login')
   }
   
-  if (user.role !== 'ADMIN') {
+  if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
     throw new Error('Forbidden - Admin access required')
   }
   
