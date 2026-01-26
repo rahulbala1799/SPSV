@@ -54,7 +54,7 @@ function LoginForm() {
       if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
         router.push('/admin')
       } else {
-        router.push('/')
+        router.push('/dashboard')
       }
       router.refresh()
     } catch (error: any) {
