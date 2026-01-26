@@ -10,10 +10,6 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<any>(null)
 
-  useEffect(() => {
-    checkAdminAccess()
-  }, [])
-
   const checkAdminAccess = async () => {
     try {
       const response = await fetch('/api/admin/check')
@@ -31,6 +27,11 @@ export default function SettingsPage() {
       router.push('/login')
     }
   }
+
+  useEffect(() => {
+    checkAdminAccess()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (

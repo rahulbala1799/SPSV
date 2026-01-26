@@ -25,10 +25,6 @@ export default function AdminDashboard() {
     completedStudents: 0
   })
 
-  useEffect(() => {
-    checkAdminAccess()
-  }, [])
-
   const checkAdminAccess = async () => {
     try {
       // Check if user is admin
@@ -63,6 +59,11 @@ export default function AdminDashboard() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAdminAccess()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleLogout = async () => {
     try {

@@ -36,25 +36,6 @@ export default function StudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState<Student | null>(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
 
-  useEffect(() => {
-    checkAdminAndFetchStudents()
-  }, [])
-
-  useEffect(() => {
-    // Filter students based on search query
-    if (searchQuery.trim() === '') {
-      setFilteredStudents(students)
-    } else {
-      const query = searchQuery.toLowerCase()
-      const filtered = students.filter(student => 
-        student.user.name?.toLowerCase().includes(query) ||
-        student.user.email.toLowerCase().includes(query) ||
-        student.phoneNumber?.toLowerCase().includes(query)
-      )
-      setFilteredStudents(filtered)
-    }
-  }, [searchQuery, students])
-
   const checkAdminAndFetchStudents = async () => {
     try {
       // Check if user is admin
@@ -74,6 +55,26 @@ export default function StudentsPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAdminAndFetchStudents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    // Filter students based on search query
+    if (searchQuery.trim() === '') {
+      setFilteredStudents(students)
+    } else {
+      const query = searchQuery.toLowerCase()
+      const filtered = students.filter(student => 
+        student.user.name?.toLowerCase().includes(query) ||
+        student.user.email.toLowerCase().includes(query) ||
+        student.phoneNumber?.toLowerCase().includes(query)
+      )
+      setFilteredStudents(filtered)
+    }
+  }, [searchQuery, students])
 
   const fetchStudents = async () => {
     try {
@@ -198,7 +199,7 @@ export default function StudentsPage() {
         {/* Info Box */}
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>📝 How it works:</strong> When you add a student, you're creating their login account. 
+            <strong>📝 How it works:</strong> When you add a student, you&apos;re creating their login account. 
             Students will use their email address as their username and the password you set to sign in at the login page. 
             Public signup is disabled - only admins can create student accounts.
           </p>
