@@ -37,3 +37,6 @@ next-env.d.ts
 src/figma/.figma*
 
 /src/generated/prisma
+
+# Git-Vercel Monitor State
+scripts/.git-vercel-monitor-state.json

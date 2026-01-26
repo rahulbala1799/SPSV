@@ -50,9 +50,12 @@ function LoginForm() {
         return
       }
 
-      // Success - redirect to dashboard (or home for now)
-      // TODO: Add session management and redirect to dashboard
-      router.push('/')
+      // Success - redirect based on user role
+      if (data.user.role === 'ADMIN') {
+        router.push('/admin')
+      } else {
+        router.push('/')
+      }
       router.refresh()
     } catch (error: any) {
       console.error('Login error:', error)

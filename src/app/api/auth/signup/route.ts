@@ -13,6 +13,13 @@ const signupSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  // DISABLED: Public signup is disabled. Students must be added by admins.
+  return NextResponse.json(
+    { error: 'Public registration is currently disabled. Please contact an administrator.' },
+    { status: 403 }
+  )
+  
+  /* ORIGINAL CODE - UNCOMMENT TO RE-ENABLE PUBLIC SIGNUP
   try {
     const body = await request.json()
     
@@ -35,28 +42,41 @@ export async function POST(request: NextRequest) {
     // Hash password securely
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        name: name.trim(),
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-      },
+    // Create user with STUDENT role and student profile
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: email.toLowerCase(),
+          name: name.trim(),
+          password: hashedPassword,
+          role: 'STUDENT'
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+        },
+      })
+
+      // Create student profile
+      await tx.student.create({
+        data: {
+          userId: user.id,
+          status: 'active'
+        }
+      })
+
+      return user
     })
 
     return NextResponse.json(
       {
         success: true,
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: result.id,
+          email: result.email,
+          name: result.name,
         },
       },
       { status: 201 }
@@ -77,4 +97,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+  */
 }

@@ -9,7 +9,9 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "figma:connect": "figma connect",
-    "figma:publish": "figma connect publish"
+    "figma:publish": "figma connect publish",
+    "monitor:vercel": "tsx scripts/monitor-git-vercel.ts",
+    "monitor:vercel:once": "tsx scripts/monitor-git-vercel.ts --once"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

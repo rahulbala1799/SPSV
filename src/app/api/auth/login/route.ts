@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
         email: true,
         name: true,
         password: true,
+        role: true,
         emailVerified: true,
       },
     })
@@ -49,19 +50,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Password is correct - return user data (without password)
-    return NextResponse.json(
+    // Password is correct - set cookie and return user data (without password)
+    const response = NextResponse.json(
       {
         success: true,
         user: {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role,
           emailVerified: user.emailVerified,
         },
       },
       { status: 200 }
     )
+    
+    // Set userId cookie for session management
+    response.cookies.set('userId', user.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7 // 7 days
+    })
+    
+    return response
   } catch (error: any) {
     // Handle validation errors
     if (error instanceof z.ZodError) {

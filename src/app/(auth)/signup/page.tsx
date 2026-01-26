@@ -73,6 +73,15 @@ export default function SignupPage() {
           <p className="text-gray-600">Sign up to access your course</p>
         </div>
 
+        {/* Registration Disabled Notice */}
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-yellow-800 font-medium mb-2">⚠️ Registration Currently Disabled</p>
+          <p className="text-sm text-yellow-700">
+            Public registration is currently disabled. Students are enrolled by administrators only. 
+            If you need access, please contact an administrator.
+          </p>
+        </div>
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
@@ -133,9 +142,10 @@ export default function SignupPage() {
             variant="primary"
             size="large"
             className="w-full"
-            disabled={loading}
+            disabled={true}
+            title="Registration is currently disabled"
           >
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            Registration Disabled
           </Button>
 
           <p className="text-center text-sm text-gray-600">

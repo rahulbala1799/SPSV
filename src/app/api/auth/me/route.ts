@@ -1,0 +1,31 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/auth'
+
+export const dynamic = 'force-dynamic'
+
+/**
+ * Get current authenticated user
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const user = await getCurrentUser(request)
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+    
+    return NextResponse.json(
+      { user },
+      { status: 200 }
+    )
+  } catch (error: any) {
+    console.error('Get current user error:', error)
+    return NextResponse.json(
+      { error: 'Failed to get user data' },
+      { status: 500 }
+    )
+  }
+}

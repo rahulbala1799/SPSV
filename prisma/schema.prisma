@@ -7,15 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Simple User model for authentication
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+// User model for authentication
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String?
   password      String    // Hashed password
+  role          Role      @default(STUDENT)
   emailVerified Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Relation to student profile if user is a student
+  studentProfile Student?
 
   @@map("users")
+}
+
+// Student model with additional student-specific information
+model Student {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Student details
+  phoneNumber     String?
+  dateOfBirth     DateTime?
+  address         String?
+  emergencyContact String?
+  enrollmentDate  DateTime  @default(now())
+  status          String    @default("active") // active, suspended, completed
+  
+  // Course progress
+  progressData    Json?     // Store test progress, quiz scores, etc.
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("students")
 }
