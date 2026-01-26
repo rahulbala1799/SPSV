@@ -122,53 +122,60 @@ export async function POST(
       })
 
       if (!progress) {
+        // First answer for this chapter
+        const score = isCorrect ? 100 : 0
         progress = await tx.chapterProgress.create({
           data: {
             studentId: student.id,
             chapterId: params.chapterId,
-            totalQuestions,
+            totalQuestions: 1, // First question answered
             correctAnswers: isCorrect ? 1 : 0,
+            score,
             startedAt: new Date()
           }
         })
       } else {
-        // Recalculate progress based on latest answers for each question
-        // Get all questions for this chapter
-        const allQuestions = await tx.question.findMany({
-          where: { chapterId: params.chapterId },
-          select: { id: true }
+        // Recalculate progress based on ALL answers for this chapter
+        // Get all unique questions that have been answered
+        const allAnswersForChapter = await tx.answer.findMany({
+          where: {
+            studentId: student.id,
+            question: {
+              chapterId: params.chapterId
+            }
+          },
+          include: {
+            question: true
+          },
+          orderBy: {
+            answeredAt: 'desc'
+          }
         })
         
-        // Get latest answer for each question
-        const latestAnswers = await Promise.all(
-          allQuestions.map(async (q) => {
-            const answers = await tx.answer.findMany({
-              where: {
-                studentId: student.id,
-                questionId: q.id
-              },
-              orderBy: { answeredAt: 'desc' },
-              take: 1
-            })
-            return answers[0]
-          })
-        )
+        // Group by question and get latest answer for each
+        const latestAnswersByQuestion = new Map()
+        allAnswersForChapter.forEach(answer => {
+          if (!latestAnswersByQuestion.has(answer.questionId)) {
+            latestAnswersByQuestion.set(answer.questionId, answer)
+          }
+        })
         
-        // Count correct answers (using latest answer for each question)
-        const uniqueCorrectCount = latestAnswers.filter(a => a?.isCorrect).length
-        const answeredCount = latestAnswers.filter(a => a !== undefined).length
+        // Count unique questions answered and correct answers
+        const uniqueQuestionsAnswered = latestAnswersByQuestion.size
+        const correctAnswersCount = Array.from(latestAnswersByQuestion.values())
+          .filter(a => a.isCorrect).length
         
-        // Calculate score based on answered questions
-        const score = answeredCount > 0
-          ? Math.round((uniqueCorrectCount / answeredCount) * 100)
+        // Calculate score: (correct answers / unique questions answered) * 100
+        const score = uniqueQuestionsAnswered > 0
+          ? Math.round((correctAnswersCount / uniqueQuestionsAnswered) * 100)
           : 0
         
         progress = await tx.chapterProgress.update({
           where: { id: progress.id },
           data: {
-            correctAnswers: uniqueCorrectCount,
+            correctAnswers: correctAnswersCount,
+            totalQuestions: uniqueQuestionsAnswered, // Total unique questions answered so far
             score,
-            totalQuestions: totalQuestions,
             lastAccessed: new Date()
           }
         })

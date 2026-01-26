@@ -134,10 +134,10 @@ export default function SouthsideFullChapterPage() {
               </div>
 
               {/* Progress */}
-              {progress && (
+              {progress && progress.totalQuestions > 0 && (
                 <div className="border-t border-gray-200 pt-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Your Progress</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">Your Overall Progress</span>
                     {isCompleted && (
                       <span className="text-sm font-medium text-green-600 flex items-center gap-1">
                         <FiCheckCircle className="w-4 h-4" />
@@ -153,12 +153,15 @@ export default function SouthsideFullChapterPage() {
                       }}
                     ></div>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
+                  <div className="flex justify-between text-sm text-gray-600 mb-1">
                     <span>
-                      {progress.correctAnswers} of {progress.totalQuestions} correct
+                      {progress.correctAnswers} of {progress.totalQuestions} questions answered correctly
                     </span>
                     <span className="font-semibold text-gray-900">{progress.score || 0}%</span>
                   </div>
+                  <p className="text-xs text-gray-500">
+                    Based on your latest answers to each question
+                  </p>
                 </div>
               )}
             </div>

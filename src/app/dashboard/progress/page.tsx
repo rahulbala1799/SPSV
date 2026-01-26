@@ -224,7 +224,7 @@ export default function ProgressPage() {
         {/* Chapter Results */}
         {chapterProgress.length > 0 && (
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h3 className="font-bold text-gray-900 mb-4">Chapter Results</h3>
+            <h3 className="font-bold text-gray-900 mb-4">Chapter Progress</h3>
             <div className="space-y-4">
               {chapterProgress.map((cp) => (
                 <Link
@@ -232,7 +232,7 @@ export default function ProgressPage() {
                   href={`/dashboard/chapters/southside-full`}
                   className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border-2 border-transparent hover:border-green-200"
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold text-gray-900">{cp.chapterTitle}</h4>
                     {cp.isCompleted && (
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium flex items-center gap-1">
@@ -241,28 +241,36 @@ export default function ProgressPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                    <span>
-                      <span className="font-semibold text-gray-900">{cp.correctAnswers}</span> / {cp.totalQuestions} correct
-                    </span>
-                    {cp.score !== null && (
-                      <span className="font-semibold text-green-600">{cp.score}%</span>
-                    )}
-                  </div>
-                  {cp.score !== null && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all ${
-                          cp.score >= 80 ? 'bg-green-500' : cp.score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}
-                        style={{ width: `${cp.score}%` }}
-                      ></div>
-                    </div>
+                  
+                  {cp.totalQuestions > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">
+                          <span className="font-semibold text-gray-900">{cp.correctAnswers}</span> of{' '}
+                          <span className="font-semibold text-gray-900">{cp.totalQuestions}</span> questions correct
+                        </span>
+                        {cp.score !== null && (
+                          <span className="text-lg font-bold text-green-600">{cp.score}%</span>
+                        )}
+                      </div>
+                      {cp.score !== null && (
+                        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                          <div
+                            className={`h-3 rounded-full transition-all ${
+                              cp.score >= 80 ? 'bg-green-500' : cp.score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${cp.score}%` }}
+                          ></div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500 mb-2">No questions answered yet</p>
                   )}
+                  
                   {cp.startedAt && (
                     <p className="text-xs text-gray-500 mt-2">
-                      Started: {new Date(cp.startedAt).toLocaleDateString()}
-                      {cp.completedAt && ` • Completed: ${new Date(cp.completedAt).toLocaleDateString()}`}
+                      Last practiced: {new Date(cp.startedAt).toLocaleDateString()}
                     </p>
                   )}
                 </Link>
