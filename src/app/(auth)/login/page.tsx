@@ -70,6 +70,9 @@ function LoginForm() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to access your course</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Students: Use the email and password provided by your administrator
+          </p>
         </div>
 
         {success && (

@@ -76,9 +76,11 @@ export default function SignupPage() {
         {/* Registration Disabled Notice */}
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800 font-medium mb-2">⚠️ Registration Currently Disabled</p>
-          <p className="text-sm text-yellow-700">
-            Public registration is currently disabled. Students are enrolled by administrators only. 
-            If you need access, please contact an administrator.
+          <p className="text-sm text-yellow-700 mb-2">
+            Public registration is currently disabled. Student accounts are created by administrators only.
+          </p>
+          <p className="text-sm text-yellow-800 font-medium">
+            If you already have an account, please <Link href="/login" className="underline">sign in here</Link>.
           </p>
         </div>
 

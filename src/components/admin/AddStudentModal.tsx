@@ -14,6 +14,7 @@ interface AddStudentModalProps {
 export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<{ email: string; password: string } | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -46,7 +47,13 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
         return
       }
 
-      // Success - reset form and close modal
+      // Success - show credentials before closing
+      setSuccess({
+        email: formData.email,
+        password: formData.password
+      })
+      
+      // Reset form
       setFormData({
         name: '',
         email: '',
@@ -56,8 +63,15 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
         address: '',
         emergencyContact: '',
       })
+      
+      // Refresh student list
       onSuccess()
-      onClose()
+      
+      // Auto-close after 5 seconds or let user close manually
+      setTimeout(() => {
+        setSuccess(null)
+        onClose()
+      }, 5000)
     } catch (error: any) {
       console.error('Create student error:', error)
       setError('Something went wrong. Please try again.')
@@ -68,6 +82,7 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
   const handleClose = () => {
     if (!loading) {
       setError(null)
+      setSuccess(null)
       onClose()
     }
   }
@@ -78,7 +93,10 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Add New Student</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Create Student Account</h2>
+            <p className="text-sm text-gray-600 mt-1">Create login credentials for a new student</p>
+          </div>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -88,12 +106,55 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-              {error}
+        {success ? (
+          <div className="p-6">
+            <div className="p-6 bg-green-50 border-2 border-green-200 rounded-lg">
+              <h3 className="text-lg font-bold text-green-900 mb-4">✅ Student Account Created Successfully!</h3>
+              <div className="bg-white p-4 rounded-lg border border-green-200 mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">Login Credentials:</p>
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-sm text-gray-600">Email (Username):</span>
+                    <p className="text-base font-mono font-semibold text-gray-900 bg-gray-50 p-2 rounded mt-1">
+                      {success.email}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-600">Password:</span>
+                    <p className="text-base font-mono font-semibold text-gray-900 bg-gray-50 p-2 rounded mt-1">
+                      {success.password}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>⚠️ Important:</strong> Share these credentials with the student. They can use them to sign in at the login page.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={handleClose}
+                className="w-full"
+              >
+                Close
+              </Button>
             </div>
-          )}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                {error}
+              </div>
+            )}
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800">
+                <strong>Note:</strong> You are creating login credentials for this student. They will use their email address as their username to sign in.
+              </p>
+            </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -108,7 +169,7 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
             />
 
             <Input
-              label="Email Address *"
+              label="Email Address (Username) *"
               type="email"
               name="email"
               value={formData.email}
@@ -189,6 +250,7 @@ export function AddStudentModal({ isOpen, onClose, onSuccess }: AddStudentModalP
             </Button>
           </div>
         </form>
+        )}
       </div>
     </div>
   )

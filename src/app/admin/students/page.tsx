@@ -195,6 +195,15 @@ export default function StudentsPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Info Box */}
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>📝 How it works:</strong> When you add a student, you're creating their login account. 
+            Students will use their email address as their username and the password you set to sign in at the login page. 
+            Public signup is disabled - only admins can create student accounts.
+          </p>
+        </div>
+
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md">
