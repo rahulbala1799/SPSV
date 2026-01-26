@@ -163,35 +163,38 @@ export default function SouthsideFullChapterPage() {
               )}
             </div>
 
-            {/* Question Count Selector */}
-            {!isCompleted && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">
-                  How many questions would you like to answer?
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {questionCountOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => setQuestionCount(option.value as number | 'all')}
-                      className={`
-                        py-3 px-4 rounded-xl font-semibold transition-all
-                        ${
-                          questionCount === option.value
-                            ? 'bg-green-600 text-white shadow-lg scale-105'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }
-                      `}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-600 mt-4">
-                  Questions will be shown in random order
-                </p>
+            {/* Question Count Selector - Always shown */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                How many questions would you like to answer?
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {questionCountOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setQuestionCount(option.value as number | 'all')}
+                    className={`
+                      py-3 px-4 rounded-xl font-semibold transition-all
+                      ${
+                        questionCount === option.value
+                          ? 'bg-green-600 text-white shadow-lg scale-105'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }
+                    `}
+                  >
+                    {option.label}
+                  </button>
+                ))}
               </div>
-            )}
+              <p className="text-sm text-gray-600 mt-4">
+                Questions will be shown in random order
+              </p>
+              {isCompleted && (
+                <p className="text-sm text-green-600 mt-2 font-medium">
+                  ✓ You can practice this chapter again anytime
+                </p>
+              )}
+            </div>
 
             {/* Action Button */}
             <button
@@ -200,8 +203,8 @@ export default function SouthsideFullChapterPage() {
             >
               {isCompleted ? (
                 <>
-                  <FiCheckCircle className="w-6 h-6" />
-                  <span>Review Chapter</span>
+                  <FiPlay className="w-6 h-6" />
+                  <span>Practice Again</span>
                 </>
               ) : hasStarted ? (
                 <>

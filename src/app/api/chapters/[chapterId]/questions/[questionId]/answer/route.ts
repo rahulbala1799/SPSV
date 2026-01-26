@@ -65,7 +65,11 @@ export async function POST(
       )
     }
 
-    // Check if already answered
+    // Check if answer is correct
+    const isCorrect = selectedAnswer.toUpperCase() === question.correctAnswer.toUpperCase()
+    const pointsEarned = isCorrect ? question.points : 0
+
+    // Check if already answered (allow re-answering for practice)
     const existingAnswer = await prisma.answer.findUnique({
       where: {
         studentId_questionId: {
@@ -75,29 +79,33 @@ export async function POST(
       }
     })
 
-    if (existingAnswer) {
-      return NextResponse.json(
-        { error: 'Question already answered' },
-        { status: 400 }
-      )
-    }
-
-    // Check if answer is correct
-    const isCorrect = selectedAnswer.toUpperCase() === question.correctAnswer.toUpperCase()
-    const pointsEarned = isCorrect ? question.points : 0
-
-    // Create answer in transaction with progress update
+    // Create or update answer in transaction with progress update
     const result = await prisma.$transaction(async (tx) => {
-      // Create answer
-      const answer = await tx.answer.create({
-        data: {
-          studentId: student.id,
-          questionId: question.id,
-          selectedAnswer: selectedAnswer.toUpperCase(),
-          isCorrect,
-          pointsEarned
-        }
-      })
+      // Create or update answer (allow re-answering for practice)
+      const answer = existingAnswer
+        ? await tx.answer.update({
+            where: {
+              studentId_questionId: {
+                studentId: student.id,
+                questionId: question.id
+              }
+            },
+            data: {
+              selectedAnswer: selectedAnswer.toUpperCase(),
+              isCorrect,
+              pointsEarned,
+              answeredAt: new Date()
+            }
+          })
+        : await tx.answer.create({
+            data: {
+              studentId: student.id,
+              questionId: question.id,
+              selectedAnswer: selectedAnswer.toUpperCase(),
+              isCorrect,
+              pointsEarned
+            }
+          })
 
       // Get or create chapter progress
       let progress = await tx.chapterProgress.findUnique({
@@ -124,15 +132,43 @@ export async function POST(
           }
         })
       } else {
-        // Update progress
-        const newCorrectAnswers = progress.correctAnswers + (isCorrect ? 1 : 0)
-        const score = Math.round((newCorrectAnswers / totalQuestions) * 100)
+        // Recalculate progress based on latest answers for each question
+        // Get all questions for this chapter
+        const allQuestions = await tx.question.findMany({
+          where: { chapterId: params.chapterId },
+          select: { id: true }
+        })
+        
+        // Get latest answer for each question
+        const latestAnswers = await Promise.all(
+          allQuestions.map(async (q) => {
+            const answers = await tx.answer.findMany({
+              where: {
+                studentId: student.id,
+                questionId: q.id
+              },
+              orderBy: { answeredAt: 'desc' },
+              take: 1
+            })
+            return answers[0]
+          })
+        )
+        
+        // Count correct answers (using latest answer for each question)
+        const uniqueCorrectCount = latestAnswers.filter(a => a?.isCorrect).length
+        const answeredCount = latestAnswers.filter(a => a !== undefined).length
+        
+        // Calculate score based on answered questions
+        const score = answeredCount > 0
+          ? Math.round((uniqueCorrectCount / answeredCount) * 100)
+          : 0
         
         progress = await tx.chapterProgress.update({
           where: { id: progress.id },
           data: {
-            correctAnswers: newCorrectAnswers,
+            correctAnswers: uniqueCorrectCount,
             score,
+            totalQuestions: totalQuestions,
             lastAccessed: new Date()
           }
         })
