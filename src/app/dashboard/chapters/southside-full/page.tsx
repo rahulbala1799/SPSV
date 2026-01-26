@@ -12,10 +12,6 @@ export default function SouthsideFullChapterPage() {
   const [progress, setProgress] = useState<any>(null)
   const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
-  useEffect(() => {
-    checkAccessAndLoad()
-  }, [])
-
   const checkAccessAndLoad = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -55,13 +51,18 @@ export default function SouthsideFullChapterPage() {
     }
   }
 
+  useEffect(() => {
+    checkAccessAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleStartChapter = () => {
     const count = questionCount === 'all' ? 'all' : questionCount
     router.push(`/dashboard/chapters/southside-full/quiz?count=${count}`)
   }
 
   const totalQuestions = chapter?.totalQuestions || 20
-  const questionCountOptions = [
+  const questionCountOptions: Array<{ value: number | 'all'; label: string }> = [
     { value: 5, label: '5 Questions' },
     { value: 10, label: '10 Questions' },
     { value: 15, label: '15 Questions' },
@@ -172,7 +173,7 @@ export default function SouthsideFullChapterPage() {
                   {questionCountOptions.map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => setQuestionCount(option.value)}
+                      onClick={() => setQuestionCount(option.value as number | 'all')}
                       className={`
                         py-3 px-4 rounded-xl font-semibold transition-all
                         ${

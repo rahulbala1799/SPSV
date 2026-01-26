@@ -18,10 +18,6 @@ export default function ChaptersPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    checkAccess()
-  }, [])
-
   const checkAccess = async () => {
     try {
       const response = await fetch('/api/auth/me')

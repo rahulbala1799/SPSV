@@ -20,10 +20,6 @@ export default function TestsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    checkAccess()
-  }, [])
-
   const checkAccess = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -45,6 +41,11 @@ export default function TestsPage() {
       router.push('/login')
     }
   }
+
+  useEffect(() => {
+    checkAccess()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const tests: Test[] = [
     {

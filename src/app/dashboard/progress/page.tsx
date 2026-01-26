@@ -21,10 +21,6 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true)
   const [chapterProgress, setChapterProgress] = useState<ChapterProgress[]>([])
 
-  useEffect(() => {
-    checkAccessAndLoad()
-  }, [])
-
   const checkAccessAndLoad = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -70,6 +66,11 @@ export default function ProgressPage() {
       console.error('Error loading chapter progress:', error)
     }
   }
+
+  useEffect(() => {
+    checkAccessAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (

@@ -32,10 +32,6 @@ function QuizContent() {
   const [progress, setProgress] = useState<any>(null)
   const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
-  useEffect(() => {
-    checkAccessAndLoad()
-  }, [])
-
   const checkAccessAndLoad = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -100,6 +96,11 @@ function QuizContent() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAccessAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const loadProgress = async () => {
     try {

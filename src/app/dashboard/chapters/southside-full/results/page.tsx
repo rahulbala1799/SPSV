@@ -14,10 +14,6 @@ function ResultsContent() {
   const [answers, setAnswers] = useState<Record<string, any>>({})
   const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
 
-  useEffect(() => {
-    checkAccessAndLoad()
-  }, [])
-
   const checkAccessAndLoad = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -87,6 +83,11 @@ function ResultsContent() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAccessAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (

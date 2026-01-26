@@ -36,10 +36,6 @@ export default function StudentDashboard() {
   const [student, setStudent] = useState<StudentData | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  useEffect(() => {
-    checkStudentAccess()
-  }, [])
-
   const checkStudentAccess = async () => {
     try {
       const response = await fetch('/api/auth/me')
