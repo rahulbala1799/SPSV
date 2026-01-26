@@ -1,0 +1,105 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/auth'
+
+export const dynamic = 'force-dynamic'
+
+// POST mark chapter as completed
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { chapterId: string } }
+) {
+  try {
+    const user = await getCurrentUser(request)
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    if (user.role !== 'STUDENT') {
+      return NextResponse.json(
+        { error: 'Only students can complete chapters' },
+        { status: 403 }
+      )
+    }
+
+    const student = await prisma.student.findUnique({
+      where: { userId: user.id }
+    })
+
+    if (!student) {
+      return NextResponse.json(
+        { error: 'Student profile not found' },
+        { status: 404 }
+      )
+    }
+
+    // Get progress
+    let progress = await prisma.chapterProgress.findUnique({
+      where: {
+        studentId_chapterId: {
+          studentId: student.id,
+          chapterId: params.chapterId
+        }
+      }
+    })
+
+    if (!progress) {
+      return NextResponse.json(
+        { error: 'Chapter progress not found. Please start the chapter first.' },
+        { status: 400 }
+      )
+    }
+
+    // Check if all questions are answered
+    const totalQuestions = await prisma.question.count({
+      where: { chapterId: params.chapterId }
+    })
+
+    const answeredCount = await prisma.answer.count({
+      where: {
+        studentId: student.id,
+        question: {
+          chapterId: params.chapterId
+        }
+      }
+    })
+
+    if (answeredCount < totalQuestions) {
+      return NextResponse.json(
+        { error: `Please answer all ${totalQuestions} questions before completing the chapter. You have answered ${answeredCount}.` },
+        { status: 400 }
+      )
+    }
+
+    // Mark as completed
+    progress = await prisma.chapterProgress.update({
+      where: { id: progress.id },
+      data: {
+        isCompleted: true,
+        completedAt: new Date(),
+        score: progress.score || Math.round((progress.correctAnswers / totalQuestions) * 100)
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      progress: {
+        isCompleted: progress.isCompleted,
+        score: progress.score,
+        totalQuestions: progress.totalQuestions,
+        correctAnswers: progress.correctAnswers,
+        completedAt: progress.completedAt
+      }
+    }, { status: 200 })
+  } catch (error: any) {
+    console.error('Complete chapter error:', error)
+    return NextResponse.json(
+      { error: 'Failed to complete chapter' },
+      { status: 500 }
+    )
+  }
+}

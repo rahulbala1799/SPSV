@@ -40,3 +40,6 @@ src/figma/.figma*
 
 # Git-Vercel Monitor State
 scripts/.git-vercel-monitor-state.json
+
+# Local documentation (not for git)
+SOUTHSIDE_FULL_QA_MCQ_README.md

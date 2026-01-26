@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { FiArrowLeft, FiBook, FiCheckCircle, FiLock, FiClock } from 'react-icons/fi'
 
 interface Chapter {
-  id: number
+  id: number | string
   title: string
   description: string
   duration: string
@@ -45,6 +45,14 @@ export default function ChaptersPage() {
   }
 
   const chapters: Chapter[] = [
+    {
+      id: 'southside-full',
+      title: 'Southside Full',
+      description: 'Test your knowledge of roads, landmarks, and locations in Dublin\'s Southside area',
+      duration: '30 min',
+      completed: false,
+      locked: false
+    },
     {
       id: 1,
       title: 'Introduction to SPSV',
@@ -153,7 +161,11 @@ export default function ChaptersPage() {
               onClick={() => {
                 if (!chapter.locked) {
                   // Navigate to chapter content
-                  router.push(`/dashboard/chapters/${chapter.id}`)
+                  if (chapter.id === 'southside-full') {
+                    router.push('/dashboard/chapters/southside-full')
+                  } else {
+                    router.push(`/dashboard/chapters/${chapter.id}`)
+                  }
                 }
               }}
             >

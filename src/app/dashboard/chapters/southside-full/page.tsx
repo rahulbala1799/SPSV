@@ -1,0 +1,176 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook } from 'react-icons/fi'
+
+export default function SouthsideFullChapterPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [chapter, setChapter] = useState<any>(null)
+  const [progress, setProgress] = useState<any>(null)
+
+  useEffect(() => {
+    checkAccessAndLoad()
+  }, [])
+
+  const checkAccessAndLoad = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      const data = await response.json()
+
+      if (!response.ok || !data.user) {
+        router.push('/login')
+        return
+      }
+
+      if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
+        router.push('/admin')
+        return
+      }
+
+      // Load chapter data
+      await loadChapter()
+    } catch (error) {
+      console.error('Error:', error)
+      router.push('/login')
+    }
+  }
+
+  const loadChapter = async () => {
+    try {
+      const response = await fetch('/api/chapters/chapter_southside_full')
+      const data = await response.json()
+
+      if (response.ok) {
+        setChapter(data.chapter)
+        setProgress(data.studentProgress)
+      }
+    } catch (error) {
+      console.error('Error loading chapter:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStartChapter = () => {
+    router.push('/dashboard/chapters/southside-full/quiz')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    )
+  }
+
+  const isCompleted = progress?.isCompleted || false
+  const hasStarted = progress !== null
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard/chapters"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <FiArrowLeft className="w-6 h-6" />
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Chapter Details</h1>
+              <p className="text-sm text-gray-600">Southside Full</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
+        {chapter && (
+          <>
+            {/* Chapter Info Card */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FiBook className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{chapter.title}</h2>
+                  <p className="text-gray-600 mb-4">{chapter.description}</p>
+                  
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <FiClock className="w-4 h-4" />
+                      <span>{chapter.duration} minutes</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiBook className="w-4 h-4" />
+                      <span>{chapter.totalQuestions} questions</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress */}
+              {progress && (
+                <div className="border-t border-gray-200 pt-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Your Progress</span>
+                    {isCompleted && (
+                      <span className="text-sm font-medium text-green-600 flex items-center gap-1">
+                        <FiCheckCircle className="w-4 h-4" />
+                        Completed
+                      </span>
+                    )}
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                    <div
+                      className="bg-green-500 h-3 rounded-full transition-all"
+                      style={{
+                        width: `${progress.score || 0}%`
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>
+                      {progress.correctAnswers} of {progress.totalQuestions} correct
+                    </span>
+                    <span className="font-semibold text-gray-900">{progress.score || 0}%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={handleStartChapter}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+            >
+              {isCompleted ? (
+                <>
+                  <FiCheckCircle className="w-6 h-6" />
+                  <span>Review Chapter</span>
+                </>
+              ) : hasStarted ? (
+                <>
+                  <FiPlay className="w-6 h-6" />
+                  <span>Continue Chapter</span>
+                </>
+              ) : (
+                <>
+                  <FiPlay className="w-6 h-6" />
+                  <span>Start Chapter</span>
+                </>
+              )}
+            </button>
+          </>
+        )}
+      </main>
+    </div>
+  )
+}

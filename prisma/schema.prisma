@@ -51,5 +51,100 @@ model Student {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  // Relations
+  answers         Answer[]
+  chapterProgress ChapterProgress[]
+
   @@map("students")
+}
+
+// Chapter types
+enum ChapterType {
+  MCQ
+  READING
+  VIDEO
+  MIXED
+}
+
+// Chapter model for organizing course content
+model Chapter {
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  chapterNumber Int       // e.g., 1, 2, 3...
+  type          ChapterType @default(MCQ)
+  duration      Int?      // Estimated minutes
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  questions     Question[]
+  progress      ChapterProgress[]
+  
+  @@map("chapters")
+}
+
+// Question model for storing MCQ questions
+model Question {
+  id            String    @id @default(cuid())
+  chapterId     String
+  chapter       Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  questionText  String    // The actual question
+  questionNumber Int      // Order within chapter (1, 2, 3...)
+  
+  options       Json      // Array of option objects: [{ id: "A", text: "Option A" }, ...]
+  correctAnswer String    // The ID of correct option (e.g., "A", "B", "C", "D")
+  explanation   String?   // Optional explanation for the answer
+  
+  points        Int       @default(1) // Points for correct answer
+  difficulty    String    @default("medium") // easy, medium, hard
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  answers       Answer[]
+  
+  @@unique([chapterId, questionNumber])
+  @@map("questions")
+}
+
+// Track student answers and progress
+model Answer {
+  id            String    @id @default(cuid())
+  studentId     String
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  selectedAnswer String    // The option ID the student selected
+  isCorrect     Boolean
+  pointsEarned  Int       @default(0)
+  
+  answeredAt    DateTime  @default(now())
+  
+  @@unique([studentId, questionId]) // One answer per student per question
+  @@map("answers")
+}
+
+// Track chapter completion progress
+model ChapterProgress {
+  id              String    @id @default(cuid())
+  studentId       String
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  chapterId       String
+  chapter         Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  isCompleted     Boolean   @default(false)
+  score           Int?      // Percentage score
+  totalQuestions  Int
+  correctAnswers  Int       @default(0)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  
+  lastAccessed    DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([studentId, chapterId]) // One progress record per student per chapter
+  @@map("chapter_progress")
 }
