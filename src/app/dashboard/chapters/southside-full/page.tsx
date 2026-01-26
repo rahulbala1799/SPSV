@@ -67,8 +67,8 @@ export default function SouthsideFullChapterPage() {
     { value: 10, label: '10 Questions' },
     { value: 15, label: '15 Questions' },
     { value: 20, label: '20 Questions' },
-    { value: 'all', label: `All ${totalQuestions} Questions` }
-  ].filter(opt => {
+    { value: 'all' as const, label: `All ${totalQuestions} Questions` }
+  ].filter((opt): opt is { value: number | 'all'; label: string } => {
     if (typeof opt.value === 'number') {
       return opt.value <= totalQuestions
     }
