@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook } from 'react-icons/fi'
+import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook, FiBarChart2 } from 'react-icons/fi'
 
 export default function SouthsideFullChapterPage() {
   const router = useRouter()
@@ -199,28 +199,40 @@ export default function SouthsideFullChapterPage() {
               )}
             </div>
 
-            {/* Action Button */}
-            <button
-              onClick={handleStartChapter}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
-            >
-              {isCompleted ? (
-                <>
-                  <FiPlay className="w-6 h-6" />
-                  <span>Practice Again</span>
-                </>
-              ) : hasStarted ? (
-                <>
-                  <FiPlay className="w-6 h-6" />
-                  <span>Continue Practice</span>
-                </>
-              ) : (
-                <>
-                  <FiPlay className="w-6 h-6" />
-                  <span>Start Practice</span>
-                </>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                onClick={handleStartChapter}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+              >
+                {isCompleted ? (
+                  <>
+                    <FiPlay className="w-6 h-6" />
+                    <span>Practice Again</span>
+                  </>
+                ) : hasStarted ? (
+                  <>
+                    <FiPlay className="w-6 h-6" />
+                    <span>Continue Practice</span>
+                  </>
+                ) : (
+                  <>
+                    <FiPlay className="w-6 h-6" />
+                    <span>Start Practice</span>
+                  </>
+                )}
+              </button>
+              
+              {hasStarted && (
+                <Link
+                  href="/dashboard/chapters/southside-full/analytics"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+                >
+                  <FiBarChart2 className="w-6 h-6" />
+                  <span>View Analytics</span>
+                </Link>
               )}
-            </button>
+            </div>
           </>
         )}
       </main>

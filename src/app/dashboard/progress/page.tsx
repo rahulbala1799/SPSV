@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft, FiTrendingUp, FiCheckCircle, FiClock, FiAward, FiBook } from 'react-icons/fi'
+import { FiArrowLeft, FiTrendingUp, FiCheckCircle, FiClock, FiAward, FiBook, FiBarChart2 } from 'react-icons/fi'
 
 interface ChapterProgress {
   chapterId: string
@@ -227,11 +227,7 @@ export default function ProgressPage() {
             <h3 className="font-bold text-gray-900 mb-4">Chapter Progress</h3>
             <div className="space-y-4">
               {chapterProgress.map((cp) => (
-                <Link
-                  key={cp.chapterId}
-                  href={`/dashboard/chapters/southside-full`}
-                  className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border-2 border-transparent hover:border-green-200"
-                >
+                <div key={cp.chapterId} className="p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold text-gray-900">{cp.chapterTitle}</h4>
                     {cp.isCompleted && (
@@ -254,7 +250,7 @@ export default function ProgressPage() {
                         )}
                       </div>
                       {cp.score !== null && (
-                        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                        <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                           <div
                             className={`h-3 rounded-full transition-all ${
                               cp.score >= 80 ? 'bg-green-500' : cp.score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
@@ -265,15 +261,34 @@ export default function ProgressPage() {
                       )}
                     </>
                   ) : (
-                    <p className="text-sm text-gray-500 mb-2">No questions answered yet</p>
+                    <p className="text-sm text-gray-500 mb-3">No questions answered yet</p>
                   )}
+                  
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    <Link
+                      href={`/dashboard/chapters/southside-full`}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center text-sm"
+                    >
+                      Practice
+                    </Link>
+                    {cp.totalQuestions > 0 && (
+                      <Link
+                        href={`/dashboard/chapters/southside-full/analytics`}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center text-sm flex items-center justify-center gap-2"
+                      >
+                        <FiBarChart2 className="w-4 h-4" />
+                        Analytics
+                      </Link>
+                    )}
+                  </div>
                   
                   {cp.startedAt && (
                     <p className="text-xs text-gray-500 mt-2">
                       Last practiced: {new Date(cp.startedAt).toLocaleDateString()}
                     </p>
                   )}
-                </Link>
+                </div>
               ))}
             </div>
           </div>
