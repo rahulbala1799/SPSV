@@ -76,6 +76,12 @@ export default function SouthsideFullChapterPage() {
     router.push(`/dashboard/chapters/southside-full/quiz?count=${count}&strategy=${strategy}`)
   }
 
+  const handleStartChapter = () => {
+    // Use current question count with mix strategy (default)
+    const count = questionCount === 'all' ? 'all' : questionCount
+    router.push(`/dashboard/chapters/southside-full/quiz?count=${count}&strategy=mix`)
+  }
+
   const totalQuestions = chapter?.totalQuestions || 20
   const questionCountOptions: Array<{ value: number | 'all'; label: string }> = [
     { value: 5, label: '5 Questions' },
