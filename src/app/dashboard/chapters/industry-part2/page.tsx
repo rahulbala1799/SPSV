@@ -223,8 +223,7 @@ export default function IndustryPart2Page() {
           onClose={() => setShowStrategyModal(false)}
           onConfirm={handleStrategyConfirm}
           totalQuestions={totalQuestions}
-          attemptedQuestions={totalQuestions - unattemptedCount}
-          unattemptedQuestions={unattemptedCount}
+          unattemptedCount={unattemptedCount}
           selectedCount={questionCount === 'all' ? totalQuestions : questionCount}
         />
       )}
