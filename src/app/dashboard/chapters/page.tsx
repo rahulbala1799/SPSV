@@ -75,7 +75,8 @@ export default function ChaptersPage() {
           'chapter_industry_8': 'industry-8',
           'chapter_southside_full': 'southside-full',
           'chapter_dublin_one_way_streets': 'dublin-one-way-streets',
-          'chapter_southside_streets_2': 'southside-streets-2'
+          'chapter_southside_streets_2': 'southside-streets-2',
+          'chapter_northside_routes': 'northside-routes'
         }
 
         data.chapterProgress.forEach((cp: any) => {
@@ -190,6 +191,14 @@ export default function ChaptersPage() {
       title: 'Southside Streets 2',
       description: 'Test your knowledge of landmarks, locations, and one-way streets in Dublin\'s Southside area',
       duration: '45 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'northside-routes',
+      title: 'Northside Routes',
+      description: 'Test your knowledge of routes, areas, landmarks, and locations in Dublin\'s Northside area',
+      duration: '50 min',
       completed: false,
       locked: false
     },
