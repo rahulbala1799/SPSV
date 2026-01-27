@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook, FiBarChart2 } from 'react-icons/fi'
+import { QuestionSelectionModal } from '@/components/chapters/QuestionSelectionModal'
 
 export default function SouthsideFullChapterPage() {
   const router = useRouter()
@@ -11,6 +12,8 @@ export default function SouthsideFullChapterPage() {
   const [chapter, setChapter] = useState<any>(null)
   const [progress, setProgress] = useState<any>(null)
   const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
+  const [showStrategyModal, setShowStrategyModal] = useState(false)
+  const [unattemptedCount, setUnattemptedCount] = useState(0)
 
   const checkAccessAndLoad = async () => {
     try {
@@ -43,6 +46,13 @@ export default function SouthsideFullChapterPage() {
       if (response.ok) {
         setChapter(data.chapter)
         setProgress(data.studentProgress)
+        
+        // Get unattempted question count
+        const analyticsResponse = await fetch('/api/analytics/chapter/chapter_southside_full')
+        const analyticsData = await analyticsResponse.json()
+        if (analyticsResponse.ok) {
+          setUnattemptedCount(analyticsData.overview.questionsNotAttempted)
+        }
       }
     } catch (error) {
       console.error('Error loading chapter:', error)
@@ -56,9 +66,14 @@ export default function SouthsideFullChapterPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleStartChapter = () => {
+  const handleQuestionCountClick = (count: number | 'all') => {
+    setQuestionCount(count)
+    setShowStrategyModal(true)
+  }
+
+  const handleStrategyConfirm = (strategy: 'mix' | 'new_only' | 'prioritize_new') => {
     const count = questionCount === 'all' ? 'all' : questionCount
-    router.push(`/dashboard/chapters/southside-full/quiz?count=${count}`)
+    router.push(`/dashboard/chapters/southside-full/quiz?count=${count}&strategy=${strategy}`)
   }
 
   const totalQuestions = chapter?.totalQuestions || 20
@@ -172,11 +187,11 @@ export default function SouthsideFullChapterPage() {
                 How many questions would you like to answer?
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {questionCountOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setQuestionCount(option.value as number | 'all')}
-                    className={`
+                  {questionCountOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleQuestionCountClick(option.value as number | 'all')}
+                      className={`
                       py-3 px-4 rounded-xl font-semibold transition-all
                       ${
                         questionCount === option.value
@@ -236,6 +251,16 @@ export default function SouthsideFullChapterPage() {
           </>
         )}
       </main>
+
+      {/* Question Selection Strategy Modal */}
+      <QuestionSelectionModal
+        isOpen={showStrategyModal}
+        onClose={() => setShowStrategyModal(false)}
+        selectedCount={questionCount}
+        totalQuestions={chapter?.totalQuestions || 20}
+        unattemptedCount={unattemptedCount}
+        onConfirm={handleStrategyConfirm}
+      />
     </div>
   )
 }

@@ -170,12 +170,17 @@ export async function POST(
           ? Math.round((correctAnswersCount / uniqueQuestionsAnswered) * 100)
           : 0
         
+        // Check if ALL questions in chapter have been attempted
+        const isCompleted = uniqueQuestionsAnswered >= totalQuestions
+        
         progress = await tx.chapterProgress.update({
           where: { id: progress.id },
           data: {
             correctAnswers: correctAnswersCount,
             totalQuestions: uniqueQuestionsAnswered, // Total unique questions answered so far
             score,
+            isCompleted,
+            completedAt: isCompleted && !progress.isCompleted ? new Date() : progress.completedAt,
             lastAccessed: new Date()
           }
         })

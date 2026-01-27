@@ -57,15 +57,17 @@ function QuizContent() {
 
   const loadQuestions = async () => {
     try {
-      // Get count from URL params
+      // Get count and strategy from URL params
       const count = searchParams.get('count') || 'all'
+      const strategy = searchParams.get('strategy') || 'mix'
       setQuestionCount(count as any)
       
-      // Build query string with random and count
+      // Build query string with strategy and count
       // Don't include previous answers - start fresh each time
       const queryParams = new URLSearchParams({
         includeAnswers: 'false', // Start fresh - don't show previous answers
-        random: 'true'
+        random: 'true',
+        strategy: strategy
       })
       if (count !== 'all') {
         queryParams.set('count', count)

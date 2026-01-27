@@ -83,15 +83,17 @@ export default function ProgressPage() {
   // Calculate stats from chapter progress
   const totalChapters = 1 // Currently only Southside Full
   const completedChapters = chapterProgress.filter(cp => cp.isCompleted).length
+  const inProgressChapters = chapterProgress.filter(cp => !cp.isCompleted && cp.totalQuestions > 0).length
   const totalTests = 5
   const completedTests = 0
-  const averageScore = chapterProgress.length > 0
-    ? Math.round(chapterProgress.reduce((sum, cp) => sum + (cp.score || 0), 0) / chapterProgress.length)
+  const averageScore = chapterProgress.length > 0 && chapterProgress.some(cp => cp.score !== null)
+    ? Math.round(chapterProgress.reduce((sum, cp) => sum + (cp.score || 0), 0) / chapterProgress.filter(cp => cp.score !== null).length)
     : 0
   const overallProgress = totalChapters > 0
     ? Math.round((completedChapters / totalChapters) * 100)
     : 0
-  const hoursStudied = 0
+  const totalQuestionsAnswered = chapterProgress.reduce((sum, cp) => sum + cp.totalQuestions, 0)
+  const totalCorrectAnswers = chapterProgress.reduce((sum, cp) => sum + cp.correctAnswers, 0)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
@@ -116,32 +118,41 @@ export default function ProgressPage() {
       {/* Main Content */}
       <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
         {/* Overall Progress */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl shadow-lg p-8 mb-6 text-white">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 mb-4">
-              <span className="text-3xl font-bold text-white">{overallProgress}%</span>
+            <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-white/20 backdrop-blur-sm mb-4 border-4 border-white/30">
+              <span className="text-4xl font-bold">{overallProgress}%</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Overall Progress</h2>
-            <p className="text-gray-600">Keep up the great work!</p>
+            <h2 className="text-3xl font-bold mb-2">Your Learning Progress</h2>
+            <p className="text-green-100">
+              {overallProgress === 100 
+                ? '🎉 Amazing! All chapters completed!' 
+                : overallProgress > 0 
+                ? 'Keep up the excellent work!' 
+                : 'Start your learning journey today!'}
+            </p>
           </div>
 
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
-            <div
-              className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${overallProgress}%` }}
-            ></div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-green-50 rounded-xl">
-              <FiCheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-gray-900">{completedChapters}</p>
-              <p className="text-sm text-gray-600">Chapters Completed</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+              <FiCheckCircle className="w-6 h-6 mx-auto mb-2" />
+              <p className="text-3xl font-bold">{completedChapters}</p>
+              <p className="text-sm text-green-100">Completed</p>
             </div>
-            <div className="text-center p-4 bg-blue-50 rounded-xl">
-              <FiAward className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-gray-900">{completedTests}</p>
-              <p className="text-sm text-gray-600">Tests Passed</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+              <FiClock className="w-6 h-6 mx-auto mb-2" />
+              <p className="text-3xl font-bold">{inProgressChapters}</p>
+              <p className="text-sm text-green-100">In Progress</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+              <FiTrendingUp className="w-6 h-6 mx-auto mb-2" />
+              <p className="text-3xl font-bold">{averageScore}%</p>
+              <p className="text-sm text-green-100">Avg Score</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+              <FiBook className="w-6 h-6 mx-auto mb-2" />
+              <p className="text-3xl font-bold">{totalQuestionsAnswered}</p>
+              <p className="text-sm text-green-100">Questions</p>
             </div>
           </div>
         </div>
