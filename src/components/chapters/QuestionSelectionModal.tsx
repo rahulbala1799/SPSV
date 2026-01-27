@@ -95,7 +95,7 @@ export function QuestionSelectionModal({
                   </p>
                   {unattemptedCount < countText && (
                     <p className="text-xs text-orange-600 mt-1">
-                      ⚠️ You'll get {unattemptedCount} questions instead of {countText}
+                      ⚠️ You&apos;ll get {unattemptedCount} questions instead of {countText}
                     </p>
                   )}
                 </div>
@@ -138,7 +138,7 @@ export function QuestionSelectionModal({
           {allUnattempted && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <p className="text-sm text-green-800">
-                🎉 All questions are new! You'll get a random selection of {countText} questions.
+                🎉 All questions are new! You&apos;ll get a random selection of {countText} questions.
               </p>
             </div>
           )}
@@ -147,7 +147,7 @@ export function QuestionSelectionModal({
           {!hasUnattempted && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                ✅ You've attempted all questions! You'll get a random selection for practice.
+                ✅ You&apos;ve attempted all questions! You&apos;ll get a random selection for practice.
               </p>
             </div>
           )}
