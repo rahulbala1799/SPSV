@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { updateChapterProgress } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,6 +84,17 @@ export async function POST(
         completedAt: new Date(),
         score: progress.score || Math.round((progress.correctAnswers / totalQuestions) * 100)
       }
+    })
+
+    // Track chapter completion for analytics
+    await updateChapterProgress(student.id, params.chapterId, {
+      isCompleted: true,
+      progressPercent: 100,
+      correctAnswers: progress.correctAnswers,
+      totalQuestions: progress.totalQuestions
+    }).catch(err => {
+      // Don't fail the request if analytics tracking fails
+      console.log('[Analytics] Failed to track chapter completion:', err.message)
     })
 
     return NextResponse.json({

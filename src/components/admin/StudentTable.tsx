@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { FiEdit2, FiTrash2, FiMail, FiPhone, FiCalendar } from 'react-icons/fi'
 
 interface Student {
@@ -25,6 +26,8 @@ interface StudentTableProps {
 }
 
 export function StudentTable({ students, onEdit, onDelete }: StudentTableProps) {
+  const router = useRouter()
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
       day: '2-digit',
@@ -78,7 +81,11 @@ export function StudentTable({ students, onEdit, onDelete }: StudentTableProps) 
               </tr>
             ) : (
               students.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50 transition-colors">
+                <tr 
+                  key={student.id} 
+                  onClick={() => router.push(`/admin/students/${student.id}/profile`)}
+                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
@@ -127,14 +134,20 @@ export function StudentTable({ students, onEdit, onDelete }: StudentTableProps) 
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <button
-                      onClick={() => onEdit(student)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit(student)
+                      }}
                       className="text-blue-600 hover:text-blue-900 mr-4"
                       title="Edit student"
                     >
                       <FiEdit2 className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => onDelete(student)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(student)
+                      }}
                       className="text-red-600 hover:text-red-900"
                       title="Delete student"
                     >

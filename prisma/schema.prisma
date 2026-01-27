@@ -35,6 +35,24 @@ enum TestSessionStatus {
   ABANDONED
 }
 
+enum ActivityType {
+  LOGIN
+  LOGOUT
+  CHAPTER_VIEW
+  CHAPTER_COMPLETE
+  QUESTION_ATTEMPT
+  TEST_START
+  TEST_COMPLETE
+  SESSION_START
+  SESSION_END
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
 enum TimedQuestionCategory {
   INDUSTRY
   AREA_KNOWLEDGE
@@ -83,6 +101,10 @@ model Student {
   answers         Answer[]
   chapterProgress ChapterProgress[]
   untimedTestAttempts UntimedTestAttempt[]
+  activities      StudentActivity[]
+  questionAttempts QuestionAttempt[]
+  timedTestAttempts TimedTestAttemptTracking[]
+  dailyActivities  DailyActivity[]
 
   @@map("students")
 }
@@ -169,9 +191,12 @@ model ChapterProgress {
   chapter         Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   
   isCompleted     Boolean   @default(false)
+  progressStatus  ProgressStatus @default(NOT_STARTED)
+  progressPercent Int       @default(0)
   score           Int?      // Percentage score
   totalQuestions  Int
   correctAnswers  Int       @default(0)
+  timeSpentSeconds Int      @default(0)
   startedAt       DateTime?
   completedAt     DateTime?
   
@@ -179,6 +204,8 @@ model ChapterProgress {
   updatedAt       DateTime  @updatedAt
   
   @@unique([studentId, chapterId]) // One progress record per student per chapter
+  @@index([studentId])
+  @@index([chapterId])
   @@map("chapter_progress")
 }
 
@@ -329,4 +356,89 @@ model TimedTestAnswer {
   @@index([sessionId])
   @@index([sessionId, questionId])
   @@map("test_answers")
+}
+
+// ===== ANALYTICS MODELS =====
+
+// Track all student activities for analytics
+model StudentActivity {
+  id            String       @id @default(cuid())
+  studentId     String
+  student       Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  activityType  ActivityType
+  timestamp     DateTime     @default(now())
+  duration      Int?         // Duration in seconds (for sessions)
+  metadata      Json?        // Additional context (chapter_id, question_id, test_id, etc.)
+  
+  @@index([studentId, timestamp])
+  @@index([activityType, timestamp])
+  @@map("student_activities")
+}
+
+// Track individual question attempts for analytics
+model QuestionAttempt {
+  id               String   @id @default(cuid())
+  studentId        String
+  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  questionId       String
+  chapterId        String?
+  topicId          String?
+  attemptedAt      DateTime @default(now())
+  answerGiven      String
+  isCorrect        Boolean
+  timeSpentSeconds Int?
+  attemptNumber    Int      @default(1) // How many times they've tried this question
+  testType         String?  // 'timed', 'untimed', 'practice', 'chapter'
+  
+  @@index([studentId, questionId])
+  @@index([studentId, attemptedAt])
+  @@index([questionId])
+  @@index([chapterId])
+  @@map("question_attempts")
+}
+
+// Track timed test attempts for analytics (separate from TestSession for flexibility)
+model TimedTestAttemptTracking {
+  id                String   @id @default(cuid())
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  testSessionId     String   // Reference to TestSession
+  testType          String   // "FULL_TIMED", "MOCK"
+  attemptNumber     Int      @default(1)
+  startedAt         DateTime @default(now())
+  completedAt       DateTime?
+  durationSeconds   Int?
+  score             Int      @default(0)
+  maxScore          Int
+  percentage        Float    @default(0)
+  questionsTotal    Int
+  questionsCorrect  Int      @default(0)
+  industryCorrect   Int      @default(0)
+  areaCorrect       Int      @default(0)
+  status            String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ABANDONED
+  
+  @@index([studentId, testSessionId])
+  @@index([studentId, completedAt])
+  @@index([studentId, testType])
+  @@map("timed_test_attempts_tracking")
+}
+
+// Daily aggregated stats (for performance optimization)
+model DailyActivity {
+  id                   String   @id @default(cuid())
+  studentId            String
+  student              Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date                 DateTime @db.Date
+  timeSpentSeconds     Int      @default(0)
+  questionsAttempted   Int      @default(0)
+  questionsCorrect     Int      @default(0)
+  chaptersAccessed     Json     @default("[]") // Array of chapter IDs
+  testsAttempted       Json     @default("[]") // Array of test IDs
+  loginCount           Int      @default(0)
+  firstLoginAt         DateTime?
+  lastLogoutAt         DateTime?
+  
+  @@unique([studentId, date])
+  @@index([studentId, date])
+  @@map("daily_activities")
 }
