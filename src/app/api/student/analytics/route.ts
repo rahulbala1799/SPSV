@@ -56,11 +56,35 @@ export async function GET(request: NextRequest) {
       orderBy: { answeredAt: 'desc' }
     })
 
-    // Calculate overall statistics
+    // Get untimed test attempts
+    const untimedTests = await prisma.untimedTestAttempt.findMany({
+      where: { studentId: student.id },
+      include: {
+        testQuestions: {
+          where: { selectedAnswer: { not: null } },
+          select: {
+            isCorrect: true,
+            answeredAt: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    const completedUntimedTests = untimedTests.filter(t => t.state === 'COMPLETED')
+    
+    // Calculate overall statistics (including untimed tests)
     const totalAttempts = allAnswers.length
     const correctAttempts = allAnswers.filter(a => a.isCorrect).length
-    const overallSuccessRate = totalAttempts > 0
-      ? Math.round((correctAttempts / totalAttempts) * 100)
+    
+    // Add untimed test attempts
+    const untimedTestAttempts = untimedTests.flatMap(t => t.testQuestions)
+    const untimedCorrectAttempts = untimedTestAttempts.filter(tq => tq.isCorrect).length
+    
+    const combinedTotalAttempts = totalAttempts + untimedTestAttempts.length
+    const combinedCorrectAttempts = correctAttempts + untimedCorrectAttempts
+    const overallSuccessRate = combinedTotalAttempts > 0
+      ? Math.round((combinedCorrectAttempts / combinedTotalAttempts) * 100)
       : 0
 
     // Get unique questions attempted
@@ -145,18 +169,28 @@ export async function GET(request: NextRequest) {
         : 0
     })).sort((a, b) => b.successRate - a.successRate)
 
-    // Get study streak (days studied)
+    // Get study streak (days studied) - including test activity
     const answerDates = allAnswers.map(a => a.answeredAt.toDateString())
-    const uniqueDates = new Set(answerDates)
-    const daysStudied = uniqueDates.size
+    const testDates = untimedTestAttempts
+      .filter(tq => tq.answeredAt)
+      .map(tq => new Date(tq.answeredAt!).toDateString())
+    const allDates = new Set([...answerDates, ...testDates])
+    const daysStudied = allDates.size
 
-    // Get most recent activity (last 7 days)
+    // Get most recent activity (last 7 days) - including tests
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
     
     const recentAnswers = allAnswers.filter(a => a.answeredAt >= sevenDaysAgo)
-    const recentSuccessRate = recentAnswers.length > 0
-      ? Math.round((recentAnswers.filter(a => a.isCorrect).length / recentAnswers.length) * 100)
+    const recentTestAnswers = untimedTestAttempts.filter(
+      tq => tq.answeredAt && new Date(tq.answeredAt) >= sevenDaysAgo
+    )
+    const recentTotal = recentAnswers.length + recentTestAnswers.length
+    const recentCorrect = 
+      recentAnswers.filter(a => a.isCorrect).length +
+      recentTestAnswers.filter(tq => tq.isCorrect).length
+    const recentSuccessRate = recentTotal > 0
+      ? Math.round((recentCorrect / recentTotal) * 100)
       : 0
 
     // Calculate study duration (first answer to last answer)
@@ -167,21 +201,62 @@ export async function GET(request: NextRequest) {
       studyDuration = Math.ceil((lastAnswer.getTime() - firstAnswer.getTime()) / (1000 * 60 * 60 * 24))
     }
 
+    // Calculate untimed test statistics
+    const untimedTestStats = {
+      totalTests: untimedTests.length,
+      completedTests: completedUntimedTests.length,
+      averageScore: completedUntimedTests.length > 0
+        ? Math.round(
+            completedUntimedTests
+              .filter(t => t.score !== null)
+              .reduce((sum, t) => sum + (t.score || 0), 0) / 
+            completedUntimedTests.filter(t => t.score !== null).length
+          )
+        : null,
+      byCategory: {
+        INDUSTRY_KNOWLEDGE: {
+          total: untimedTests.filter(t => t.category === 'INDUSTRY_KNOWLEDGE').length,
+          completed: completedUntimedTests.filter(t => t.category === 'INDUSTRY_KNOWLEDGE').length,
+          averageScore: (() => {
+            const industryTests = completedUntimedTests.filter(
+              t => t.category === 'INDUSTRY_KNOWLEDGE' && t.score !== null
+            )
+            return industryTests.length > 0
+              ? Math.round(industryTests.reduce((sum, t) => sum + (t.score || 0), 0) / industryTests.length)
+              : null
+          })(),
+        },
+        AREA_KNOWLEDGE: {
+          total: untimedTests.filter(t => t.category === 'AREA_KNOWLEDGE').length,
+          completed: completedUntimedTests.filter(t => t.category === 'AREA_KNOWLEDGE').length,
+          averageScore: (() => {
+            const areaTests = completedUntimedTests.filter(
+              t => t.category === 'AREA_KNOWLEDGE' && t.score !== null
+            )
+            return areaTests.length > 0
+              ? Math.round(areaTests.reduce((sum, t) => sum + (t.score || 0), 0) / areaTests.length)
+              : null
+          })(),
+        },
+      },
+    }
+
     return NextResponse.json({
       overall: {
-        totalAttempts,
-        correctAttempts,
+        totalAttempts: combinedTotalAttempts,
+        correctAttempts: combinedCorrectAttempts,
         overallSuccessRate,
         totalQuestionsAttempted,
         daysStudied,
         studyDuration,
         recentSuccessRate: recentSuccessRate,
-        recentActivityCount: recentAnswers.length
+        recentActivityCount: recentTotal
       },
       difficultyStats,
       chapterPerformance,
       strongestChapters: chapterPerformance.slice(0, 3),
-      weakestChapters: chapterPerformance.slice(-3).reverse()
+      weakestChapters: chapterPerformance.slice(-3).reverse(),
+      untimedTests: untimedTestStats
     }, { status: 200 })
   } catch (error: any) {
     console.error('Get student analytics error:', error)

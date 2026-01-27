@@ -98,9 +98,42 @@ export async function GET(request: NextRequest) {
       ? Math.round((completedChapters / totalChapters) * 100)
       : 0
 
-    // Get total questions answered
+    // Get total questions answered from chapters
     const totalQuestionsAnswered = allProgress.reduce((sum, p) => sum + p.totalQuestions, 0)
     const totalCorrectAnswers = allProgress.reduce((sum, p) => sum + p.correctAnswers, 0)
+
+    // Get untimed test statistics
+    const untimedTests = await prisma.untimedTestAttempt.findMany({
+      where: { studentId: student.id },
+      select: {
+        id: true,
+        category: true,
+        questionCount: true,
+        state: true,
+        score: true,
+        correctAnswers: true,
+        totalAnswered: true,
+        completedAt: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    const completedUntimedTests = untimedTests.filter(t => t.state === 'COMPLETED')
+    const totalUntimedTests = untimedTests.length
+    const completedUntimedTestsCount = completedUntimedTests.length
+    
+    // Calculate average score from untimed tests
+    const untimedTestScores = completedUntimedTests
+      .filter(t => t.score !== null)
+      .map(t => t.score!)
+    const averageUntimedTestScore = untimedTestScores.length > 0
+      ? Math.round(untimedTestScores.reduce((sum, score) => sum + score, 0) / untimedTestScores.length)
+      : null
+
+    // Get total questions from untimed tests
+    const totalUntimedTestQuestions = completedUntimedTests.reduce((sum, t) => sum + t.totalAnswered, 0)
+    const totalUntimedTestCorrect = completedUntimedTests.reduce((sum, t) => sum + t.correctAnswers, 0)
 
     // Get recent activity (last 10 answers)
     const recentActivity = allAnswers.slice(0, 10).map(answer => ({
@@ -145,22 +178,45 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    // Combine chapter and test scores for overall average
+    const allScores = [
+      ...chaptersWithScores.map(p => p.score!),
+      ...untimedTestScores
+    ]
+    const combinedAverageScore = allScores.length > 0
+      ? Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length)
+      : averageScore
+
     return NextResponse.json({
       overview: {
         totalChapters,
         completedChapters,
         inProgressChapters,
         notStartedChapters: totalChapters - completedChapters - inProgressChapters,
-        averageScore,
+        averageScore: combinedAverageScore,
         overallProgress,
-        totalQuestionsAnswered,
-        totalCorrectAnswers,
-        totalTests: 5, // Keep for compatibility (can be made dynamic later)
-        completedTests: 0 // Can be calculated from actual test data when tests are implemented
+        totalQuestionsAnswered: totalQuestionsAnswered + totalUntimedTestQuestions,
+        totalCorrectAnswers: totalCorrectAnswers + totalUntimedTestCorrect,
+        totalTests: totalUntimedTests,
+        completedTests: completedUntimedTestsCount,
+        untimedTests: {
+          total: totalUntimedTests,
+          completed: completedUntimedTestsCount,
+          averageScore: averageUntimedTestScore,
+          totalQuestions: totalUntimedTestQuestions,
+          totalCorrect: totalUntimedTestCorrect,
+        }
       },
       chapterProgress: chapterProgressList,
       recentActivity,
-      recentCompletions
+      recentCompletions,
+      recentTestCompletions: completedUntimedTests.slice(0, 5).map(t => ({
+        testId: t.id,
+        category: t.category,
+        questionCount: t.questionCount,
+        score: t.score,
+        completedAt: t.completedAt,
+      }))
     }, { status: 200 })
   } catch (error: any) {
     console.error('Get student progress error:', error)

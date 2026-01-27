@@ -40,6 +40,21 @@ interface ProgressOverview {
   totalCorrectAnswers: number
   totalTests: number
   completedTests: number
+  untimedTests?: {
+    total: number
+    completed: number
+    averageScore: number | null
+    totalQuestions: number
+    totalCorrect: number
+  }
+}
+
+interface RecentTestCompletion {
+  testId: string
+  category: string
+  questionCount: number
+  score: number | null
+  completedAt: string | null
 }
 
 interface AnalyticsSummary {
@@ -75,6 +90,7 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true)
   const [chapterProgress, setChapterProgress] = useState<ChapterProgress[]>([])
   const [recentCompletions, setRecentCompletions] = useState<RecentCompletion[]>([])
+  const [recentTestCompletions, setRecentTestCompletions] = useState<RecentTestCompletion[]>([])
   const [overview, setOverview] = useState<ProgressOverview | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null)
   const [showAnalytics, setShowAnalytics] = useState(false)
@@ -112,6 +128,7 @@ export default function ProgressPage() {
         setOverview(data.overview)
         setChapterProgress(data.chapterProgress || [])
         setRecentCompletions(data.recentCompletions || [])
+        setRecentTestCompletions(data.recentTestCompletions || [])
       }
 
       // Load analytics summary
@@ -383,20 +400,53 @@ export default function ProgressPage() {
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <FiAward className="w-5 h-5 text-blue-600" />
               </div>
-              <h3 className="font-bold text-gray-900">Tests</h3>
+              <h3 className="font-bold text-gray-900">Untimed Tests</h3>
             </div>
-            <div className="mb-2">
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Progress</span>
-                <span className="font-medium text-gray-900">Coming Soon</span>
+            {overview?.untimedTests && overview.untimedTests.total > 0 ? (
+              <>
+                <div className="mb-2">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-600">Progress</span>
+                    <span className="font-medium text-gray-900">
+                      {overview.untimedTests.completed}/{overview.untimedTests.total}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      style={{ 
+                        width: `${(overview.untimedTests.completed / overview.untimedTests.total) * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+                {overview.untimedTests.averageScore !== null && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <p className="text-sm text-gray-600">Average Score</p>
+                    <p className="text-2xl font-bold text-blue-600">{overview.untimedTests.averageScore}%</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="mb-2">
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-600">Progress</span>
+                  <span className="font-medium text-gray-900">No tests yet</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-gray-300 h-2 rounded-full"
+                    style={{ width: '0%' }}
+                  ></div>
+                </div>
+                <Link
+                  href="/dashboard/tests/untimed"
+                  className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Start your first test →
+                </Link>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-gray-300 h-2 rounded-full"
-                  style={{ width: '0%' }}
-                ></div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Average Score */}
@@ -414,7 +464,7 @@ export default function ProgressPage() {
         </div>
 
         {/* Recent Completions */}
-        {recentCompletions.length > 0 && (
+        {(recentCompletions.length > 0 || recentTestCompletions.length > 0) && (
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -423,11 +473,15 @@ export default function ProgressPage() {
               <h3 className="font-bold text-gray-900">Recent Completions</h3>
             </div>
             <div className="space-y-3">
+              {/* Chapter Completions */}
               {recentCompletions.map((completion) => (
                 <div key={completion.chapterId} className="p-4 bg-green-50 rounded-xl border border-green-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold text-gray-900">{completion.chapterTitle}</h4>
+                      <div className="flex items-center gap-2">
+                        <FiBook className="w-4 h-4 text-green-600" />
+                        <h4 className="font-semibold text-gray-900">{completion.chapterTitle}</h4>
+                      </div>
                       <p className="text-xs text-gray-600 mt-1">
                         Completed: {completion.completedAt ? new Date(completion.completedAt).toLocaleDateString() : 'Unknown'}
                       </p>
@@ -437,6 +491,31 @@ export default function ProgressPage() {
                     )}
                   </div>
                 </div>
+              ))}
+              {/* Test Completions */}
+              {recentTestCompletions.map((test) => (
+                <Link
+                  key={test.testId}
+                  href={`/dashboard/tests/untimed/${test.testId}/results`}
+                  className="block p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <FiAward className="w-4 h-4 text-blue-600" />
+                        <h4 className="font-semibold text-gray-900">
+                          {test.category === 'INDUSTRY_KNOWLEDGE' ? 'Industry' : 'Area'} Knowledge Test
+                        </h4>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {test.questionCount} questions • Completed: {test.completedAt ? new Date(test.completedAt).toLocaleDateString() : 'Unknown'}
+                      </p>
+                    </div>
+                    {test.score !== null && (
+                      <span className="text-2xl font-bold text-blue-600">{test.score}%</span>
+                    )}
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
