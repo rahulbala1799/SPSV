@@ -388,14 +388,12 @@ export default function ProgressPage() {
             <div className="mb-2">
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-600">Progress</span>
-                <span className="font-medium text-gray-900">
-                  {completedTests}/{totalTests}
-                </span>
+                <span className="font-medium text-gray-900">Coming Soon</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{ width: `${(completedTests / totalTests) * 100}%` }}
+                  className="bg-gray-300 h-2 rounded-full"
+                  style={{ width: '0%' }}
                 ></div>
               </div>
             </div>

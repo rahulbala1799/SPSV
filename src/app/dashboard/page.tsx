@@ -208,9 +208,7 @@ export default function StudentDashboard() {
               <p className="text-xs text-gray-600 mt-1">Chapters</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-2xl font-bold text-blue-600">
-                {student.progress?.completedTests}/{student.progress?.totalTests}
-              </p>
+              <p className="text-2xl font-bold text-blue-600">-</p>
               <p className="text-xs text-gray-600 mt-1">Tests</p>
             </div>
           </div>
@@ -263,7 +261,7 @@ export default function StudentDashboard() {
                 <FiClipboard className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
               </div>
               <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                {student.progress?.completedTests} of {student.progress?.totalTests}
+                Coming Soon
               </span>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Tests</h3>
