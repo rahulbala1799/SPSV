@@ -1,28 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
     // Get authenticated user
-    const meResponse = await fetch(
-      new URL('/api/auth/me', request.url).toString(),
-      {
-        headers: { cookie: request.headers.get('cookie') || '' },
-      }
-    )
+    const user = await getCurrentUser(request)
 
-    if (!meResponse.ok) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized', code: 'AUTH_001' },
         { status: 401 }
       )
     }
 
-    const { user } = await meResponse.json()
-
-    if (!user || user.role !== 'STUDENT') {
+    if (user.role !== 'STUDENT') {
       return NextResponse.json(
         { error: 'Student access required', code: 'AUTH_004' },
         { status: 403 }

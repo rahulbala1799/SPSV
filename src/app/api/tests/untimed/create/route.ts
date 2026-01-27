@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,44 +20,16 @@ function shuffleArray<T>(array: T[]): T[] {
 export async function POST(request: NextRequest) {
   try {
     // Get authenticated user
-    const authHeader = request.headers.get('cookie')
-    if (!authHeader) {
+    const user = await getCurrentUser(request)
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized', code: 'AUTH_001' },
         { status: 401 }
       )
     }
 
-    // Extract session and get user
-    const sessionCookie = authHeader
-      .split(';')
-      .find((c) => c.trim().startsWith('session='))
-    
-    if (!sessionCookie) {
-      return NextResponse.json(
-        { error: 'Session not found', code: 'AUTH_002' },
-        { status: 401 }
-      )
-    }
-
-    // Get user from /api/auth/me
-    const meResponse = await fetch(
-      new URL('/api/auth/me', request.url).toString(),
-      {
-        headers: { cookie: request.headers.get('cookie') || '' },
-      }
-    )
-
-    if (!meResponse.ok) {
-      return NextResponse.json(
-        { error: 'Failed to authenticate', code: 'AUTH_003' },
-        { status: 401 }
-      )
-    }
-
-    const { user } = await meResponse.json()
-
-    if (!user || user.role !== 'STUDENT') {
+    if (user.role !== 'STUDENT') {
       return NextResponse.json(
         { error: 'Student access required', code: 'AUTH_004' },
         { status: 403 }
