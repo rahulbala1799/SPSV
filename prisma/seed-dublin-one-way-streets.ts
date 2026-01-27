@@ -27,7 +27,7 @@ async function main() {
   // Define all 27 questions
   const questions = [
     {
-      questionText: 'Which street is one-way from Cornmarket to Dean Street?',
+      questionText: 'What is the name of the one-way street that runs from Cornmarket to Dean Street in Dublin?',
       questionNumber: 1,
       options: [
         { id: 'A', text: 'Francis Street' },
@@ -36,12 +36,12 @@ async function main() {
         { id: 'D', text: 'Bride Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Francis Street is one-way from Cornmarket to Dean Street.',
+      explanation: 'Francis Street is a one-way street in Dublin that runs from Cornmarket to Dean Street. This is important knowledge for navigating the Liberties area of Dublin city center.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street operates one-way from King Street North to Little Britain Street?',
+      questionText: 'What is the name of the one-way street that operates from King Street North to Little Britain Street?',
       questionNumber: 2,
       options: [
         { id: 'A', text: 'Green Street' },
@@ -50,12 +50,12 @@ async function main() {
         { id: 'D', text: 'Brunswick Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Green Street operates one-way from King Street North to Little Britain Street.',
+      explanation: 'Green Street is a one-way street that operates from King Street North to Little Britain Street in Dublin\'s north inner city area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Coombe to Thomas Street?',
+      questionText: 'What is the name of the one-way street that runs from Coombe to Thomas Street?',
       questionNumber: 3,
       options: [
         { id: 'A', text: 'Meath Street' },
@@ -64,12 +64,12 @@ async function main() {
         { id: 'D', text: 'Talbot Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Meath Street is one-way from Coombe to Thomas Street.',
+      explanation: 'Meath Street is a one-way street that runs from Coombe to Thomas Street in the Liberties area of Dublin.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Leinster Street South to St. Stephen\'s Green North?',
+      questionText: 'What is the name of the one-way street that runs from Leinster Street South to St. Stephen\'s Green North?',
       questionNumber: 4,
       options: [
         { id: 'A', text: 'Kildare Street' },
@@ -78,12 +78,12 @@ async function main() {
         { id: 'D', text: 'Molesworth Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Kildare Street is one-way from Leinster Street South to St. Stephen\'s Green North.',
+      explanation: 'Kildare Street is a one-way street that runs from Leinster Street South to St. Stephen\'s Green North. This street is located in the prestigious Georgian area of Dublin and is home to the National Library and National Museum.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Dawson Street to Kildare Street?',
+      questionText: 'What is the name of the one-way street that runs from Dawson Street to Kildare Street?',
       questionNumber: 5,
       options: [
         { id: 'A', text: 'Molesworth Street' },
@@ -92,12 +92,12 @@ async function main() {
         { id: 'D', text: 'D\'Olier Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Molesworth Street is one-way from Dawson Street to Kildare Street.',
+      explanation: 'Molesworth Street is a one-way street that runs from Dawson Street to Kildare Street in Dublin\'s city center, connecting the shopping district to the Georgian quarter.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Grangegorman Lower to Manor Street?',
+      questionText: 'What is the name of the one-way street that runs from Grangegorman Lower to Manor Street?',
       questionNumber: 6,
       options: [
         { id: 'A', text: 'Kirwan Street' },
@@ -106,12 +106,12 @@ async function main() {
         { id: 'D', text: 'Church Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Kirwan Street is one-way from Grangegorman Lower to Manor Street.',
+      explanation: 'Kirwan Street is a one-way street that runs from Grangegorman Lower to Manor Street in Dublin\'s north inner city area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Meath Street to Pimlico?',
+      questionText: 'What is the name of the one-way street that runs from Meath Street to Pimlico?',
       questionNumber: 7,
       options: [
         { id: 'A', text: 'Gray Street' },
@@ -120,12 +120,12 @@ async function main() {
         { id: 'D', text: 'Fade Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Gray Street is one-way from Meath Street to Pimlico.',
+      explanation: 'Gray Street is a one-way street that runs from Meath Street to Pimlico in the Liberties area of Dublin.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Stephen Street Lower to Exchequer Street?',
+      questionText: 'What is the name of the one-way street that runs from Stephen Street Lower to Exchequer Street?',
       questionNumber: 8,
       options: [
         { id: 'A', text: 'Drury Street' },
@@ -134,12 +134,12 @@ async function main() {
         { id: 'D', text: 'South Great Georges Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Drury Street is one-way from Stephen Street Lower to Exchequer Street.',
+      explanation: 'Drury Street is a one-way street that runs from Stephen Street Lower to Exchequer Street in Dublin\'s city center, connecting the shopping district.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Bride Street to Patrick Street?',
+      questionText: 'What is the name of the one-way street that runs from Bride Street to Patrick Street?',
       questionNumber: 9,
       options: [
         { id: 'A', text: 'Bulle Alley' },
@@ -148,12 +148,12 @@ async function main() {
         { id: 'D', text: 'Meath Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Bulle Alley is one-way from Bride Street to Patrick Street.',
+      explanation: 'Bulle Alley is a one-way street that runs from Bride Street to Patrick Street in the Liberties area of Dublin.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from College Green to Aston Quay?',
+      questionText: 'What is the name of the one-way street that runs from College Green to Aston Quay?',
       questionNumber: 10,
       options: [
         { id: 'A', text: 'Westmoreland Street' },
@@ -162,12 +162,12 @@ async function main() {
         { id: 'D', text: 'Parliament Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Westmoreland Street is one-way from College Green to Aston Quay.',
+      explanation: 'Westmoreland Street is a major one-way street that runs from College Green to Aston Quay, connecting the city center to the quays along the River Liffey.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Burgh Quay to College Green?',
+      questionText: 'What is the name of the one-way street that runs from Burgh Quay to College Green?',
       questionNumber: 11,
       options: [
         { id: 'A', text: 'D\'Olier Street' },
@@ -176,12 +176,12 @@ async function main() {
         { id: 'D', text: 'Parliament Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'D\'Olier Street is one-way from Burgh Quay to College Green.',
+      explanation: 'D\'Olier Street is a one-way street that runs from Burgh Quay to College Green, providing an important route from the quays to the city center.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Blackhall Place to Church Street?',
+      questionText: 'What is the name of the one-way street that runs from Blackhall Place to Church Street?',
       questionNumber: 12,
       options: [
         { id: 'A', text: 'Brunswick Street' },
@@ -190,12 +190,12 @@ async function main() {
         { id: 'D', text: 'Green Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Brunswick Street is one-way from Blackhall Place to Church Street.',
+      explanation: 'Brunswick Street is a one-way street that runs from Blackhall Place to Church Street in Dublin\'s north inner city area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from King Street North to Arran Quay?',
+      questionText: 'What is the name of the one-way street that runs from King Street North to Arran Quay?',
       questionNumber: 13,
       options: [
         { id: 'A', text: 'Queen Street' },
@@ -204,12 +204,12 @@ async function main() {
         { id: 'D', text: 'Green Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Queen Street is one-way from King Street North to Arran Quay.',
+      explanation: 'Queen Street is a one-way street that runs from King Street North to Arran Quay, connecting the north inner city to the quays.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from South Great Georges Street to Exchequer Street?',
+      questionText: 'What is the name of the one-way street that runs from South Great Georges Street to Exchequer Street?',
       questionNumber: 14,
       options: [
         { id: 'A', text: 'Wicklow Street' },
@@ -218,12 +218,12 @@ async function main() {
         { id: 'D', text: 'Nassau Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Wicklow Street is one-way from South Great Georges Street to Exchequer Street.',
+      explanation: 'Wicklow Street is a one-way street that runs from South Great Georges Street to Exchequer Street in Dublin\'s city center shopping district.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Dame Street to Wellington Quay?',
+      questionText: 'What is the name of the one-way street that runs from Dame Street to Wellington Quay?',
       questionNumber: 15,
       options: [
         { id: 'A', text: 'Eustace Street' },
@@ -232,12 +232,12 @@ async function main() {
         { id: 'D', text: 'Fleet Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Eustace Street is one-way from Dame Street to Wellington Quay.',
+      explanation: 'Eustace Street is a one-way street that runs from Dame Street to Wellington Quay, connecting the main thoroughfare to the quays along the River Liffey.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Amiens Street to Marlborough Street?',
+      questionText: 'What is the name of the one-way street that runs from Amiens Street to Marlborough Street?',
       questionNumber: 16,
       options: [
         { id: 'A', text: 'Talbot Street' },
@@ -246,12 +246,12 @@ async function main() {
         { id: 'D', text: 'Summerhill' }
       ],
       correctAnswer: 'A',
-      explanation: 'Talbot Street is one-way from Amiens Street to Marlborough Street.',
+      explanation: 'Talbot Street is a one-way street that runs from Amiens Street to Marlborough Street in Dublin\'s north inner city, connecting the Connolly Station area to the city center.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Drury Street to South Great Georges Street?',
+      questionText: 'What is the name of the one-way street that runs from Drury Street to South Great Georges Street?',
       questionNumber: 17,
       options: [
         { id: 'A', text: 'Fade Street' },
@@ -260,12 +260,12 @@ async function main() {
         { id: 'D', text: 'Dame Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Fade Street is one-way from Drury Street to South Great Georges Street.',
+      explanation: 'Fade Street is a one-way street that runs from Drury Street to South Great Georges Street in Dublin\'s city center shopping district.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Tara Street to Hawkins Street?',
+      questionText: 'What is the name of the one-way street that runs from Tara Street to Hawkins Street?',
       questionNumber: 18,
       options: [
         { id: 'A', text: 'Poolbeg Street' },
@@ -274,12 +274,12 @@ async function main() {
         { id: 'D', text: 'Mark Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Poolbeg Street is one-way from Tara Street to Hawkins Street.',
+      explanation: 'Poolbeg Street is a one-way street that runs from Tara Street to Hawkins Street, connecting the Tara Street DART station area to the city center.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Townsend Street to Pearse Street?',
+      questionText: 'What is the name of the one-way street that runs from Townsend Street to Pearse Street?',
       questionNumber: 19,
       options: [
         { id: 'A', text: 'Shaw Street' },
@@ -288,12 +288,12 @@ async function main() {
         { id: 'D', text: 'Lombard Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Shaw Street is one-way from Townsend Street to Pearse Street.',
+      explanation: 'Shaw Street is a one-way street that runs from Townsend Street to Pearse Street in Dublin\'s south inner city area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Pearse Street to Townsend Street?',
+      questionText: 'What is the name of the one-way street that runs from Pearse Street to Townsend Street?',
       questionNumber: 20,
       options: [
         { id: 'A', text: 'Mark Street' },
@@ -302,12 +302,12 @@ async function main() {
         { id: 'D', text: 'Poolbeg Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Mark Street is one-way from Pearse Street to Townsend Street.',
+      explanation: 'Mark Street is a one-way street that runs from Pearse Street to Townsend Street, providing a return route in the opposite direction to Shaw Street.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Stephens Street South to Adelaide Road?',
+      questionText: 'What is the name of the one-way street that runs from Stephens Street South to Adelaide Road?',
       questionNumber: 21,
       options: [
         { id: 'A', text: 'Earlsfort Terrace' },
@@ -316,12 +316,12 @@ async function main() {
         { id: 'D', text: 'Harcourt Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Earlsfort Terrace is one-way from Stephens Street South to Adelaide Road.',
+      explanation: 'Earlsfort Terrace is a one-way street that runs from Stephens Street South to Adelaide Road, connecting the city center to the Grand Canal area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Camden Street Lower to New Bride Street?',
+      questionText: 'What is the name of the one-way street that runs from Camden Street Lower to New Bride Street?',
       questionNumber: 22,
       options: [
         { id: 'A', text: 'Camden Row' },
@@ -330,12 +330,12 @@ async function main() {
         { id: 'D', text: 'Wexford Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Camden Row is one-way from Camden Street Lower to New Bride Street.',
+      explanation: 'Camden Row is a one-way street that runs from Camden Street Lower to New Bride Street in Dublin\'s south inner city area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Baggot Street Lower to Mount Street Upper?',
+      questionText: 'What is the name of the one-way street that runs from Baggot Street Lower to Mount Street Upper?',
       questionNumber: 23,
       options: [
         { id: 'A', text: 'James Street East' },
@@ -344,12 +344,12 @@ async function main() {
         { id: 'D', text: 'Shelbourne Road' }
       ],
       correctAnswer: 'A',
-      explanation: 'James Street East is one-way from Baggot Street Lower to Mount Street Upper.',
+      explanation: 'James Street East is a one-way street that runs from Baggot Street Lower to Mount Street Upper in Dublin\'s Ballsbridge area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Dame Street to East Essex Street?',
+      questionText: 'What is the name of the one-way street that runs from Dame Street to East Essex Street?',
       questionNumber: 24,
       options: [
         { id: 'A', text: 'Sycamore Street' },
@@ -358,12 +358,12 @@ async function main() {
         { id: 'D', text: 'Parliament Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Sycamore Street is one-way from Dame Street to East Essex Street.',
+      explanation: 'Sycamore Street is a one-way street that runs from Dame Street to East Essex Street, connecting the main thoroughfare to the Temple Bar area.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Stephens Green North to Nassau Street?',
+      questionText: 'What is the name of the one-way street that runs from St. Stephen\'s Green North to Nassau Street?',
       questionNumber: 25,
       options: [
         { id: 'A', text: 'Dawson Street' },
@@ -372,12 +372,12 @@ async function main() {
         { id: 'D', text: 'Leinster Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Dawson Street is one-way from Stephens Green North to Nassau Street.',
+      explanation: 'Dawson Street is a one-way street that runs from St. Stephen\'s Green North to Nassau Street, connecting the prestigious Georgian square to the shopping and cultural district.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Suffolk Street to Leinster Street South?',
+      questionText: 'What is the name of the one-way street that runs from Suffolk Street to Leinster Street South?',
       questionNumber: 26,
       options: [
         { id: 'A', text: 'Nassau Street' },
@@ -386,12 +386,12 @@ async function main() {
         { id: 'D', text: 'Molesworth Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'Nassau Street is one-way from Suffolk Street to Leinster Street South.',
+      explanation: 'Nassau Street is a one-way street that runs from Suffolk Street to Leinster Street South, connecting the shopping district to the Georgian quarter near Trinity College.',
       points: 1,
       difficulty: 'medium'
     },
     {
-      questionText: 'Which street is one-way from Parliament Street to Eustace Street?',
+      questionText: 'What is the name of the one-way street that runs from Parliament Street to Eustace Street?',
       questionNumber: 27,
       options: [
         { id: 'A', text: 'East Essex Street' },
@@ -400,7 +400,7 @@ async function main() {
         { id: 'D', text: 'Werburgh Street' }
       ],
       correctAnswer: 'A',
-      explanation: 'East Essex Street is one-way from Parliament Street to Eustace Street.',
+      explanation: 'East Essex Street is a one-way street that runs from Parliament Street to Eustace Street, connecting the Temple Bar area to the quays.',
       points: 1,
       difficulty: 'medium'
     }
