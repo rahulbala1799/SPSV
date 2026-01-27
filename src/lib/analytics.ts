@@ -7,6 +7,19 @@
 
 import { prisma } from './prisma'
 
+/**
+ * Time calculation constants
+ * Based on average time spent per question
+ */
+export const TIME_PER_QUESTION_SECONDS = 40 // Average 40 seconds per question
+
+/**
+ * Calculate study time from number of questions answered
+ */
+export function calculateTimeFromQuestions(questionCount: number): number {
+  return questionCount * TIME_PER_QUESTION_SECONDS
+}
+
 export type ActivityType = 
   | 'LOGIN'
   | 'LOGOUT'
@@ -97,6 +110,49 @@ export async function trackQuestionAttempt(
 }
 
 /**
+ * Calculate and update time spent for a chapter based on questions answered
+ */
+export async function calculateChapterTimeFromAnswers(
+  studentId: string,
+  chapterId: string
+): Promise<number> {
+  try {
+    // Count total answers for this chapter
+    const answerCount = await prisma.answer.count({
+      where: {
+        studentId,
+        question: {
+          chapterId
+        }
+      }
+    })
+
+    // Calculate time: 40 seconds per question answered
+    const calculatedTime = calculateTimeFromQuestions(answerCount)
+
+    // Update chapter progress with calculated time
+    await prisma.chapterProgress.updateMany({
+      where: {
+        studentId,
+        chapterId
+      },
+      data: {
+        timeSpentSeconds: calculatedTime
+      }
+    })
+
+    return calculatedTime
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Analytics] Time calculation skipped')
+    } else {
+      console.error('[Analytics] Failed to calculate chapter time:', error)
+    }
+    return 0
+  }
+}
+
+/**
  * Update chapter progress with time tracking
  */
 export async function updateChapterProgress(
@@ -133,9 +189,18 @@ export async function updateChapterProgress(
       }
     }
 
-    // Accumulate time spent
-    if (updates.timeSpentSeconds && existing) {
-      data.timeSpentSeconds = existing.timeSpentSeconds + updates.timeSpentSeconds
+    // If timeSpentSeconds is not provided, calculate from questions answered
+    if (!updates.timeSpentSeconds) {
+      const calculatedTime = await calculateChapterTimeFromAnswers(studentId, chapterId)
+      if (calculatedTime > 0) {
+        data.timeSpentSeconds = calculatedTime
+      } else if (existing) {
+        // Keep existing time if calculation fails
+        data.timeSpentSeconds = existing.timeSpentSeconds
+      }
+    } else if (existing) {
+      // Use provided time or accumulate if it's an increment
+      data.timeSpentSeconds = updates.timeSpentSeconds
     }
 
     await prisma.chapterProgress.upsert({
@@ -219,6 +284,43 @@ export async function trackTimedTestCompletion(
       console.log('[Analytics] Test tracking skipped')
     } else {
       console.error('[Analytics] Failed to track test:', error)
+    }
+  }
+}
+
+/**
+ * Recalculate time spent for all chapters for a student
+ * Useful for migrating existing data or fixing time calculations
+ */
+export async function recalculateStudentTime(studentId: string): Promise<{
+  chaptersUpdated: number
+  totalTimeCalculated: number
+}> {
+  try {
+    const chapters = await prisma.chapter.findMany({
+      where: { isActive: true }
+    })
+
+    let chaptersUpdated = 0
+    let totalTime = 0
+
+    for (const chapter of chapters) {
+      const time = await calculateChapterTimeFromAnswers(studentId, chapter.id)
+      if (time > 0) {
+        chaptersUpdated++
+        totalTime += time
+      }
+    }
+
+    return {
+      chaptersUpdated,
+      totalTimeCalculated: totalTime
+    }
+  } catch (error) {
+    console.error('[Analytics] Failed to recalculate student time:', error)
+    return {
+      chaptersUpdated: 0,
+      totalTimeCalculated: 0
     }
   }
 }

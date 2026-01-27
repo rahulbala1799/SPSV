@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { trackQuestionAttempt, calculateChapterTimeFromAnswers, TIME_PER_QUESTION_SECONDS } from '@/lib/analytics'
 import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
@@ -188,6 +189,32 @@ export async function POST(
 
       return { answer, progress }
     })
+
+    // Track question attempt with calculated time (40 seconds per question)
+    const student = await prisma.student.findUnique({
+      where: { userId: user.id }
+    })
+
+    if (student) {
+      // Track the question attempt
+      await trackQuestionAttempt(
+        student.id,
+        question.id,
+        selectedAnswer.toUpperCase(),
+        isCorrect,
+        TIME_PER_QUESTION_SECONDS, // 40 seconds per question
+        params.chapterId,
+        'chapter'
+      ).catch(err => {
+        // Don't fail the request if tracking fails
+        console.log('[Analytics] Question tracking failed:', err.message)
+      })
+
+      // Update chapter time based on all questions answered
+      await calculateChapterTimeFromAnswers(student.id, params.chapterId).catch(err => {
+        console.log('[Analytics] Time calculation failed:', err.message)
+      })
+    }
 
     return NextResponse.json({
       success: true,

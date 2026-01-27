@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
+import { calculateTimeFromQuestions } from '@/lib/analytics'
 
 export async function GET(
   request: NextRequest,
@@ -48,7 +49,23 @@ export async function GET(
     const currentChapter = currentChapterProgress?.chapter.title || null
 
     // Calculate total time spent from chapter progress
-    const totalStudyTime = chapterProgress.reduce((sum, cp) => sum + (cp.timeSpentSeconds || 0), 0)
+    // If timeSpentSeconds is 0 or null, calculate from questions answered
+    let totalStudyTime = chapterProgress.reduce((sum, cp) => {
+      if (cp.timeSpentSeconds && cp.timeSpentSeconds > 0) {
+        return sum + cp.timeSpentSeconds
+      }
+      // Calculate from questions if time not set
+      return sum + calculateTimeFromQuestions(cp.totalQuestions)
+    }, 0)
+
+    // Also add time from test questions if chapter progress time is missing
+    if (totalStudyTime === 0) {
+      // Fallback: calculate from all answers
+      const totalAnswers = await prisma.answer.count({
+        where: { studentId }
+      })
+      totalStudyTime = calculateTimeFromQuestions(totalAnswers)
+    }
 
     // 2. Untimed Test Statistics
     const untimedTests = await prisma.untimedTestAttempt.findMany({

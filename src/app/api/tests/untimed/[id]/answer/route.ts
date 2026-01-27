@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { trackQuestionAttempt, TIME_PER_QUESTION_SECONDS } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
 
@@ -233,6 +234,23 @@ export async function POST(
         isModification,
       }
     })
+
+    // Track question attempt with calculated time (40 seconds per question)
+    if (!result.isModification) {
+      // Only track new answers, not modifications
+      await trackQuestionAttempt(
+        student.id,
+        testQuestion.questionId,
+        selectedAnswer,
+        result.updatedTestQuestion.isCorrect || false,
+        TIME_PER_QUESTION_SECONDS, // 40 seconds per question
+        undefined, // No chapter for untimed tests
+        'untimed'
+      ).catch(err => {
+        // Don't fail the request if tracking fails
+        console.log('[Analytics] Question tracking failed:', err.message)
+      })
+    }
 
     return NextResponse.json(
       {

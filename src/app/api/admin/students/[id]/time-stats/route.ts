@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
+import { calculateTimeFromQuestions, calculateChapterTimeFromAnswers } from '@/lib/analytics'
 
 export async function GET(
   request: NextRequest,
@@ -35,7 +36,17 @@ export async function GET(
       include: { chapter: true }
     })
 
-    const totalTimeSpent = chapterProgress.reduce((sum, cp) => sum + (cp.timeSpentSeconds || 0), 0)
+    // Calculate time - use stored time or calculate from questions
+    let totalTimeSpent = 0
+    for (const cp of chapterProgress) {
+      if (cp.timeSpentSeconds && cp.timeSpentSeconds > 0) {
+        totalTimeSpent += cp.timeSpentSeconds
+      } else {
+        // Calculate from questions answered for this chapter
+        const calculatedTime = await calculateChapterTimeFromAnswers(studentId, cp.chapterId)
+        totalTimeSpent += calculatedTime
+      }
+    }
     const avgTimePerDay = daysSinceEnrollment > 0 ? totalTimeSpent / daysSinceEnrollment : 0
 
     // Time spent per chapter
