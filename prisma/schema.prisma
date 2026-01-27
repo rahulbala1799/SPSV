@@ -24,6 +24,22 @@ enum QuestionCategory {
   AREA_KNOWLEDGE
 }
 
+enum TestType {
+  FULL_TIMED
+  MOCK
+}
+
+enum TestSessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum TimedQuestionCategory {
+  INDUSTRY
+  AREA_KNOWLEDGE
+}
+
 // User model for authentication
 model User {
   id            String    @id @default(cuid())
@@ -37,6 +53,7 @@ model User {
   
   // Relation to student profile if user is a student
   studentProfile Student?
+  testSessions   TestSession[]
 
   @@index([email])
   @@map("users")
@@ -211,4 +228,105 @@ model TestQuestion {
   @@unique([testAttemptId, questionId])
   @@index([idempotencyKey])
   @@map("test_questions")
+}
+
+// Question Bank - Master repository of all available questions for timed tests
+model QuestionBank {
+  id            String              @id @default(cuid())
+  questionText  String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctAnswer String
+  explanation   String?
+  category      TimedQuestionCategory
+  isActive      Boolean             @default(true)
+  timesUsed     Int                 @default(0)
+  timesCorrect  Int                 @default(0)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  
+  testQuestions TimedTestQuestion[]
+  
+  @@index([category])
+  @@index([category, isActive])
+  @@map("question_bank")
+}
+
+// Test Session - Track user test attempts for timed tests
+model TestSession {
+  id                String            @id @default(cuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testType          TestType
+  status            TestSessionStatus @default(IN_PROGRESS)
+  totalQuestions    Int
+  industryQuestions Int               @default(0)
+  areaQuestions     Int               @default(0)
+  timeAllotted      Int               // in seconds
+  timeRemaining     Int               // in seconds
+  score             Int?
+  scorePercentage   Decimal?
+  industryScore     Int               @default(0)
+  areaScore         Int               @default(0)
+  industryPercentage Decimal?
+  areaPercentage    Decimal?
+  startedAt         DateTime          @default(now())
+  completedAt       DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  questions         TimedTestQuestion[]
+  answers           TimedTestAnswer[]
+  
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, completedAt])
+  @@index([testType])
+  @@map("test_sessions")
+}
+
+// Test Question - Questions used in a specific test session (snapshot)
+model TimedTestQuestion {
+  id            String              @id @default(cuid())
+  sessionId     String
+  session       TestSession         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionBankId String
+  questionBank  QuestionBank        @relation(fields: [questionBankId], references: [id], onDelete: Restrict)
+  orderNumber   Int
+  questionText  String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctAnswer String
+  explanation   String?
+  category      TimedQuestionCategory
+  createdAt     DateTime            @default(now())
+  
+  answer        TimedTestAnswer?
+  
+  @@index([sessionId])
+  @@index([sessionId, orderNumber])
+  @@map("timed_test_questions")
+}
+
+// Test Answer - User's answers during timed test
+model TimedTestAnswer {
+  id            String            @id @default(cuid())
+  sessionId     String
+  session       TestSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId    String            @unique
+  question      TimedTestQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedAnswer String?
+  isCorrect     Boolean?
+  timeSpent     Int               @default(0) // in seconds
+  answeredAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  @@index([sessionId])
+  @@index([sessionId, questionId])
+  @@map("test_answers")
 }
