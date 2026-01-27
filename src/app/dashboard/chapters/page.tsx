@@ -70,6 +70,30 @@ export default function ChaptersPage() {
       completed: false,
       locked: false
     },
+    {
+      id: 'industry-5',
+      title: 'Working as an SPSV Operator',
+      description: 'SPSV vehicle licensing, equipment requirements, passenger regulations, and compliance',
+      duration: '40 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'industry-7',
+      title: 'Taximeter Fares',
+      description: 'National Maximum Taxi Fare, tariff rates, booking fees, and fare regulations',
+      duration: '30 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'industry-8',
+      title: 'Delivering Customer Satisfaction',
+      description: 'Customer service standards, fare regulations, complaint procedures, and passenger rights',
+      duration: '45 min',
+      completed: false,
+      locked: false
+    },
   ]
 
   const areaChapters: Chapter[] = [
