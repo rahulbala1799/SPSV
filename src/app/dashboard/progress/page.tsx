@@ -395,12 +395,18 @@ export default function ProgressPage() {
           </div>
 
           {/* Tests Progress */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FiAward className="w-5 h-5 text-blue-600" />
+          <Link
+            href="/dashboard/progress/tests"
+            className="block bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <FiAward className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-gray-900">Untimed Tests</h3>
               </div>
-              <h3 className="font-bold text-gray-900">Untimed Tests</h3>
+              <FiBarChart2 className="w-5 h-5 text-gray-400" />
             </div>
             {overview?.untimedTests && overview.untimedTests.total > 0 ? (
               <>
@@ -426,6 +432,11 @@ export default function ProgressPage() {
                     <p className="text-2xl font-bold text-blue-600">{overview.untimedTests.averageScore}%</p>
                   </div>
                 )}
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <p className="text-sm text-blue-600 font-medium flex items-center gap-2">
+                    View detailed metrics →
+                  </p>
+                </div>
               </>
             ) : (
               <div className="mb-2">
@@ -441,13 +452,14 @@ export default function ProgressPage() {
                 </div>
                 <Link
                   href="/dashboard/tests/untimed"
+                  onClick={(e) => e.stopPropagation()}
                   className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
                 >
                   Start your first test →
                 </Link>
               </div>
             )}
-          </div>
+          </Link>
 
           {/* Average Score */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
