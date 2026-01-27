@@ -76,7 +76,8 @@ export default function ChaptersPage() {
           'chapter_southside_full': 'southside-full',
           'chapter_dublin_one_way_streets': 'dublin-one-way-streets',
           'chapter_southside_streets_2': 'southside-streets-2',
-          'chapter_northside_routes': 'northside-routes'
+          'chapter_northside_routes': 'northside-routes',
+          'chapter_churches_cemeteries': 'churches-cemeteries'
         }
 
         data.chapterProgress.forEach((cp: any) => {
@@ -199,6 +200,14 @@ export default function ChaptersPage() {
       title: 'Northside Routes',
       description: 'Test your knowledge of routes, areas, landmarks, and locations in Dublin\'s Northside area',
       duration: '50 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'churches-cemeteries',
+      title: 'Churches and Cemeteries',
+      description: 'Test your knowledge of churches, cemeteries, and religious sites in Dublin',
+      duration: '30 min',
       completed: false,
       locked: false
     },
