@@ -127,7 +127,7 @@ export default function TimedTestsPage() {
                   </div>
                   <div className="text-right">
                     <div className="font-bold">
-                      {test.scorePercentage ? test.scorePercentage.toFixed(1) : 'N/A'}%
+                      {test.scorePercentage ? Number(test.scorePercentage).toFixed(1) : 'N/A'}%
                     </div>
                     <div className="text-sm text-gray-600">
                       {test.completedAt ? new Date(test.completedAt).toLocaleDateString() : 'N/A'}
