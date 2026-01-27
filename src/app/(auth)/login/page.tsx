@@ -1,34 +1,23 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
-import Link from 'next/link'
 
 function LoginForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
 
-  // Check for signup success message
-  useEffect(() => {
-    if (searchParams.get('signup') === 'success') {
-      setSuccess('Account created successfully! Please sign in.')
-    }
-  }, [searchParams])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setSuccess(null)
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -75,12 +64,6 @@ function LoginForm() {
           </p>
         </div>
 
-        {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
-            {success}
-          </div>
-        )}
-
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
@@ -121,13 +104,6 @@ function LoginForm() {
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </Button>
-
-          <p className="text-center text-sm text-gray-600">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-green-600 hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
         </form>
       </div>
     </div>
