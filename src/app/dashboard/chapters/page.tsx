@@ -252,8 +252,7 @@ export default function ChaptersPage() {
                   </div>
                 </div>
               </div>
-                </div>
-              </div>
+            </div>
             ))}
           </div>
         </div>
