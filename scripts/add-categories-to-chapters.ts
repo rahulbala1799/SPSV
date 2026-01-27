@@ -25,10 +25,18 @@ async function main() {
 
     console.log(`Found ${chapters.length} chapters\n`)
 
-    // Define chapter categorization based on chapter numbers
-    // This is a general categorization - adjust based on your actual chapter structure
-    const industryKnowledgeChapters = [5, 7, 8] // Chapters 5, 7, 8 are industry knowledge
-    const areaKnowledgeChapters = [1, 2, 3, 4, 6] // Other chapters are area knowledge
+    // Define chapter categorization based on chapter titles and numbers
+    // Industry Knowledge chapters
+    const industryKnowledgeTitles = [
+      'Industry Knowledge',
+      'Working as an SPSV Operator',
+      'Taximeter Fares',
+      'Delivering Customer Satisfaction',
+    ]
+    const industryKnowledgeNumbers = [5, 7, 8] // Chapters 5, 7, 8 are industry knowledge
+    
+    // Area Knowledge chapters
+    const areaKnowledgeTitles = ['Southside Full']
 
     let updatedCount = 0
     let skippedCount = 0
@@ -36,11 +44,16 @@ async function main() {
     for (const chapter of chapters) {
       let category: 'INDUSTRY_KNOWLEDGE' | 'AREA_KNOWLEDGE' | null = null
 
-      // Determine category based on chapter number
-      if (industryKnowledgeChapters.includes(chapter.chapterNumber)) {
+      // Determine category based on title first (more reliable)
+      const titleLower = chapter.title.toLowerCase()
+      if (industryKnowledgeTitles.some((title) => titleLower.includes(title.toLowerCase()))) {
         category = 'INDUSTRY_KNOWLEDGE'
-      } else if (areaKnowledgeChapters.includes(chapter.chapterNumber)) {
+      } else if (areaKnowledgeTitles.some((title) => titleLower.includes(title.toLowerCase()))) {
         category = 'AREA_KNOWLEDGE'
+      }
+      // Fallback to chapter number if title doesn't match
+      else if (industryKnowledgeNumbers.includes(chapter.chapterNumber)) {
+        category = 'INDUSTRY_KNOWLEDGE'
       }
 
       if (!category) {
