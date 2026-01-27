@@ -16,18 +16,25 @@ import {
   FiX
 } from 'react-icons/fi'
 
+interface ProgressOverview {
+  totalChapters: number
+  completedChapters: number
+  inProgressChapters: number
+  notStartedChapters: number
+  averageScore: number
+  overallProgress: number
+  totalQuestionsAnswered: number
+  totalCorrectAnswers: number
+  totalTests: number
+  completedTests: number
+}
+
 interface StudentData {
   user: {
     name: string
     email: string
   }
-  progress?: {
-    completedChapters: number
-    totalChapters: number
-    completedTests: number
-    totalTests: number
-    overallProgress: number
-  }
+  progress?: ProgressOverview
 }
 
 export default function StudentDashboard() {
@@ -52,17 +59,33 @@ export default function StudentDashboard() {
         return
       }
 
-      // Set student data
-      setStudent({
-        user: data.user,
-        progress: {
-          completedChapters: 0,
-          totalChapters: 12,
-          completedTests: 0,
-          totalTests: 5,
-          overallProgress: 0
-        }
-      })
+      // Fetch real progress data
+      const progressResponse = await fetch('/api/student/progress')
+      const progressData = await progressResponse.json()
+
+      if (progressResponse.ok && progressData.overview) {
+        setStudent({
+          user: data.user,
+          progress: progressData.overview
+        })
+      } else {
+        // Fallback to empty progress
+        setStudent({
+          user: data.user,
+          progress: {
+            completedChapters: 0,
+            totalChapters: 0,
+            completedTests: 0,
+            totalTests: 5,
+            overallProgress: 0,
+            inProgressChapters: 0,
+            notStartedChapters: 0,
+            averageScore: 0,
+            totalQuestionsAnswered: 0,
+            totalCorrectAnswers: 0
+          }
+        })
+      }
 
       setLoading(false)
     } catch (error) {
@@ -177,7 +200,7 @@ export default function StudentDashboard() {
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
-          <div className="grid grid-cols-2 gap-4 text-center">
+          <div className="grid grid-cols-2 gap-4 text-center mb-4">
             <div className="bg-green-50 rounded-lg p-3">
               <p className="text-2xl font-bold text-green-600">
                 {student.progress?.completedChapters}/{student.progress?.totalChapters}
@@ -191,6 +214,24 @@ export default function StudentDashboard() {
               <p className="text-xs text-gray-600 mt-1">Tests</p>
             </div>
           </div>
+          {student.progress && student.progress.totalQuestionsAnswered > 0 && (
+            <div className="border-t border-gray-200 pt-4">
+              <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                <div>
+                  <p className="font-bold text-gray-900">{student.progress.totalQuestionsAnswered}</p>
+                  <p className="text-xs text-gray-600">Questions</p>
+                </div>
+                <div>
+                  <p className="font-bold text-green-600">{student.progress.averageScore}%</p>
+                  <p className="text-xs text-gray-600">Avg Score</p>
+                </div>
+                <div>
+                  <p className="font-bold text-blue-600">{student.progress.inProgressChapters}</p>
+                  <p className="text-xs text-gray-600">In Progress</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Quick Actions Grid */}

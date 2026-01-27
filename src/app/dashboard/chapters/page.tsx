@@ -12,11 +12,25 @@ interface Chapter {
   duration: string
   completed: boolean
   locked: boolean
+  score?: number | null
+  questionsAnswered?: number
+  totalQuestions?: number
+  hasStarted?: boolean
+}
+
+interface ChapterProgress {
+  chapterId: string
+  isCompleted: boolean
+  score: number | null
+  totalQuestions: number
+  correctAnswers: number
+  hasStarted: boolean
 }
 
 export default function ChaptersPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [progressData, setProgressData] = useState<Map<string, ChapterProgress>>(new Map())
 
   const checkAccess = async () => {
     try {
@@ -33,10 +47,51 @@ export default function ChaptersPage() {
         return
       }
 
+      // Load progress data
+      await loadProgressData()
+
       setLoading(false)
     } catch (error) {
       console.error('Error:', error)
       router.push('/login')
+    }
+  }
+
+  const loadProgressData = async () => {
+    try {
+      const response = await fetch('/api/student/progress')
+      const data = await response.json()
+
+      if (response.ok && data.chapterProgress) {
+        const progressMap = new Map<string, ChapterProgress>()
+        
+        // Map chapter IDs to route IDs
+        const chapterIdMap: Record<string, string> = {
+          'chapter_industry_part1': 'industry-part1',
+          'chapter_industry_part2': 'industry-part2',
+          'chapter_industry_part3': 'industry-part3',
+          'chapter_industry_5': 'industry-5',
+          'chapter_industry_7': 'industry-7',
+          'chapter_industry_8': 'industry-8',
+          'chapter_southside_full': 'southside-full'
+        }
+
+        data.chapterProgress.forEach((cp: any) => {
+          const routeId = chapterIdMap[cp.chapterId] || cp.chapterId
+          progressMap.set(routeId, {
+            chapterId: cp.chapterId,
+            isCompleted: cp.isCompleted,
+            score: cp.score,
+            totalQuestions: cp.totalQuestions,
+            correctAnswers: cp.correctAnswers,
+            hasStarted: cp.hasStarted
+          })
+        })
+
+        setProgressData(progressMap)
+      }
+    } catch (error) {
+      console.error('Error loading progress:', error)
     }
   }
 
@@ -45,7 +100,22 @@ export default function ChaptersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const industryChapters: Chapter[] = [
+  // Helper function to enrich chapters with progress data
+  const enrichWithProgress = (chapters: Chapter[]): Chapter[] => {
+    return chapters.map(chapter => {
+      const progress = progressData.get(chapter.id as string)
+      return {
+        ...chapter,
+        completed: progress?.isCompleted || false,
+        score: progress?.score,
+        questionsAnswered: progress?.totalQuestions,
+        totalQuestions: progress?.totalQuestions,
+        hasStarted: progress?.hasStarted || false
+      }
+    })
+  }
+
+  const industryChaptersBase: Chapter[] = [
     {
       id: 'industry-part1',
       title: 'Industry Knowledge - Part 1',
@@ -96,7 +166,7 @@ export default function ChaptersPage() {
     },
   ]
 
-  const areaChapters: Chapter[] = [
+  const areaChaptersBase: Chapter[] = [
     {
       id: 'southside-full',
       title: 'Southside Full',
@@ -106,6 +176,9 @@ export default function ChaptersPage() {
       locked: false
     },
   ]
+
+  const industryChapters = enrichWithProgress(industryChaptersBase)
+  const areaChapters = enrichWithProgress(areaChaptersBase)
 
   if (loading) {
     return (
@@ -181,16 +254,35 @@ export default function ChaptersPage() {
                   {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
-                      <div>
+                      <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900 mb-1">
                           {chapter.title}
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">{chapter.description}</p>
                       </div>
+                      {chapter.completed && chapter.score !== null && (
+                        <div className="ml-4">
+                          <span className="text-2xl font-bold text-green-600">{chapter.score}%</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <FiClock className="w-4 h-4" />
-                      <span>{chapter.duration}</span>
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-2 text-gray-500">
+                        <FiClock className="w-4 h-4" />
+                        <span>{chapter.duration}</span>
+                      </div>
+                      {chapter.hasStarted && chapter.questionsAnswered !== undefined && (
+                        <div className="flex items-center gap-2 text-blue-600">
+                          <FiBook className="w-4 h-4" />
+                          <span>{chapter.questionsAnswered} questions answered</span>
+                        </div>
+                      )}
+                      {chapter.completed && (
+                        <div className="flex items-center gap-2 text-green-600 font-medium">
+                          <FiCheckCircle className="w-4 h-4" />
+                          <span>Completed</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
