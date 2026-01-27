@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft } from 'react-icons/fi'
+import { FiArrowLeft, FiClock, FiPlay } from 'react-icons/fi'
 
 export default function TestsPage() {
   const router = useRouter()
@@ -58,17 +58,54 @@ export default function TestsPage() {
             </Link>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Practice Tests</h1>
-              <p className="text-sm text-gray-600">Tests and assessments</p>
+              <p className="text-sm text-gray-600">Choose your test type</p>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content - Blank Canvas */}
+      {/* Main Content */}
       <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
-        {/* Empty state - ready for test implementation */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <p className="text-gray-500">Tests area - ready for implementation</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Timed Tests Section */}
+          <Link
+            href="/dashboard/tests/timed"
+            className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-600 transition-colors">
+                <FiClock className="w-8 h-8 text-orange-600 group-hover:text-white transition-colors" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Timed Tests</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Practice tests with time limits to simulate real exam conditions
+              </p>
+              <div className="flex items-center gap-2 text-orange-600 font-semibold">
+                <span>View Tests</span>
+                <FiPlay className="w-4 h-4" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Untimed Tests Section */}
+          <Link
+            href="/dashboard/tests/untimed"
+            className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
+                <FiPlay className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Untimed Tests</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Take your time to practice and learn at your own pace
+              </p>
+              <div className="flex items-center gap-2 text-blue-600 font-semibold">
+                <span>View Tests</span>
+                <FiPlay className="w-4 h-4" />
+              </div>
+            </div>
+          </Link>
         </div>
       </main>
     </div>
