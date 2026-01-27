@@ -219,17 +219,6 @@ export default function ProgressPage() {
             <p className="text-sm text-gray-600 mt-1">Across all tests</p>
           </div>
 
-          {/* Study Time */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <FiClock className="w-5 h-5 text-orange-600" />
-              </div>
-              <h3 className="font-bold text-gray-900">Study Time</h3>
-            </div>
-            <p className="text-3xl font-bold text-orange-600">{hoursStudied}h</p>
-            <p className="text-sm text-gray-600 mt-1">Total hours studied</p>
-          </div>
         </div>
 
         {/* Chapter Results */}
