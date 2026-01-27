@@ -66,23 +66,29 @@ export async function GET(
           ? questions.length 
           : parseInt(countParam || '0', 10)
 
-        if (unattemptedQuestions.length >= targetCount) {
-          // Enough unattempted questions
-          questions = unattemptedQuestions.slice(0, targetCount)
+        // Randomize unattempted questions within themselves
+        const shuffledUnattempted = [...unattemptedQuestions]
+        for (let i = shuffledUnattempted.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledUnattempted[i], shuffledUnattempted[j]] = [shuffledUnattempted[j], shuffledUnattempted[i]]
+        }
+
+        // Randomize attempted questions within themselves
+        const shuffledAttempted = [...attemptedQuestions]
+        for (let i = shuffledAttempted.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledAttempted[i], shuffledAttempted[j]] = [shuffledAttempted[j], shuffledAttempted[i]]
+        }
+
+        if (shuffledUnattempted.length >= targetCount) {
+          // Enough unattempted questions - take only from unattempted
+          questions = shuffledUnattempted.slice(0, targetCount)
         } else {
-          // Need to add attempted questions
-          const neededFromAttempted = targetCount - unattemptedQuestions.length
-          
-          // Shuffle attempted questions
-          const shuffledAttempted = [...attemptedQuestions]
-          for (let i = shuffledAttempted.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledAttempted[i], shuffledAttempted[j]] = [shuffledAttempted[j], shuffledAttempted[i]]
-          }
-          
+          // Need to add attempted questions - all unattempted + some attempted
+          const neededFromAttempted = targetCount - shuffledUnattempted.length
           questions = [
-            ...unattemptedQuestions,
-            ...shuffledAttempted.slice(0, neededFromAttempted)
+            ...shuffledUnattempted, // All unattempted (randomized)
+            ...shuffledAttempted.slice(0, neededFromAttempted) // Some attempted (randomized)
           ]
         }
       }
@@ -98,8 +104,8 @@ export async function GET(
       }
     }
 
-    // Always randomize for strategy (except new_only which should show in order)
-    if (strategy && strategy !== 'new_only') {
+    // Always randomize for strategy (except new_only and prioritize_new which handle their own randomization)
+    if (strategy && strategy !== 'new_only' && strategy !== 'prioritize_new') {
       for (let i = questions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [questions[i], questions[j]] = [questions[j], questions[i]]
@@ -107,8 +113,8 @@ export async function GET(
     }
 
     // Limit count if specified (apply after strategy filtering and randomization)
-    // Note: prioritize_new already applies count, but we apply it here too to ensure consistency
-    if (countParam && countParam !== 'all') {
+    // Note: prioritize_new already applies count internally, so skip it here
+    if (countParam && countParam !== 'all' && strategy !== 'prioritize_new') {
       const count = parseInt(countParam, 10)
       if (!isNaN(count) && count > 0) {
         questions = questions.slice(0, Math.min(count, questions.length))
