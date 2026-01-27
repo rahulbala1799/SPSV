@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { FiArrowLeft, FiClock, FiAlertCircle } from 'react-icons/fi'
 
 export default function FullTestStartPage() {
   const router = useRouter()
@@ -36,47 +38,123 @@ export default function FullTestStartPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6">Full Timed Test</h1>
-      
-      <div className="border rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Test Details</h2>
-        <ul className="space-y-2 mb-4">
-          <li><strong>Total Questions:</strong> 90</li>
-          <li><strong>Time Allotted:</strong> 90 minutes</li>
-          <li><strong>Breakdown:</strong> 54 Industry + 36 Area Knowledge</li>
-        </ul>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard/timed-tests"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <FiArrowLeft className="w-6 h-6" />
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <FiClock className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Full Timed Test</h1>
+                <p className="text-sm text-gray-600">90 questions in 90 minutes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <div className="border rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Important Rules</h2>
-        <ul className="space-y-2 list-disc list-inside">
-          <li>All questions must be answered before submission</li>
-          <li>Timer cannot be paused</li>
-          <li>Test will auto-submit when time expires</li>
-          <li>You cannot change answers after submission</li>
-        </ul>
-      </div>
+      {/* Main Content */}
+      <main className="px-4 py-6 max-w-3xl mx-auto pb-20">
+        {/* Test Details Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <FiClock className="w-5 h-5 text-green-600" />
+            <h2 className="text-xl font-semibold text-gray-900">Test Details</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <span className="text-gray-700">Total Questions</span>
+              <span className="text-xl font-bold text-gray-900">90</span>
+            </div>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <span className="text-gray-700">Time Allotted</span>
+              <span className="text-xl font-bold text-gray-900">90 minutes</span>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="text-gray-700 mb-2">Question Breakdown:</div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="font-semibold">54 Industry Knowledge</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="font-semibold">36 Area Knowledge</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div className="mb-6">
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="w-5 h-5"
-          />
-          <span>I understand the test conditions</span>
-        </label>
-      </div>
+        {/* Important Rules Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <FiAlertCircle className="w-5 h-5 text-orange-600" />
+            <h2 className="text-xl font-semibold text-gray-900">Important Rules</h2>
+          </div>
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="text-green-600 mt-1">✓</span>
+              <span className="text-gray-700">Questions can be answered in any order</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-orange-600 mt-1">⚠️</span>
+              <span className="text-gray-700">Timer cannot be paused once started</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-orange-600 mt-1">⚠️</span>
+              <span className="text-gray-700">Test will auto-submit when time expires</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-red-600 mt-1">✗</span>
+              <span className="text-gray-700">You cannot change answers after submission</span>
+            </li>
+          </ul>
+        </div>
 
-      <button
-        onClick={handleStart}
-        disabled={!agreed || loading}
-        className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {loading ? 'Starting...' : 'Start Test'}
-      </button>
+        {/* Agreement Checkbox */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="w-6 h-6 mt-0.5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+            />
+            <span className="text-gray-900">
+              I understand and agree to the test conditions. I am ready to begin the timed test.
+            </span>
+          </label>
+        </div>
+
+        {/* Start Button */}
+        <button
+          onClick={handleStart}
+          disabled={!agreed || loading}
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Starting Test...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <FiClock className="w-5 h-5" />
+              Start Full Test
+            </span>
+          )}
+        </button>
+      </main>
     </div>
   )
 }
