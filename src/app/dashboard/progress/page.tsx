@@ -369,7 +369,7 @@ export default function ProgressPage() {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {/* Chapters Progress */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -394,7 +394,7 @@ export default function ProgressPage() {
             </div>
           </div>
 
-          {/* Tests Progress */}
+          {/* Untimed Tests Progress */}
           <Link
             href="/dashboard/progress/tests"
             className="block bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all"
@@ -461,17 +461,38 @@ export default function ProgressPage() {
             )}
           </Link>
 
-          {/* Average Score */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <FiTrendingUp className="w-5 h-5 text-purple-600" />
+          {/* Timed Tests Progress */}
+          <Link
+            href="/dashboard/progress/timed-tests"
+            className="block bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <FiClock className="w-5 h-5 text-purple-600" />
+                </div>
+                <h3 className="font-bold text-gray-900">Timed Tests</h3>
               </div>
-              <h3 className="font-bold text-gray-900">Average Score</h3>
+              <FiBarChart2 className="w-5 h-5 text-gray-400" />
             </div>
-            <p className="text-3xl font-bold text-purple-600">{averageScore}%</p>
-            <p className="text-sm text-gray-600 mt-1">Across all tests</p>
-          </div>
+            <div className="mb-2">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-600">Click to view</span>
+                <span className="font-medium text-gray-900">Analytics</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-purple-500 h-2 rounded-full"
+                  style={{ width: '100%' }}
+                ></div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-gray-200">
+                <p className="text-sm text-purple-600 font-medium flex items-center gap-2">
+                  View detailed metrics →
+                </p>
+              </div>
+            </div>
+          </Link>
 
         </div>
 
