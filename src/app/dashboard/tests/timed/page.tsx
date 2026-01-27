@@ -74,7 +74,7 @@ export default function TimedTestsPage() {
         {/* Info Banner */}
         <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-6">
           <p className="text-sm text-orange-800">
-            <strong>⏱️ Timed Tests:</strong> These tests have time limits to simulate real exam conditions. Make sure you're ready before starting!
+            <strong>⏱️ Timed Tests:</strong> These tests have time limits to simulate real exam conditions. Make sure you&apos;re ready before starting!
           </p>
         </div>
 
