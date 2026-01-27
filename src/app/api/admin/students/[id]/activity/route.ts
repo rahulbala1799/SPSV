@@ -27,7 +27,13 @@ export async function GET(
     }
 
     // Collect recent activities from various sources
-    const activities = []
+    interface Activity {
+      type: string
+      timestamp: Date
+      description: string
+      metadata: Record<string, any>
+    }
+    const activities: Activity[] = []
 
     // 1. Chapter completions
     const completedChapters = await prisma.chapterProgress.findMany({

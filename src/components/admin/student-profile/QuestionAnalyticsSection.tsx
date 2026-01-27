@@ -41,6 +41,7 @@ export function QuestionAnalyticsSection({ studentId }: Props) {
 
   useEffect(() => {
     fetchQuestionAnalytics()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId])
 
   const fetchQuestionAnalytics = async () => {

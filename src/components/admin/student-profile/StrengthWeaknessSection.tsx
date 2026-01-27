@@ -51,6 +51,7 @@ export function StrengthWeaknessSection({ studentId }: Props) {
 
   useEffect(() => {
     fetchAnalysis()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId])
 
   const fetchAnalysis = async () => {

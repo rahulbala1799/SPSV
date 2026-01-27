@@ -51,6 +51,7 @@ export default function StudentProfilePage() {
 
   useEffect(() => {
     fetchStudentProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId])
 
   const fetchStudentProfile = async () => {

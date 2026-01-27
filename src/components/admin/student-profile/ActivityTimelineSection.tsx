@@ -31,6 +31,7 @@ export function ActivityTimelineSection({ studentId }: Props) {
 
   useEffect(() => {
     fetchActivityTimeline()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId])
 
   const fetchActivityTimeline = async () => {

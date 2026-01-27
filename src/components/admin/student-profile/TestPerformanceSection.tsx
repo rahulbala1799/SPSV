@@ -49,10 +49,12 @@ export function TestPerformanceSection({ studentId }: Props) {
 
   useEffect(() => {
     fetchTestPerformance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId])
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tests, filterStatus, filterType])
 
   const fetchTestPerformance = async () => {

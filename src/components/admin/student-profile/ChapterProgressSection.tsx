@@ -43,6 +43,7 @@ export function ChapterProgressSection({ studentId }: Props) {
 
   useEffect(() => {
     fetchChapterProgress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId, sortBy])
 
   const fetchChapterProgress = async () => {
