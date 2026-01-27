@@ -208,7 +208,9 @@ export default function StudentDashboard() {
               <p className="text-xs text-gray-600 mt-1">Chapters</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-2xl font-bold text-blue-600">-</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {student.progress?.untimedTests?.completed || 0}/{student.progress?.untimedTests?.total || 0}
+              </p>
               <p className="text-xs text-gray-600 mt-1">Tests</p>
             </div>
           </div>
