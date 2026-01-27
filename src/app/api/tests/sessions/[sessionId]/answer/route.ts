@@ -35,13 +35,10 @@ export async function POST(
       return NextResponse.json({ error: 'Question not found' }, { status: 404 })
     }
 
-    // Upsert answer
+    // Upsert answer - questionId is unique
     const answer = await prisma.timedTestAnswer.upsert({
       where: {
-        sessionId_questionId: {
-          sessionId: params.sessionId,
-          questionId
-        }
+        questionId
       },
       update: {
         selectedAnswer,
