@@ -191,10 +191,7 @@ export async function POST(
     })
 
     // Track question attempt with calculated time (40 seconds per question)
-    const student = await prisma.student.findUnique({
-      where: { userId: user.id }
-    })
-
+    // Student is already fetched above, so we can use it directly
     if (student) {
       // Track the question attempt
       await trackQuestionAttempt(
