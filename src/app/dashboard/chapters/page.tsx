@@ -105,7 +105,7 @@ export default function ChaptersPage() {
             </Link>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Course Chapters</h1>
-              <p className="text-sm text-gray-600">{chapters.length} chapters available</p>
+              <p className="text-sm text-gray-600">{industryChapters.length + areaChapters.length} chapters available</p>
             </div>
           </div>
         </div>
