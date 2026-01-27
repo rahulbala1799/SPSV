@@ -5,6 +5,106 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock } from 'react-icons/fi'
 
+interface TestHistory {
+  id: string
+  testType: string
+  totalQuestions: number
+  score: number
+  scorePercentage: number | null
+  completedAt: string | null
+}
+
+function TimedTestsStats() {
+  const [history, setHistory] = useState<TestHistory[]>([])
+  const [stats, setStats] = useState({
+    totalTests: 0,
+    averageScore: 0,
+    bestScore: 0
+  })
+
+  useEffect(() => {
+    fetchHistory()
+  }, [])
+
+  async function fetchHistory() {
+    try {
+      const res = await fetch('/api/tests/history')
+      const data = await res.json()
+      setHistory(data.tests || [])
+      
+      if (data.tests?.length > 0) {
+        const scores = data.tests
+          .map((t: TestHistory) => Number(t.scorePercentage || 0))
+          .filter((s: number) => s > 0)
+        if (scores.length > 0) {
+          setStats({
+            totalTests: data.tests.length,
+            averageScore: scores.reduce((a: number, b: number) => a + b, 0) / scores.length,
+            bestScore: Math.max(...scores)
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching history:', error)
+    }
+  }
+
+  return (
+    <>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-xl shadow-lg p-4 text-center">
+          <div className="text-2xl font-bold text-gray-900">{stats.totalTests}</div>
+          <div className="text-sm text-gray-600">Total Tests</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-4 text-center">
+          <div className="text-2xl font-bold text-gray-900">{stats.averageScore.toFixed(1)}%</div>
+          <div className="text-sm text-gray-600">Average Score</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-4 text-center">
+          <div className="text-2xl font-bold text-gray-900">{stats.bestScore.toFixed(1)}%</div>
+          <div className="text-sm text-gray-600">Best Score</div>
+        </div>
+      </div>
+
+      {/* Recent Tests */}
+      {history.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Tests</h2>
+          <div className="space-y-2">
+            {history.slice(0, 5).map((test) => (
+              <Link
+                key={test.id}
+                href={`/dashboard/timed-tests/results/${test.id}`}
+                className="block border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-medium text-gray-900">
+                      {test.testType === 'FULL_TIMED' ? 'Full Test' : 'Mock Test'}
+                    </span>
+                    <span className="text-gray-600 ml-2">
+                      {test.totalQuestions} questions
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-gray-900">
+                      {test.scorePercentage ? test.scorePercentage.toFixed(1) : 'N/A'}%
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {test.completedAt ? new Date(test.completedAt).toLocaleDateString() : 'N/A'}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
 export default function TimedTestsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -78,16 +178,59 @@ export default function TimedTestsPage() {
           </p>
         </div>
 
-        {/* Tests List - Blank Canvas */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="flex flex-col items-center">
-            <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-              <FiClock className="w-8 h-8 text-orange-600" />
+        {/* Tests Cards */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Full Test Card */}
+          <Link
+            href="/dashboard/timed-tests/full/start"
+            className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-1"
+          >
+            <div className="flex flex-col">
+              <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                <FiClock className="w-8 h-8 text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Full Timed Test</h2>
+              <div className="space-y-2 mb-4">
+                <p className="text-gray-700"><strong>90 questions</strong> in 90 minutes</p>
+                <p className="text-sm text-gray-600">
+                  54 Industry Knowledge + 36 Area Knowledge
+                </p>
+              </div>
+              <div className="mt-auto">
+                <span className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                  Start Full Test
+                </span>
+              </div>
             </div>
-            <p className="text-gray-500 mb-2">Timed tests area</p>
-            <p className="text-sm text-gray-400">Ready for implementation</p>
-          </div>
+          </Link>
+
+          {/* Mock Test Card */}
+          <Link
+            href="/dashboard/timed-tests/mock/config"
+            className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-1"
+          >
+            <div className="flex flex-col">
+              <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                <FiClock className="w-8 h-8 text-blue-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Mock Tests</h2>
+              <div className="space-y-2 mb-4">
+                <p className="text-gray-700"><strong>Customizable</strong> questions and time</p>
+                <p className="text-sm text-gray-600">
+                  Choose 5-90 questions (increments of 5)
+                </p>
+              </div>
+              <div className="mt-auto">
+                <span className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  Configure Mock Test
+                </span>
+              </div>
+            </div>
+          </Link>
         </div>
+
+        {/* Stats Section */}
+        <TimedTestsStats />
       </main>
     </div>
   )
