@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { FiArrowLeft, FiClock } from 'react-icons/fi'
 import Timer from '@/components/timed-tests/Timer'
-import QuestionGrid from '@/components/timed-tests/QuestionGrid'
 
 interface Question {
   id: string
@@ -162,149 +163,209 @@ export default function TestSessionPage() {
   }
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-8">Loading...</div>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    )
   }
 
   if (!session || questions.length === 0) {
-    return <div className="container mx-auto px-4 py-8">Session not found</div>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Session not found</p>
+          <Link href="/dashboard/timed-tests" className="text-blue-600 hover:underline mt-2 inline-block">
+            Return to Timed Tests
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const currentQuestion = questions[currentIndex]
   const answeredCount = Object.keys(answers).length
-  const answeredQuestions = new Set(
-    questions.filter(q => answers[q.id]).map(q => q.orderNumber)
-  )
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Timer and Header */}
-      <div className="flex justify-between items-center mb-6 sticky top-0 bg-white z-10 py-4 border-b">
-        <div>
-          <h1 className="text-xl font-semibold">
-            Question {currentIndex + 1} of {questions.length}
-          </h1>
-          <p className="text-sm text-gray-600">
-            {answeredCount} / {questions.length} answered
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/dashboard/timed-tests"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <FiArrowLeft className="w-6 h-6" />
+            </Link>
+            <div className="flex-1 mx-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-gray-600">
+                  Question {currentIndex + 1} of {questions.length}
+                </span>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-600">
+                    {answeredCount} / {questions.length} answered
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <FiClock className="w-5 h-5 text-gray-600" />
+                    <Timer
+                      timeRemaining={timeRemaining}
+                      onExpire={handleTimerExpire}
+                      onWarning={handleWarning}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
+                  style={{
+                    width: `${((currentIndex + 1) / questions.length) * 100}%`
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-right">
-          <Timer
-            timeRemaining={timeRemaining}
-            onExpire={handleTimerExpire}
-            onWarning={handleWarning}
-          />
-          {saving && <div className="text-xs text-gray-500">Saving...</div>}
-        </div>
-      </div>
+      </header>
 
       {/* Warning Modal */}
       {warning && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md">
-            <h2 className="text-xl font-bold mb-4">Time Warning</h2>
-            <p className="mb-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md mx-4">
+            <div className="flex items-center gap-3 mb-4">
+              <FiClock className="w-8 h-8 text-orange-600" />
+              <h2 className="text-xl font-bold text-gray-900">Time Warning</h2>
+            </div>
+            <p className="text-gray-700 mb-6">
               {warning === 1 
-                ? '1 minute remaining!'
-                : `${warning} minutes remaining!`
+                ? '⏰ Only 1 minute remaining!'
+                : `⏰ ${warning} minutes remaining!`
               }
             </p>
             <button
               onClick={() => setWarning(null)}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors"
             >
-              OK
+              Continue Test
             </button>
           </div>
         </div>
       )}
 
-      {/* Question Grid */}
-      <div className="mb-6">
-        <QuestionGrid
-          totalQuestions={questions.length}
-          currentIndex={currentIndex}
-          answeredQuestions={answeredQuestions}
-          onQuestionClick={setCurrentIndex}
-        />
-      </div>
+      {/* Main Content */}
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
+        {saving && (
+          <div className="mb-4 text-center text-sm text-gray-600">
+            💾 Saving...
+          </div>
+        )}
 
-      {/* Question Display */}
-      {currentQuestion && (
-        <div className="border rounded-lg p-6 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <span className={`px-2 py-1 rounded text-xs ${
-              currentQuestion.category === 'INDUSTRY' ? 'bg-green-100' : 'bg-blue-100'
-            }`}>
-              {currentQuestion.category}
-            </span>
+        {/* Question Display */}
+        {currentQuestion && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            {/* Question Header */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  Question {currentQuestion.orderNumber}
+                </span>
+                <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+                  currentQuestion.category === 'INDUSTRY' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {currentQuestion.category === 'INDUSTRY' ? 'Industry Knowledge' : 'Area Knowledge'}
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 leading-relaxed">
+                {currentQuestion.questionText}
+              </h2>
+            </div>
+
+            {/* Options */}
+            <div className="space-y-3 mb-6">
+              {['A', 'B', 'C', 'D'].map(option => {
+                const isSelected = answers[currentQuestion.id] === option
+                return (
+                  <label
+                    key={option}
+                    className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      isSelected
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`question-${currentQuestion.id}`}
+                      value={option}
+                      checked={isSelected}
+                      onChange={() => handleAnswerSelect(option)}
+                      className="w-5 h-5 mr-4"
+                    />
+                    <span className="text-gray-900">
+                      <strong className="font-semibold">{option}.</strong> {currentQuestion.options[option as keyof typeof currentQuestion.options]}
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
           </div>
-          
-          <h2 className="text-lg font-semibold mb-4">{currentQuestion.questionText}</h2>
-          
-          <div className="space-y-3">
-            {['A', 'B', 'C', 'D'].map(option => (
-              <label
-                key={option}
-                className={`flex items-center p-3 border-2 rounded cursor-pointer ${
-                  answers[currentQuestion.id] === option
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={`question-${currentQuestion.id}`}
-                  value={option}
-                  checked={answers[currentQuestion.id] === option}
-                  onChange={() => handleAnswerSelect(option)}
-                  className="mr-3"
-                />
-                <span><strong>{option}.</strong> {currentQuestion.options[option as keyof typeof currentQuestion.options]}</span>
-              </label>
-            ))}
-          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex gap-4">
+          <button
+            onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
+            disabled={currentIndex === 0}
+            className="flex-1 py-3 px-6 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-gray-700 transition-colors"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentIndex(Math.min(questions.length - 1, currentIndex + 1))}
+            disabled={currentIndex === questions.length - 1}
+            className="flex-1 py-3 px-6 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-gray-700 transition-colors"
+          >
+            Next
+          </button>
         </div>
-      )}
 
-      {/* Navigation */}
-      <div className="flex justify-between mb-6">
-        <button
-          onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-          disabled={currentIndex === 0}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
+        {/* Review & Submit Button */}
         <button
           onClick={() => setShowReview(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
         >
-          Review & Submit
+          Review & Submit Test
         </button>
-        <button
-          onClick={() => setCurrentIndex(Math.min(questions.length - 1, currentIndex + 1))}
-          disabled={currentIndex === questions.length - 1}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      </main>
 
       {/* Review Modal */}
       {showReview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">Review & Submit</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Review & Submit Test</h2>
             
-            <div className="mb-4 space-y-2">
-              <p><strong>Total Questions:</strong> {questions.length}</p>
-              <p><strong>Answered:</strong> {answeredCount}</p>
-              <p><strong>Unanswered:</strong> {questions.length - answeredCount}</p>
+            <div className="mb-6 space-y-3 text-gray-700">
+              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="font-medium">Total Questions:</span>
+                <span className="font-bold">{questions.length}</span>
+              </div>
+              <div className="flex justify-between p-3 bg-green-50 rounded-lg">
+                <span className="font-medium">Answered:</span>
+                <span className="font-bold text-green-600">{answeredCount}</span>
+              </div>
+              <div className="flex justify-between p-3 bg-orange-50 rounded-lg">
+                <span className="font-medium">Unanswered:</span>
+                <span className="font-bold text-orange-600">{questions.length - answeredCount}</span>
+              </div>
             </div>
 
             {questions.length - answeredCount > 0 && (
-              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="font-semibold mb-2">Unanswered Questions:</p>
+              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+                <p className="font-semibold text-yellow-900 mb-3">⚠️ Unanswered Questions:</p>
                 <div className="flex flex-wrap gap-2">
                   {questions
                     .filter(q => !answers[q.id])
@@ -315,25 +376,31 @@ export default function TestSessionPage() {
                           setCurrentIndex(q.orderNumber - 1)
                           setShowReview(false)
                         }}
-                        className="px-2 py-1 bg-yellow-200 rounded text-sm"
+                        className="px-3 py-2 bg-yellow-200 hover:bg-yellow-300 rounded-lg text-sm font-semibold text-yellow-900 transition-colors"
                       >
-                        {q.orderNumber}
+                        Q{q.orderNumber}
                       </button>
                     ))}
                 </div>
               </div>
             )}
 
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl mb-6">
+              <p className="text-sm text-red-900 font-medium">
+                ⚠️ Once submitted, you cannot change your answers. Make sure you've reviewed all questions.
+              </p>
+            </div>
+
             <div className="flex gap-4">
               <button
                 onClick={() => setShowReview(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 rounded"
+                className="flex-1 py-3 px-6 bg-gray-200 hover:bg-gray-300 rounded-xl font-semibold text-gray-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleSubmit(false)}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded"
+                className="flex-1 py-3 px-6 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
               >
                 Submit Test
               </button>
