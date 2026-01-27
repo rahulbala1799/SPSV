@@ -106,8 +106,9 @@ export async function GET(
       }
     }
 
-    // Limit count if specified (and not already limited by strategy)
-    if (countParam && countParam !== 'all' && !strategy) {
+    // Limit count if specified (apply after strategy filtering and randomization)
+    // Note: prioritize_new already applies count, but we apply it here too to ensure consistency
+    if (countParam && countParam !== 'all') {
       const count = parseInt(countParam, 10)
       if (!isNaN(count) && count > 0) {
         questions = questions.slice(0, Math.min(count, questions.length))
