@@ -27,6 +27,13 @@ interface ProgressOverview {
   totalCorrectAnswers: number
   totalTests: number
   completedTests: number
+  untimedTests?: {
+    total: number
+    completed: number
+    averageScore: number | null
+    totalQuestions: number
+    totalCorrect: number
+  }
 }
 
 interface StudentData {
