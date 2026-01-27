@@ -43,3 +43,5 @@ scripts/.git-vercel-monitor-state.json
 
 # Local documentation (not for git)
 SOUTHSIDE_FULL_QA_MCQ_README.md
+UNTIMED_TESTS_README.md
+UNTIMED_TESTS_BUILD_SPEC.md
