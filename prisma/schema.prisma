@@ -13,6 +13,17 @@ enum Role {
   STUDENT
 }
 
+enum TestState {
+  CREATED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestionCategory {
+  INDUSTRY_KNOWLEDGE
+  AREA_KNOWLEDGE
+}
+
 // User model for authentication
 model User {
   id            String    @id @default(cuid())
@@ -54,6 +65,7 @@ model Student {
   // Relations
   answers         Answer[]
   chapterProgress ChapterProgress[]
+  untimedTestAttempts UntimedTestAttempt[]
 
   @@map("students")
 }
@@ -73,6 +85,7 @@ model Chapter {
   description   String?
   chapterNumber Int       // e.g., 1, 2, 3...
   type          ChapterType @default(MCQ)
+  category      QuestionCategory? // Category for untimed test filtering
   duration      Int?      // Estimated minutes
   isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
@@ -92,6 +105,7 @@ model Question {
   
   questionText  String    // The actual question
   questionNumber Int      // Order within chapter (1, 2, 3...)
+  category      QuestionCategory? // Inherited from chapter, for untimed tests
   
   options       Json      // Array of option objects: [{ id: "A", text: "Option A" }, ...]
   correctAnswer String    // The ID of correct option (e.g., "A", "B", "C", "D")
@@ -104,8 +118,10 @@ model Question {
   updatedAt     DateTime  @updatedAt
   
   answers       Answer[]
+  testQuestions TestQuestion[]
   
   @@unique([chapterId, questionNumber])
+  @@index([category])
   @@map("questions")
 }
 
@@ -147,4 +163,52 @@ model ChapterProgress {
   
   @@unique([studentId, chapterId]) // One progress record per student per chapter
   @@map("chapter_progress")
+}
+
+// Untimed test attempts
+model UntimedTestAttempt {
+  id              String      @id @default(cuid())
+  studentId       String
+  student         Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  category        QuestionCategory // INDUSTRY_KNOWLEDGE or AREA_KNOWLEDGE
+  questionCount   Int         // Number of questions (5, 10, 15, etc.)
+  state           TestState   @default(CREATED)
+  
+  score           Int?        // Percentage score (0-100)
+  correctAnswers  Int         @default(0)
+  totalAnswered   Int         @default(0)
+  
+  createdAt       DateTime    @default(now())
+  startedAt       DateTime?   // When first question was answered
+  completedAt     DateTime?   // When test was completed
+  lastQuestionAt  DateTime?   // Last question answered timestamp
+  expiresAt       DateTime?   // Expiration for CREATED state (24h)
+  
+  testQuestions   TestQuestion[]
+  
+  @@index([studentId, state])
+  @@index([studentId, createdAt])
+  @@index([expiresAt])
+  @@map("untimed_test_attempts")
+}
+
+// Individual questions in a test attempt
+model TestQuestion {
+  id              String             @id @default(cuid())
+  testAttemptId   String
+  testAttempt     UntimedTestAttempt @relation(fields: [testAttemptId], references: [id], onDelete: Cascade)
+  questionId      String
+  question        Question           @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  questionOrder   Int                // Position in test (1, 2, 3...)
+  selectedAnswer  String?            // Student's answer (A, B, C, D)
+  isCorrect       Boolean?           // Whether answer was correct
+  answeredAt      DateTime?          // When question was answered
+  idempotencyKey  String?            // UUID v4 for idempotent submissions
+  
+  @@unique([testAttemptId, questionOrder])
+  @@unique([testAttemptId, questionId])
+  @@index([idempotencyKey])
+  @@map("test_questions")
 }
