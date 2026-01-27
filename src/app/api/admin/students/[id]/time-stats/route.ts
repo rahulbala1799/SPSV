@@ -28,7 +28,7 @@ export async function GET(
     // Get enrollment date
     const enrollmentDate = new Date(student.enrollmentDate)
     const today = new Date()
-    const daysSinceEnrollment = Math.ceil((today.getTime() - enrollmentDate.getTime()) / (1000 * 60 * 60 * 24))
+    const daysSinceEnrollment = Math.max(1, Math.ceil((today.getTime() - enrollmentDate.getTime()) / (1000 * 60 * 60 * 24)))
 
     // Get chapter time data
     const chapterProgress = await prisma.chapterProgress.findMany({
@@ -47,7 +47,10 @@ export async function GET(
         totalTimeSpent += calculatedTime
       }
     }
-    const avgTimePerDay = daysSinceEnrollment > 0 ? totalTimeSpent / daysSinceEnrollment : 0
+    // Calculate average time per day (in seconds, then convert to minutes)
+    // Use at least 1 day to avoid division by very small numbers
+    const avgTimePerDaySeconds = totalTimeSpent / daysSinceEnrollment
+    const avgTimePerDay = Math.round(avgTimePerDaySeconds / 60) // Convert to minutes
 
     // Time spent per chapter
     const chapterTimeData = chapterProgress

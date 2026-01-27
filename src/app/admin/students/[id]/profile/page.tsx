@@ -113,7 +113,8 @@ export default function StudentProfilePage() {
     const enrolled = new Date(enrollmentDate)
     const diffTime = Math.abs(now.getTime() - enrolled.getTime())
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
+    // Use at least 1 day to avoid division by zero or very small numbers
+    return Math.max(1, diffDays)
   }
 
   if (loading) {
@@ -153,7 +154,10 @@ export default function StudentProfilePage() {
   }
 
   const daysSinceEnrollment = getDaysSinceEnrollment(student.enrollmentDate)
-  const avgMinutesPerDay = stats ? Math.round((stats.totalStudyTime / daysSinceEnrollment) / 60) : 0
+  // Calculate average minutes per day (totalStudyTime is in seconds)
+  const avgMinutesPerDay = stats && daysSinceEnrollment > 0 
+    ? Math.round((stats.totalStudyTime / daysSinceEnrollment) / 60) 
+    : 0
 
   return (
     <div className="min-h-screen bg-gray-50">
