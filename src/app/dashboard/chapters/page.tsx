@@ -45,76 +45,39 @@ export default function ChaptersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chapters: Chapter[] = [
+  const industryChapters: Chapter[] = [
+    {
+      id: 'industry-part1',
+      title: 'Industry Knowledge - Part 1',
+      description: 'SPSV regulations, National Transport Authority, licensing basics and vehicle requirements',
+      duration: '25 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'industry-part2',
+      title: 'Industry Knowledge - Part 2',
+      description: 'Driver licence applications, vetting process, vehicle specifications and safety requirements',
+      duration: '30 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'industry-part3',
+      title: 'Industry Knowledge - Part 3',
+      description: 'SPSV licensing procedures, vehicle requirements and advertising regulations',
+      duration: '25 min',
+      completed: false,
+      locked: false
+    },
+  ]
+
+  const areaChapters: Chapter[] = [
     {
       id: 'southside-full',
       title: 'Southside Full',
       description: 'Test your knowledge of roads, landmarks, and locations in Dublin\'s Southside area',
       duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 1,
-      title: 'Introduction to SPSV',
-      description: 'Understanding the role and responsibilities of SPSV drivers',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 2,
-      title: 'Road Safety & Traffic Laws',
-      description: 'Essential traffic rules and safety guidelines',
-      duration: '45 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 3,
-      title: 'Vehicle Maintenance',
-      description: 'Basic vehicle checks and maintenance procedures',
-      duration: '40 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 4,
-      title: 'Customer Service',
-      description: 'Professional conduct and passenger interaction',
-      duration: '35 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 5,
-      title: 'Dublin Area Knowledge',
-      description: 'Major routes, landmarks, and navigation',
-      duration: '60 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 6,
-      title: 'Fare Calculation',
-      description: 'Understanding fares, meters, and receipts',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 7,
-      title: 'Emergency Procedures',
-      description: 'Handling emergencies and incidents',
-      duration: '40 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 8,
-      title: 'Legal Requirements',
-      description: 'Licensing, insurance, and legal obligations',
-      duration: '45 min',
       completed: false,
       locked: false
     },
@@ -150,8 +113,76 @@ export default function ChaptersPage() {
 
       {/* Main Content */}
       <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
-        <div className="space-y-4">
-          {chapters.map((chapter) => (
+        {/* Industry Knowledge Section */}
+        <div className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-gray-900">Industry Knowledge</h2>
+            <p className="text-sm text-gray-600">SPSV regulations, licensing and vehicle requirements</p>
+          </div>
+          <div className="space-y-4">
+            {industryChapters.map((chapter) => (
+              <div
+                key={chapter.id}
+                className={`bg-white rounded-2xl shadow-lg p-6 transition-all ${
+                  chapter.locked
+                    ? 'opacity-60 cursor-not-allowed'
+                    : 'hover:shadow-xl cursor-pointer transform hover:-translate-y-1'
+                }`}
+                onClick={() => {
+                  if (!chapter.locked) {
+                    router.push(`/dashboard/chapters/${chapter.id}`)
+                  }
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Icon */}
+                  <div
+                    className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
+                      chapter.completed
+                        ? 'bg-green-100'
+                        : chapter.locked
+                        ? 'bg-gray-100'
+                        : 'bg-blue-100'
+                    }`}
+                  >
+                    {chapter.completed ? (
+                      <FiCheckCircle className="w-6 h-6 text-green-600" />
+                    ) : chapter.locked ? (
+                      <FiLock className="w-6 h-6 text-gray-400" />
+                    ) : (
+                      <FiBook className="w-6 h-6 text-blue-600" />
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1">
+                          {chapter.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">{chapter.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <FiClock className="w-4 h-4" />
+                      <span>{chapter.duration}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Area Knowledge Section */}
+        <div className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-gray-900">Area Knowledge</h2>
+            <p className="text-sm text-gray-600">Dublin routes, landmarks and navigation</p>
+          </div>
+          <div className="space-y-4">
+            {areaChapters.map((chapter) => (
             <div
               key={chapter.id}
               className={`bg-white rounded-2xl shadow-lg p-6 transition-all ${
@@ -221,8 +252,10 @@ export default function ChaptersPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     </div>
