@@ -387,7 +387,7 @@ export default function TestSessionPage() {
 
             <div className="p-4 bg-red-50 border border-red-200 rounded-xl mb-6">
               <p className="text-sm text-red-900 font-medium">
-                ⚠️ Once submitted, you cannot change your answers. Make sure you've reviewed all questions.
+                ⚠️ Once submitted, you cannot change your answers. Make sure you&apos;ve reviewed all questions.
               </p>
             </div>
 
