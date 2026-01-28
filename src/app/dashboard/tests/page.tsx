@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft, FiClock, FiPlay } from 'react-icons/fi'
+import { FiArrowLeft, FiClock, FiPlay, FiClipboard } from 'react-icons/fi'
 
 export default function TestsPage() {
   const router = useRouter()
@@ -66,7 +66,27 @@ export default function TestsPage() {
 
       {/* Main Content */}
       <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Assigned Tests Section */}
+          <Link
+            href="/dashboard/tests/assigned"
+            className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-1 group border-2 border-green-200"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
+                <FiClipboard className="w-8 h-8 text-green-600 group-hover:text-white transition-colors" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Assigned Tests</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Tests assigned by your instructor
+              </p>
+              <div className="flex items-center gap-2 text-green-600 font-semibold">
+                <span>View Tests</span>
+                <FiPlay className="w-4 h-4" />
+              </div>
+            </div>
+          </Link>
+
           {/* Timed Tests Section */}
           <Link
             href="/dashboard/tests/timed"

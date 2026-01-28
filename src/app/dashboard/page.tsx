@@ -44,11 +44,17 @@ interface StudentData {
   progress?: ProgressOverview
 }
 
+interface AssignedTest {
+  id: string
+  status: string
+}
+
 export default function StudentDashboard() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [student, setStudent] = useState<StudentData | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [assignedTestsCount, setAssignedTestsCount] = useState(0)
 
   const checkStudentAccess = async () => {
     try {
@@ -92,6 +98,18 @@ export default function StudentDashboard() {
             totalCorrectAnswers: 0
           }
         })
+      }
+
+      // Fetch assigned tests count
+      try {
+        const assignedTestsResponse = await fetch('/api/student/assigned-tests')
+        const assignedTestsData = await assignedTestsResponse.json()
+        if (assignedTestsResponse.ok && assignedTestsData.tests) {
+          const notStartedCount = assignedTestsData.tests.filter((t: AssignedTest) => t.status === 'NOT_STARTED').length
+          setAssignedTestsCount(notStartedCount)
+        }
+      } catch (error) {
+        console.error('Error fetching assigned tests:', error)
       }
 
       setLoading(false)
@@ -269,12 +287,22 @@ export default function StudentDashboard() {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
                 <FiClipboard className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
               </div>
-              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                Coming Soon
-              </span>
+              {assignedTestsCount > 0 ? (
+                <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                  {assignedTestsCount} New
+                </span>
+              ) : (
+                <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                  Available
+                </span>
+              )}
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Tests</h3>
-            <p className="text-sm text-gray-600">Practice tests and assessments</p>
+            <p className="text-sm text-gray-600">
+              {assignedTestsCount > 0 
+                ? `${assignedTestsCount} assigned test${assignedTestsCount > 1 ? 's' : ''} waiting`
+                : 'Practice tests and assessments'}
+            </p>
           </Link>
 
           {/* Progress */}
