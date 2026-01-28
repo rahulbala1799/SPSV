@@ -54,18 +54,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get questions from QuestionBank
+    // Get ALL questions from QuestionBank (no limit for better randomization)
     const [industryQuestions, areaQuestions] = await Promise.all([
       industryCount > 0
         ? prisma.questionBank.findMany({
-            where: { category: 'INDUSTRY', isActive: true },
-            take: industryCount * 2 // Get extra for shuffling
+            where: { category: 'INDUSTRY', isActive: true }
           })
         : [],
       areaCount > 0
         ? prisma.questionBank.findMany({
-            where: { category: 'AREA_KNOWLEDGE', isActive: true },
-            take: areaCount * 2
+            where: { category: 'AREA_KNOWLEDGE', isActive: true }
           })
         : []
     ])

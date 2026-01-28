@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import 'dotenv/config'
+import { syncToQuestionBank } from './sync-to-question-bank'
 
 const prisma = new PrismaClient()
 
@@ -1430,6 +1431,10 @@ async function main() {
   }
 
   console.log(`Created ${chapter8Questions.length} questions for Chapter 8`)
+  
+  // Auto-sync all three chapters to QuestionBank for timed tests
+  await syncToQuestionBank(prisma, [chapter5.id, chapter7.id, chapter8.id])
+  
   console.log('Seed completed successfully!')
   console.log(`\nSummary:`)
   console.log(`- Chapter 5: ${chapter5Questions.length} questions`)

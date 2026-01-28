@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { syncToQuestionBank } from './sync-to-question-bank'
 
 const prisma = new PrismaClient()
 
@@ -328,6 +329,10 @@ async function seedSouthsideChapter() {
   }
 
   console.log(`✅ Created ${questions.length} questions for Southside Full chapter`)
+  
+  // Auto-sync to QuestionBank for timed tests
+  await syncToQuestionBank(prisma, [chapter.id])
+  
   console.log('🎉 Seeding complete!')
 }
 

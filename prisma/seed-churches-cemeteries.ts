@@ -1,5 +1,6 @@
 import { PrismaClient, QuestionCategory } from '@prisma/client'
 import 'dotenv/config'
+import { syncToQuestionBank } from './sync-to-question-bank'
 
 const prisma = new PrismaClient()
 
@@ -527,6 +528,10 @@ async function main() {
   }
 
   console.log(`✅ Created ${questions.length} questions for Churches and Cemeteries chapter`)
+  
+  // Auto-sync to QuestionBank for timed tests
+  await syncToQuestionBank(prisma, [chapter.id])
+  
   console.log('🎉 Seeding complete!')
 }
 
