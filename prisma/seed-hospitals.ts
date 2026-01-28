@@ -1,5 +1,6 @@
 import { PrismaClient, QuestionCategory } from '@prisma/client'
 import 'dotenv/config'
+import { syncToQuestionBank } from './sync-to-question-bank'
 
 const prisma = new PrismaClient()
 
