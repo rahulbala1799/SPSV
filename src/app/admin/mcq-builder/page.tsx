@@ -121,11 +121,8 @@ export default function MCQBuilderPage() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <Link href="/admin" className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block">
-                ← Back to Dashboard
-              </Link>
               <h1 className="text-2xl font-bold text-gray-900">MCQ Builder</h1>
               <p className="text-sm text-gray-600 mt-1">
                 Create and manage custom MCQ tests for students
@@ -139,6 +136,33 @@ export default function MCQBuilderPage() {
               Create New Test
             </Link>
           </div>
+          {/* Navigation */}
+          <nav className="flex items-center gap-4 border-t border-gray-200 pt-4">
+            <Link
+              href="/admin"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/admin/students"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Students
+            </Link>
+            <Link
+              href="/admin/mcq-builder"
+              className="px-4 py-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors font-medium"
+            >
+              MCQ Builder
+            </Link>
+            <Link
+              href="/admin/settings"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Settings
+            </Link>
+          </nav>
         </div>
       </header>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { StatsCard } from '@/components/admin/StatsCard'
-import { FiUsers, FiUserCheck, FiUserX, FiBookOpen, FiSettings } from 'react-icons/fi'
+import { FiUsers, FiUserCheck, FiUserX, FiBookOpen, FiSettings, FiClipboard } from 'react-icons/fi'
 
 interface DashboardStats {
   totalStudents: number
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -128,6 +128,33 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
+          {/* Navigation */}
+          <nav className="flex items-center gap-4 border-t border-gray-200 pt-4">
+            <Link
+              href="/admin"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/admin/students"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Students
+            </Link>
+            <Link
+              href="/admin/mcq-builder"
+              className="px-4 py-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors font-medium"
+            >
+              MCQ Builder
+            </Link>
+            <Link
+              href="/admin/settings"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Settings
+            </Link>
+          </nav>
         </div>
       </header>
 
@@ -165,10 +192,45 @@ export default function AdminDashboard() {
           />
         </div>
 
+        {/* MCQ Builder Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">MCQ Builder</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Create custom MCQ tests and assign them to students
+              </p>
+            </div>
+            <Link
+              href="/admin/mcq-builder"
+              className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors font-semibold"
+            >
+              Go to MCQ Builder
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+              <FiClipboard className="w-6 h-6 text-orange-600 mb-2" />
+              <h3 className="font-semibold text-gray-900 mb-1">Create Tests</h3>
+              <p className="text-sm text-gray-600">Build custom MCQ tests with selected questions</p>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+              <FiUsers className="w-6 h-6 text-orange-600 mb-2" />
+              <h3 className="font-semibold text-gray-900 mb-1">Assign to Students</h3>
+              <p className="text-sm text-gray-600">Select which students should take each test</p>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+              <FiBookOpen className="w-6 h-6 text-orange-600 mb-2" />
+              <h3 className="font-semibold text-gray-900 mb-1">Track Progress</h3>
+              <p className="text-sm text-gray-600">Monitor test completion and scores</p>
+            </div>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/students"
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all group"
@@ -176,15 +238,6 @@ export default function AdminDashboard() {
               <FiUsers className="w-8 h-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-semibold text-gray-900 mb-1">Manage Students</h3>
               <p className="text-sm text-gray-600">View, add, edit, or remove students</p>
-            </Link>
-
-            <Link
-              href="/admin/mcq-builder"
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all group"
-            >
-              <FiBookOpen className="w-8 h-8 text-orange-600 mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-gray-900 mb-1">MCQ Builder</h3>
-              <p className="text-sm text-gray-600">Create and manage custom tests</p>
             </Link>
 
             <Link
