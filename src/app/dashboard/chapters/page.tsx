@@ -78,7 +78,8 @@ export default function ChaptersPage() {
           'chapter_southside_streets_2': 'southside-streets-2',
           'chapter_northside_routes': 'northside-routes',
           'chapter_churches_cemeteries': 'churches-cemeteries',
-          'chapter_embassies': 'embassies'
+          'chapter_embassies': 'embassies',
+          'chapter_tourist_attractions': 'tourist-attractions'
         }
 
         data.chapterProgress.forEach((cp: any) => {
@@ -217,6 +218,14 @@ export default function ChaptersPage() {
       title: 'Embassies',
       description: 'Test your knowledge of embassy locations in Dublin',
       duration: '35 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'tourist-attractions',
+      title: 'Tourist Attractions & Landmarks',
+      description: 'Test your knowledge of tourist attractions, landmarks, museums, and cultural sites in Dublin',
+      duration: '40 min',
       completed: false,
       locked: false
     },
