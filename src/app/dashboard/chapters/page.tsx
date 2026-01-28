@@ -77,7 +77,8 @@ export default function ChaptersPage() {
           'chapter_dublin_one_way_streets': 'dublin-one-way-streets',
           'chapter_southside_streets_2': 'southside-streets-2',
           'chapter_northside_routes': 'northside-routes',
-          'chapter_churches_cemeteries': 'churches-cemeteries'
+          'chapter_churches_cemeteries': 'churches-cemeteries',
+          'chapter_embassies': 'embassies'
         }
 
         data.chapterProgress.forEach((cp: any) => {
@@ -208,6 +209,14 @@ export default function ChaptersPage() {
       title: 'Churches and Cemeteries',
       description: 'Test your knowledge of churches, cemeteries, and religious sites in Dublin',
       duration: '30 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'embassies',
+      title: 'Embassies',
+      description: 'Test your knowledge of embassy locations in Dublin',
+      duration: '35 min',
       completed: false,
       locked: false
     },
