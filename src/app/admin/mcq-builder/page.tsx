@@ -39,6 +39,7 @@ export default function MCQBuilderPage() {
 
   useEffect(() => {
     checkAdminAndFetchTests()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAdminAndFetchTests = async () => {

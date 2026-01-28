@@ -45,6 +45,7 @@ export default function TakeAssignedTestPage() {
 
   useEffect(() => {
     fetchTest()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testId])
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export default function TakeAssignedTestPage() {
 
       return () => clearInterval(timer)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, test, timeRemaining])
 
   const fetchTest = async () => {

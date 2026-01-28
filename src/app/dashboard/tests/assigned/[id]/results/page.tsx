@@ -40,6 +40,7 @@ export default function AssignedTestResultsPage() {
 
   useEffect(() => {
     fetchResults()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testId])
 
   const fetchResults = async () => {

@@ -29,6 +29,7 @@ export default function AssignedTestsPage() {
 
   useEffect(() => {
     checkAccessAndFetchTests()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAccessAndFetchTests = async () => {
@@ -136,7 +137,7 @@ export default function AssignedTestsPage() {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">No Tests Assigned</h2>
             <p className="text-gray-600">
-              You don't have any tests assigned yet. Check back later.
+              You don&apos;t have any tests assigned yet. Check back later.
             </p>
           </div>
         ) : (
