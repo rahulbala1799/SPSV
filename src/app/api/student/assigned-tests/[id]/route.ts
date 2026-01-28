@@ -76,6 +76,24 @@ export async function GET(
       explanation: null // Don't show explanation until completed
     }))
 
+    // Get attempt ID if test is in progress
+    let attemptId = null
+    if (assignment.status === 'IN_PROGRESS') {
+      const attempt = await prisma.assignedTestAttempt.findFirst({
+        where: {
+          testId: params.id,
+          studentId,
+          completedAt: null
+        },
+        orderBy: {
+          startedAt: 'desc'
+        }
+      })
+      if (attempt) {
+        attemptId = attempt.id
+      }
+    }
+
     return NextResponse.json({
       success: true,
       test: {
@@ -92,7 +110,8 @@ export async function GET(
           startedAt: assignment.startedAt,
           completedAt: assignment.completedAt,
           score: assignment.score
-        }
+        },
+        attemptId
       }
     })
   } catch (error: any) {

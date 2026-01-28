@@ -27,6 +27,7 @@ interface Test {
     completedAt: string | null
     score: number | null
   }
+  attemptId?: string | null
 }
 
 export default function TakeAssignedTestPage() {
@@ -84,6 +85,10 @@ export default function TakeAssignedTestPage() {
         // Check if in progress
         if (data.test.studentStatus.status === 'IN_PROGRESS') {
           setStarted(true)
+          // Set attempt ID if available
+          if (data.test.attemptId) {
+            setAttemptId(data.test.attemptId)
+          }
           // Set timer if timed test
           if (data.test.isTimed && data.test.studentStatus.startedAt) {
             const startTime = new Date(data.test.studentStatus.startedAt).getTime()
@@ -138,6 +143,12 @@ export default function TakeAssignedTestPage() {
 
   const handleSubmitTest = async (autoSubmit = false) => {
     if (!started || !test) return
+
+    // Check if attemptId is set
+    if (!attemptId) {
+      alert('Error: Test attempt not found. Please refresh the page and try again.')
+      return
+    }
 
     if (!autoSubmit) {
       const unanswered = test.questions.filter(q => !answers.has(q.id))
