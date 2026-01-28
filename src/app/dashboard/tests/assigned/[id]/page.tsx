@@ -151,10 +151,21 @@ export default function TakeAssignedTestPage() {
     }
 
     if (!autoSubmit) {
-      const unanswered = test.questions.filter(q => !answers.has(q.id))
+      // Check for unanswered questions - must have key AND non-null value
+      const unanswered = test.questions.filter(q => {
+        const answer = answers.get(q.id)
+        return !answer || answer === null || answer === undefined || answer === ''
+      })
+      
       if (unanswered.length > 0) {
         const confirmSubmit = confirm(
           `You have ${unanswered.length} unanswered question(s). Are you sure you want to submit?`
+        )
+        if (!confirmSubmit) return
+      } else {
+        // All questions answered - show confirmation
+        const confirmSubmit = confirm(
+          'All questions have been answered. Are you ready to submit your test?'
         )
         if (!confirmSubmit) return
       }
