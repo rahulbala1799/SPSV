@@ -79,7 +79,8 @@ export default function ChaptersPage() {
           'chapter_northside_routes': 'northside-routes',
           'chapter_churches_cemeteries': 'churches-cemeteries',
           'chapter_embassies': 'embassies',
-          'chapter_tourist_attractions': 'tourist-attractions'
+          'chapter_tourist_attractions': 'tourist-attractions',
+          'chapter_hospitals': 'hospitals'
         }
 
         data.chapterProgress.forEach((cp: any) => {
@@ -226,6 +227,14 @@ export default function ChaptersPage() {
       title: 'Tourist Attractions & Landmarks',
       description: 'Test your knowledge of tourist attractions, landmarks, museums, and cultural sites in Dublin',
       duration: '40 min',
+      completed: false,
+      locked: false
+    },
+    {
+      id: 'hospitals',
+      title: 'Hospitals',
+      description: 'Test your knowledge of hospital locations in Dublin',
+      duration: '35 min',
       completed: false,
       locked: false
     },
