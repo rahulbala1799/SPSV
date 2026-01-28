@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft, FiClock, FiCheck, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { FiArrowLeft, FiClock, FiCheck, FiChevronLeft, FiChevronRight, FiList } from 'react-icons/fi'
 
 interface Question {
   id: string
@@ -42,6 +42,7 @@ export default function TakeAssignedTestPage() {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [started, setStarted] = useState(false)
+  const [showQuestionNav, setShowQuestionNav] = useState(false)
 
   useEffect(() => {
     fetchTest()
@@ -311,20 +312,29 @@ export default function TakeAssignedTestPage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-4xl mx-auto pb-32">
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
         <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
           {/* Question */}
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-semibold text-gray-600">
-                Question {currentQuestionIndex + 1} of {test.questionCount}
-              </span>
-              {selectedAnswerForCurrent && (
-                <span className="text-sm text-green-600 flex items-center gap-1">
-                  <FiCheck className="w-4 h-4" />
-                  Answered
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-gray-600">
+                  Question {currentQuestionIndex + 1} of {test.questionCount}
                 </span>
-              )}
+                {selectedAnswerForCurrent && (
+                  <span className="text-sm text-green-600 flex items-center gap-1">
+                    <FiCheck className="w-4 h-4" />
+                    Answered
+                  </span>
+                )}
+              </div>
+              {/* Progress bar */}
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div
+                  className="bg-green-600 h-1.5 rounded-full transition-all"
+                  style={{ width: `${((currentQuestionIndex + 1) / test.questionCount) * 100}%` }}
+                />
+              </div>
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               {currentQuestion.questionText}
@@ -363,59 +373,117 @@ export default function TakeAssignedTestPage() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div className="pt-6 border-t border-gray-200 space-y-4">
+            {/* Question Navigation Button (Mobile) */}
             <button
-              onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
-              disabled={currentQuestionIndex === 0}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setShowQuestionNav(true)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
-              <FiChevronLeft />
-              Previous
+              <FiList className="w-5 h-5" />
+              <span className="font-medium text-gray-700">View All Questions</span>
             </button>
 
-            <div className="flex gap-2">
-              {test.questions.map((_, index) => (
+            {/* Previous/Next Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+                disabled={currentQuestionIndex === 0}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold text-gray-700 transition-colors"
+              >
+                <FiChevronLeft className="w-5 h-5" />
+                Previous
+              </button>
+
+              {currentQuestionIndex === test.questionCount - 1 ? (
                 <button
-                  key={index}
-                  onClick={() => setCurrentQuestionIndex(index)}
-                  className={`w-8 h-8 rounded-full text-sm font-semibold transition-colors ${
-                    index === currentQuestionIndex
-                      ? 'bg-blue-600 text-white'
-                      : answers.has(test.questions[index].id)
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  onClick={() => handleSubmitTest()}
+                  disabled={submitting}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
                 >
-                  {index + 1}
+                  {submitting ? 'Submitting...' : 'Submit Test'}
+                  <FiCheck className="w-5 h-5" />
                 </button>
-              ))}
+              ) : (
+                <button
+                  onClick={() => setCurrentQuestionIndex(Math.min(test.questionCount - 1, currentQuestionIndex + 1))}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold"
+                >
+                  Next
+                  <FiChevronRight className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
-            {currentQuestionIndex === test.questionCount - 1 ? (
-              <button
-                onClick={() => handleSubmitTest()}
-                disabled={submitting}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
-              >
-                {submitting ? 'Submitting...' : 'Submit Test'}
-                <FiCheck />
-              </button>
-            ) : (
-              <button
-                onClick={() => setCurrentQuestionIndex(Math.min(test.questionCount - 1, currentQuestionIndex + 1))}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                Next
-                <FiChevronRight />
-              </button>
-            )}
+            {/* Question Counter */}
+            <div className="text-center text-sm text-gray-600">
+              Question {currentQuestionIndex + 1} of {test.questionCount}
+            </div>
           </div>
         </div>
       </main>
 
+      {/* Question Navigation Modal */}
+      {showQuestionNav && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50" onClick={() => setShowQuestionNav(false)}>
+          <div className="bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">All Questions</h3>
+              <button
+                onClick={() => setShowQuestionNav(false)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <FiChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="mb-4 flex items-center justify-between text-sm">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-green-500 rounded"></div>
+                    <span className="text-gray-600">Answered</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-400 rounded"></div>
+                    <span className="text-gray-600">Unanswered</span>
+                  </div>
+                </div>
+                <span className="text-gray-600 font-medium">
+                  {answers.size} / {test.questionCount} answered
+                </span>
+              </div>
+              <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                {test.questions.map((question, index) => {
+                  const isAnswered = answers.has(question.id)
+                  const isCurrent = index === currentQuestionIndex
+
+                  return (
+                    <button
+                      key={question.id}
+                      onClick={() => {
+                        setCurrentQuestionIndex(index)
+                        setShowQuestionNav(false)
+                      }}
+                      className={`aspect-square rounded-lg font-semibold text-sm transition-all ${
+                        isCurrent
+                          ? 'bg-blue-600 text-white ring-4 ring-blue-200 scale-110'
+                          : isAnswered
+                          ? 'bg-green-500 text-white hover:bg-green-600'
+                          : 'bg-yellow-400 text-gray-900 hover:bg-yellow-500'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Submit Button */}
       {answers.size === test.questionCount && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
           <div className="max-w-4xl mx-auto px-4 py-4">
             <button
               onClick={() => handleSubmitTest()}
