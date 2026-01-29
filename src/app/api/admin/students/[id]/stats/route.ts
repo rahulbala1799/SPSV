@@ -83,6 +83,14 @@ export async function GET(
       }
     })
 
+    // Fetch assigned test attempts
+    const assignedTests = await prisma.assignedTestAttempt.findMany({
+      where: {
+        studentId,
+        completedAt: { not: null }
+      }
+    })
+
     // Combine test statistics
     const allTests = [
       ...untimedTests.map(t => ({
@@ -92,6 +100,10 @@ export async function GET(
       ...timedTests.map(t => ({
         score: Number(t.scorePercentage) || 0,
         type: 'timed'
+      })),
+      ...assignedTests.map(t => ({
+        score: Number(t.percentageScore) || (t.score || 0),
+        type: 'assigned'
       }))
     ]
 
@@ -129,11 +141,22 @@ export async function GET(
       }
     })
 
-    const questionsAttempted = chapterAnswers.length + testQuestions.length + timedTestAnswers.length
+    // From assigned test answers
+    const assignedTestAnswers = await prisma.assignedTestAnswer.findMany({
+      where: {
+        attempt: {
+          studentId
+        },
+        isCorrect: { not: null }
+      }
+    })
+
+    const questionsAttempted = chapterAnswers.length + testQuestions.length + timedTestAnswers.length + assignedTestAnswers.length
     const questionsCorrect = 
       chapterAnswers.filter(a => a.isCorrect).length +
       testQuestions.filter(q => q.isCorrect === true).length +
-      timedTestAnswers.filter(a => a.isCorrect === true).length
+      timedTestAnswers.filter(a => a.isCorrect === true).length +
+      assignedTestAnswers.filter(a => a.isCorrect === true).length
 
     // 5. Calculate overall completion
     // Based on chapters completed and tests taken

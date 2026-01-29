@@ -44,7 +44,7 @@ export function TestPerformanceSection({ studentId }: Props) {
   const [filteredTests, setFilteredTests] = useState<TestAttempt[]>([])
   const [summary, setSummary] = useState<TestSummary | null>(null)
   const [filterStatus, setFilterStatus] = useState<'all' | 'passed' | 'failed'>('all')
-  const [filterType, setFilterType] = useState<'all' | 'timed' | 'untimed'>('all')
+  const [filterType, setFilterType] = useState<'all' | 'timed' | 'untimed' | 'assigned'>('all')
   const [selectedTest, setSelectedTest] = useState<TestAttempt | null>(null)
 
   useEffect(() => {
@@ -216,6 +216,7 @@ export function TestPerformanceSection({ studentId }: Props) {
           <option value="all">All Types</option>
           <option value="timed">Timed</option>
           <option value="untimed">Untimed</option>
+          <option value="assigned">Assigned</option>
         </select>
         <span className="text-sm text-gray-500 ml-auto">
           Showing {filteredTests.length} of {tests.length} tests

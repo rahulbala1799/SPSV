@@ -42,6 +42,26 @@ export async function GET(
       orderBy: { completedAt: 'desc' }
     })
 
+    // Fetch assigned test attempts
+    const assignedTests = await prisma.assignedTestAttempt.findMany({
+      where: {
+        studentId,
+        completedAt: { not: null }
+      },
+      include: {
+        test: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            isTimed: true,
+            timeLimitMinutes: true
+          }
+        }
+      },
+      orderBy: { completedAt: 'desc' }
+    })
+
     // Combine and format test data
     const allTests = [
       ...untimedTests.map(test => ({
@@ -79,6 +99,20 @@ export async function GET(
         areaScore: test.areaScore,
         industryPercentage: Number(test.industryPercentage) || 0,
         areaPercentage: Number(test.areaPercentage) || 0
+      })),
+      ...assignedTests.map(test => ({
+        id: test.id,
+        testName: test.test.title || 'Assigned Test',
+        testType: 'Assigned',
+        category: test.test.description || 'Assigned Test',
+        dateAttempted: test.completedAt?.toISOString() || test.startedAt.toISOString(),
+        score: test.score || 0,
+        scorePercentage: Number(test.percentageScore) || (test.score || 0),
+        questionsTotal: test.totalQuestions,
+        questionsCorrect: test.correctAnswers,
+        questionsIncorrect: test.totalQuestions - test.correctAnswers,
+        timeTaken: test.timeSpentSeconds || null,
+        status: (Number(test.percentageScore) || (test.score || 0)) >= 80 ? 'Passed' : 'Failed'
       }))
     ]
 
@@ -92,6 +126,7 @@ export async function GET(
       totalTests: allTests.length,
       untimedTests: untimedTests.length,
       timedTests: timedTests.length,
+      assignedTests: assignedTests.length,
       passedTests: allTests.filter(t => t.status === 'Passed').length,
       failedTests: allTests.filter(t => t.status === 'Failed').length,
       averageScore: allTests.length > 0
