@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheck, FiX, FiAward, FiBarChart2, FiRefreshCw } from 'react-icons/fi'
+import { BottomNav } from '@/components/dashboard/BottomNav'
 
 interface Question {
   id: string
@@ -146,7 +147,7 @@ export default function TestResultsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
         {/* Score Card */}
         <div className={`rounded-2xl shadow-lg p-8 mb-6 border-2 ${getScoreBgColor(testResult.score)}`}>
           <div className="text-center">
@@ -317,6 +318,9 @@ export default function TestResultsPage() {
           </div>
         </div>
       </main>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiCheck, FiX, FiClock, FiAward } from 'react-icons/fi'
+import { BottomNav } from '@/components/dashboard/BottomNav'
 
 interface Answer {
   questionId: string
@@ -303,6 +304,9 @@ export default function AssignedTestResultsPage() {
           </Link>
         </div>
       </main>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   )
 }

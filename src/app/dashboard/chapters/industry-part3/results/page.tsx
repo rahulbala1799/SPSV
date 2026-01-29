@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheckCircle, FiX, FiAward, FiRotateCcw } from 'react-icons/fi'
+import { BottomNav } from '@/components/dashboard/BottomNav'
 
 const CHAPTER_ID = 'chapter_industry_part3'
 const CHAPTER_PATH = 'industry-part3'
@@ -122,7 +123,7 @@ function ResultsContent() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
         {/* Score Card */}
         <div className={`bg-white rounded-2xl shadow-lg p-8 mb-6 text-center ${
           isPassed ? 'border-2 border-green-500' : 'border-2 border-orange-500'

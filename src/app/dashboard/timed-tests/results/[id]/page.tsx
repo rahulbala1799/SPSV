@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiAward, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi'
+import { BottomNav } from '@/components/dashboard/BottomNav'
 
 export default function TestResultsPage() {
   const params = useParams()
@@ -87,7 +88,7 @@ export default function TestResultsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-4xl mx-auto pb-20">
+      <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
         {/* Hero Result Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 text-center">
           <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
@@ -209,6 +210,9 @@ export default function TestResultsPage() {
           </Link>
         </div>
       </main>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   )
 }
