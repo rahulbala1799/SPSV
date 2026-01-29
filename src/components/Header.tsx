@@ -112,13 +112,13 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
             ) : (
               <>
                 <a
-                  href="tel:+353894934222"
+                  href="tel:+353894034222"
                   className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
                 >
                   Call Us
                 </a>
                 <a
-                  href="https://wa.me/353894934222"
+                  href="https://wa.me/353894034222"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
@@ -235,14 +235,14 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 ) : (
                   <>
                     <a
-                      href="tel:+353894934222"
+                      href="tel:+353894034222"
                       className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Call: +353 89 493 4222
+                      Call: +353 89 403 4222
                     </a>
                     <a
-                      href="https://wa.me/353894934222"
+                      href="https://wa.me/353894034222"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"

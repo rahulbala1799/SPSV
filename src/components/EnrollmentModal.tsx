@@ -112,7 +112,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
                   <Input
                     label="Phone Number"
                     type="tel"
-                    placeholder="+353 89 493 4222"
+                    placeholder="+353 89 403 4222"
                     value={formData.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
                     required

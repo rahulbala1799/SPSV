@@ -57,7 +57,7 @@ export default function Home() {
       name: 'phone',
       label: 'Phone Number',
       type: 'tel',
-      placeholder: '+353 89 493 4222',
+      placeholder: '+353 89 403 4222',
       required: true,
     },
   ];
@@ -460,8 +460,8 @@ export default function Home() {
               <div className="text-4xl mb-4">📞</div>
               <h3 className="text-xl font-bold mb-2">Call Us</h3>
               <p className="text-gray-400">
-                <a href="tel:+353894934222" className="hover:text-white transition-colors">
-                  +353 89 493 4222
+                <a href="tel:+353894034222" className="hover:text-white transition-colors">
+                  +353 89 403 4222
                 </a>
                 <br />
                 Mon-Fri: 9AM-6PM

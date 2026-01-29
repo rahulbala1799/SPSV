@@ -236,13 +236,13 @@ export default function TimetablePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+353894934222"
+              href="tel:+353894034222"
               className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors text-lg"
             >
-              Call Us: +353 89 493 4222
+              Call Us: +353 89 403 4222
             </a>
             <a
-              href="https://wa.me/353894934222"
+              href="https://wa.me/353894034222"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-lg"
