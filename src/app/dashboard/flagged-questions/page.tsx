@@ -157,7 +157,7 @@ export default function FlaggedQuestionsPage() {
             <span>Back to Dashboard</span>
           </Link>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Flagged Questions</h1>
-          <p className="text-gray-600 mt-1">Review questions you've flagged for later study</p>
+          <p className="text-gray-600 mt-1">Review questions you&apos;ve flagged for later study</p>
         </div>
       </header>
 
