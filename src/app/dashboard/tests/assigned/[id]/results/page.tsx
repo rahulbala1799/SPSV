@@ -125,7 +125,7 @@ export default function AssignedTestResultsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-7xl mx-auto pb-20">
+      <main className="px-4 py-6 max-w-7xl mx-auto pb-24">
         {/* Score Card */}
         <div className={`rounded-2xl shadow-lg p-8 mb-6 ${getScoreBg(attempt.score)}`}>
           <div className="flex items-center justify-between">
