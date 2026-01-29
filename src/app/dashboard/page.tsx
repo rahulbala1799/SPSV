@@ -7,15 +7,17 @@ import {
   FiBook,
   FiClipboard,
   FiTrendingUp, 
-  FiClock, 
   FiCheckCircle,
-  FiCalendar,
   FiLogOut,
-  FiUser,
   FiMenu,
   FiX,
-  FiFlag
+  FiFlag,
+  FiAward,
+  FiTarget,
+  FiZap,
+  FiStar
 } from 'react-icons/fi'
+import { BottomNav } from '@/components/dashboard/BottomNav'
 
 interface ProgressOverview {
   totalChapters: number
@@ -67,13 +69,11 @@ export default function StudentDashboard() {
         return
       }
 
-      // If admin, redirect to admin dashboard
       if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
         router.push('/admin')
         return
       }
 
-      // Fetch real progress data
       const progressResponse = await fetch('/api/student/progress')
       const progressData = await progressResponse.json()
 
@@ -83,7 +83,6 @@ export default function StudentDashboard() {
           progress: progressData.overview
         })
       } else {
-        // Fallback to empty progress
         setStudent({
           user: data.user,
           progress: {
@@ -101,7 +100,6 @@ export default function StudentDashboard() {
         })
       }
 
-      // Fetch assigned tests count
       try {
         const assignedTestsResponse = await fetch('/api/student/assigned-tests')
         const assignedTestsData = await assignedTestsResponse.json()
@@ -136,10 +134,15 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-green-200 border-t-green-600 mx-auto mb-4"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <FiZap className="w-6 h-6 text-green-600" />
+            </div>
+          </div>
+          <p className="text-gray-700 font-medium">Loading your dashboard...</p>
         </div>
       </div>
     )
@@ -150,72 +153,55 @@ export default function StudentDashboard() {
   }
 
   const progressPercentage = student.progress?.overallProgress || 0
+  const firstName = student.user.name?.split(' ')[0] || 'Student'
+  const accuracy = student.progress?.totalQuestionsAnswered 
+    ? Math.round((student.progress.totalCorrectAnswers / student.progress.totalQuestionsAnswered) * 100)
+    : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      {/* Mobile Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+      {/* Modern Header */}
+      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50 sticky top-0 z-40">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
                 {student.user.name?.charAt(0).toUpperCase() || 'S'}
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  Hi, {student.user.name?.split(' ')[0] || 'Student'}!
+                <h1 className="text-base md:text-lg font-bold text-gray-900">
+                  {firstName}
                 </h1>
-                <p className="text-xs text-gray-600">SPSV Taxi Course</p>
+                <p className="text-xs text-gray-500">SPSV Taxi Course</p>
               </div>
             </div>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
             >
-              {menuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-            </button>
-            <button
-              onClick={handleLogout}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm"
-            >
-              <FiLogOut className="w-4 h-4" />
-              Logout
+              {menuOpen ? <FiX className="w-6 h-6 text-gray-700" /> : <FiMenu className="w-6 h-6 text-gray-700" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Dropdown Menu */}
         {menuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-3 space-y-2">
-              <Link
-                href="/dashboard"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-                onClick={() => setMenuOpen(false)}
-              >
-                <div className="flex items-center gap-3">
-                  <FiUser className="w-5 h-5" />
-                  <span>My Profile</span>
-                </div>
-              </Link>
+          <div className="border-t border-gray-200/50 bg-white/95 backdrop-blur-md">
+            <div className="px-4 py-3 space-y-1 max-w-7xl mx-auto">
               <Link
                 href="/dashboard/flagged-questions"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-green-50 rounded-xl transition-colors"
                 onClick={() => setMenuOpen(false)}
               >
-                <div className="flex items-center gap-3">
-                  <FiFlag className="w-5 h-5" />
-                  <span>Flagged Questions</span>
-                </div>
+                <FiFlag className="w-5 h-5 text-red-500" />
+                <span className="font-medium">Flagged Questions</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <FiLogOut className="w-5 h-5" />
-                  <span>Logout</span>
-                </div>
+                <FiLogOut className="w-5 h-5" />
+                <span className="font-medium">Logout</span>
               </button>
             </div>
           </div>
@@ -223,179 +209,249 @@ export default function StudentDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-7xl mx-auto pb-20">
-        {/* Progress Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Your Progress</h2>
-            <span className="text-2xl font-bold text-green-600">{progressPercentage}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div
-              className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-center mb-4">
-            <div className="bg-green-50 rounded-lg p-3">
-              <p className="text-2xl font-bold text-green-600">
-                {student.progress?.completedChapters}/{student.progress?.totalChapters}
-              </p>
-              <p className="text-xs text-gray-600 mt-1">Chapters</p>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-2xl font-bold text-blue-600">
-                {student.progress?.untimedTests?.completed || 0}/{student.progress?.untimedTests?.total || 0}
-              </p>
-              <p className="text-xs text-gray-600 mt-1">Tests</p>
-            </div>
-          </div>
-          {student.progress && student.progress.totalQuestionsAnswered > 0 && (
-            <div className="border-t border-gray-200 pt-4">
-              <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                <div>
-                  <p className="font-bold text-gray-900">{student.progress.totalQuestionsAnswered}</p>
-                  <p className="text-xs text-gray-600">Questions</p>
-                </div>
-                <div>
-                  <p className="font-bold text-green-600">{student.progress.averageScore}%</p>
-                  <p className="text-xs text-gray-600">Avg Score</p>
-                </div>
-                <div>
-                  <p className="font-bold text-blue-600">{student.progress.inProgressChapters}</p>
-                  <p className="text-xs text-gray-600">In Progress</p>
-                </div>
-              </div>
-            </div>
-          )}
+      <main className="px-4 py-6 max-w-7xl mx-auto pb-24">
+        {/* Hero Section with Progress */}
+        <div className="mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {firstName}! 👋
+          </h2>
+          <p className="text-gray-600 text-sm md:text-base">
+            {progressPercentage > 75 
+              ? "You're doing amazing! Keep up the great work!"
+              : progressPercentage > 50 
+              ? "Great progress! You're over halfway there!"
+              : progressPercentage > 25
+              ? "Keep going! You're making steady progress!"
+              : "Let's get started on your learning journey!"}
+          </p>
         </div>
 
-        {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {/* Chapters */}
-          <Link
-            href="/dashboard/chapters"
-            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-600 transition-colors">
-                <FiBook className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
+        {/* Main Progress Card */}
+        <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-3xl shadow-2xl p-6 md:p-8 mb-6 text-white relative overflow-hidden">
+          {/* Decorative circles */}
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-green-100 text-sm font-medium mb-1">Overall Progress</p>
+                <p className="text-5xl md:text-6xl font-bold">{progressPercentage}%</p>
               </div>
-              <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                {student.progress?.completedChapters} of {student.progress?.totalChapters}
-              </span>
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                <FiTrendingUp className="w-8 h-8 md:w-10 md:h-10" />
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Chapters</h3>
-            <p className="text-sm text-gray-600">Study course materials and lessons</p>
-          </Link>
 
-          {/* Tests */}
-          <Link
-            href="/dashboard/tests"
-            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                <FiClipboard className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
+            {/* Progress Bar */}
+            <div className="bg-white/20 backdrop-blur-sm rounded-full h-3 mb-6 overflow-hidden">
+              <div
+                className="bg-white h-3 rounded-full transition-all duration-1000 ease-out shadow-lg"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiBook className="w-5 h-5 text-green-200" />
+                  <p className="text-sm text-green-100">Chapters</p>
+                </div>
+                <p className="text-2xl font-bold">{student.progress?.completedChapters}/{student.progress?.totalChapters}</p>
               </div>
-              {assignedTestsCount > 0 ? (
-                <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                  {assignedTestsCount} New
-                </span>
-              ) : (
-                <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  Available
-                </span>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiClipboard className="w-5 h-5 text-green-200" />
+                  <p className="text-sm text-green-100">Tests</p>
+                </div>
+                <p className="text-2xl font-bold">{student.progress?.untimedTests?.completed || 0}/{student.progress?.untimedTests?.total || 0}</p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiTarget className="w-5 h-5 text-green-200" />
+                  <p className="text-sm text-green-100">Accuracy</p>
+                </div>
+                <p className="text-2xl font-bold">{accuracy}%</p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiCheckCircle className="w-5 h-5 text-green-200" />
+                  <p className="text-sm text-green-100">Questions</p>
+                </div>
+                <p className="text-2xl font-bold">{student.progress?.totalQuestionsAnswered || 0}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {/* Chapters */}
+            <Link
+              href="/dashboard/chapters"
+              className="group bg-white hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <FiBook className="w-6 h-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">Chapters</h4>
+              <p className="text-xs text-gray-500">Study materials</p>
+              {student.progress && student.progress.totalChapters > 0 && (
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Progress</span>
+                    <span className="font-bold text-green-600">
+                      {Math.round((student.progress.completedChapters / student.progress.totalChapters) * 100)}%
+                    </span>
+                  </div>
+                  <div className="mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full transition-all"
+                      style={{ width: `${(student.progress.completedChapters / student.progress.totalChapters) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
               )}
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Tests</h3>
-            <p className="text-sm text-gray-600">
-              {assignedTestsCount > 0 
-                ? `${assignedTestsCount} assigned test${assignedTestsCount > 1 ? 's' : ''} waiting`
-                : 'Practice tests and assessments'}
-            </p>
-          </Link>
+            </Link>
 
-          {/* Progress */}
-          <Link
-            href="/dashboard/progress"
-            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-600 transition-colors">
-                <FiTrendingUp className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" />
+            {/* Tests */}
+            <Link
+              href="/dashboard/tests"
+              className="group bg-white hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1 relative"
+            >
+              {assignedTestsCount > 0 && (
+                <div className="absolute top-3 right-3 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {assignedTestsCount}
+                </div>
+              )}
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <FiClipboard className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
-                {progressPercentage}%
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Progress</h3>
-            <p className="text-sm text-gray-600">Track your learning journey</p>
-          </Link>
+              <h4 className="font-bold text-gray-900 mb-1">Tests</h4>
+              <p className="text-xs text-gray-500">
+                {assignedTestsCount > 0 ? `${assignedTestsCount} new` : 'Practice tests'}
+              </p>
+            </Link>
 
-          {/* Flagged Questions */}
-          <Link
-            href="/dashboard/flagged-questions"
-            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:bg-red-600 transition-colors">
-                <FiFlag className="w-6 h-6 text-red-600 group-hover:text-white transition-colors" />
+            {/* Progress */}
+            <Link
+              href="/dashboard/progress"
+              className="group bg-white hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <FiAward className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                Review
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Flagged Questions</h3>
-            <p className="text-sm text-gray-600">Review questions you&apos;ve flagged for study</p>
-          </Link>
+              <h4 className="font-bold text-gray-900 mb-1">Progress</h4>
+              <p className="text-xs text-gray-500">Track performance</p>
+            </Link>
+
+            {/* Flagged */}
+            <Link
+              href="/dashboard/flagged-questions"
+              className="group bg-white hover:bg-gradient-to-br hover:from-red-50 hover:to-orange-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <FiFlag className="w-6 h-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">Flagged</h4>
+              <p className="text-xs text-gray-500">Review questions</p>
+            </Link>
+          </div>
         </div>
 
-        {/* Additional Resources */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Additional Resources</h2>
-          <div className="space-y-3">
-            <Link
-              href="/spsv-manual"
-              className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
-            >
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <FiBook className="w-5 h-5 text-orange-600" />
+        {/* Performance Insights */}
+        {student.progress && student.progress.totalQuestionsAnswered > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Insights</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <FiTarget className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Questions Answered</p>
+                    <p className="text-2xl font-bold text-gray-900">{student.progress.totalQuestionsAnswered}</p>
+                  </div>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <p className="text-xs text-blue-700">
+                    <span className="font-bold">{student.progress.totalCorrectAnswers}</span> correct answers
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">SPSV Manual</h3>
-                <p className="text-sm text-gray-600">Complete study manual</p>
-              </div>
-            </Link>
 
-            <Link
-              href="/test-guide"
-              className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
-            >
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <FiClipboard className="w-5 h-5 text-yellow-600" />
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <FiStar className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Average Score</p>
+                    <p className="text-2xl font-bold text-gray-900">{student.progress.averageScore}%</p>
+                  </div>
+                </div>
+                <div className="bg-green-50 rounded-lg p-3">
+                  <p className="text-xs text-green-700">
+                    {student.progress.averageScore >= 80 ? 'Excellent!' : student.progress.averageScore >= 60 ? 'Good progress!' : 'Keep practicing!'}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">Test Guide</h3>
-                <p className="text-sm text-gray-600">Preparation guidelines</p>
-              </div>
-            </Link>
 
-            <Link
-              href="/timetable"
-              className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
-            >
-              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <FiCalendar className="w-5 h-5 text-indigo-600" />
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <FiZap className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">In Progress</p>
+                    <p className="text-2xl font-bold text-gray-900">{student.progress.inProgressChapters}</p>
+                  </div>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-3">
+                  <p className="text-xs text-purple-700">
+                    Chapters in progress
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">Timetable</h3>
-                <p className="text-sm text-gray-600">Class schedule</p>
-              </div>
-            </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Motivational Card */}
+        <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl shadow-xl p-6 text-white mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+              <FiZap className="w-6 h-6" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold mb-2">Keep Learning!</h3>
+              <p className="text-sm text-white/90 mb-3">
+                {progressPercentage < 25 
+                  ? "Start your learning journey today. Consistency is key!"
+                  : progressPercentage < 75
+                  ? "You're making great progress! Keep up the momentum!"
+                  : "You're almost there! Finish strong!"}
+              </p>
+              <Link
+                href="/dashboard/chapters"
+                className="inline-block bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-white/90 transition-colors"
+              >
+                Continue Learning →
+              </Link>
+            </div>
           </div>
         </div>
       </main>
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   )
 }
