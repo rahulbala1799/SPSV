@@ -347,7 +347,7 @@ export default function StudentDashboard() {
               </span>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Flagged Questions</h3>
-            <p className="text-sm text-gray-600">Review questions you've flagged for study</p>
+            <p className="text-sm text-gray-600">Review questions you&apos;ve flagged for study</p>
           </Link>
         </div>
 

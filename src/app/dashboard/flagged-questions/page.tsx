@@ -37,6 +37,7 @@ export default function FlaggedQuestionsPage() {
 
   useEffect(() => {
     checkAccessAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAccessAndLoad = async () => {
@@ -227,8 +228,8 @@ export default function FlaggedQuestionsPage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Flagged Questions</h3>
             <p className="text-gray-600">
               {filter === 'all'
-                ? "You haven't flagged any questions yet."
-                : `You haven't flagged any questions from ${getSourceLabel(filter).toLowerCase()}.`}
+                ? "You haven&apos;t flagged any questions yet."
+                : `You haven&apos;t flagged any questions from ${getSourceLabel(filter).toLowerCase()}.`}
             </p>
           </div>
         ) : (
@@ -288,7 +289,7 @@ export default function FlaggedQuestionsPage() {
                         <div className="text-xs text-gray-500 text-center">
                           From Timed Test
                           <br />
-                          (Can't unflag)
+                          (Can&apos;t unflag)
                         </div>
                       )}
                     </div>
