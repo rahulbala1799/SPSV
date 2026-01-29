@@ -556,7 +556,7 @@ translations/
 **Recommendation:** Start with English only, add translations later if needed
 
 ### 2. Phone Numbers and Contact Info
-- Keep in international format: `+353 89 493 4222`
+- Keep in international format: `+353 89 403 4222`
 - No translation needed
 - Consistent across all languages
 
