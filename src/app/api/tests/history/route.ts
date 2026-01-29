@@ -11,19 +11,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Get in-progress, paused, and completed tests
     const sessions = await prisma.testSession.findMany({
       where: {
         userId: user.id,
-        status: 'COMPLETED'
+        status: {
+          in: ['IN_PROGRESS', 'PAUSED', 'COMPLETED']
+        }
       },
-      orderBy: { completedAt: 'desc' },
-      take: 20,
+      orderBy: [
+        { status: 'asc' }, // IN_PROGRESS first, then PAUSED, then COMPLETED
+        { startedAt: 'desc' }
+      ],
+      take: 30,
       select: {
         id: true,
         testType: true,
         totalQuestions: true,
         score: true,
         scorePercentage: true,
+        status: true,
+        timeAllotted: true,
+        timeRemaining: true,
         startedAt: true,
         completedAt: true
       }

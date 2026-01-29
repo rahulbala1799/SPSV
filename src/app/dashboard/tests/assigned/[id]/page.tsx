@@ -44,6 +44,8 @@ export default function TakeAssignedTestPage() {
   const [submitting, setSubmitting] = useState(false)
   const [started, setStarted] = useState(false)
   const [showQuestionNav, setShowQuestionNav] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const [pausing, setPausing] = useState(false)
 
   useEffect(() => {
     fetchTest()
@@ -51,7 +53,7 @@ export default function TakeAssignedTestPage() {
   }, [testId])
 
   useEffect(() => {
-    if (started && test?.isTimed && timeRemaining !== null && timeRemaining > 0) {
+    if (started && !isPaused && test?.isTimed && timeRemaining !== null && timeRemaining > 0) {
       const timer = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev === null || prev <= 1) {
@@ -66,7 +68,7 @@ export default function TakeAssignedTestPage() {
       return () => clearInterval(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started, test, timeRemaining])
+  }, [started, isPaused, test, timeRemaining])
 
   const fetchTest = async () => {
     try {
@@ -82,9 +84,10 @@ export default function TakeAssignedTestPage() {
           return
         }
 
-        // Check if in progress
-        if (data.test.studentStatus.status === 'IN_PROGRESS') {
+        // Check if in progress or paused
+        if (data.test.studentStatus.status === 'IN_PROGRESS' || data.test.studentStatus.status === 'PAUSED') {
           setStarted(true)
+          setIsPaused(data.test.studentStatus.status === 'PAUSED')
           // Set attempt ID if available
           if (data.test.attemptId) {
             setAttemptId(data.test.attemptId)
@@ -139,6 +142,71 @@ export default function TakeAssignedTestPage() {
     const newAnswers = new Map(answers)
     newAnswers.set(questionId, answerId)
     setAnswers(newAnswers)
+  }
+
+  const handlePause = async () => {
+    if (!started || !test || !attemptId) return
+
+    if (!confirm('Save progress and pause this test? You can resume it later from the Assigned Tests page.')) {
+      return
+    }
+
+    setPausing(true)
+    try {
+      const response = await fetch(`/api/student/assigned-tests/${testId}/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          attemptId,
+          timeRemaining: test.isTimed ? timeRemaining : null
+        })
+      })
+
+      const data = await response.json()
+      if (response.ok) {
+        setIsPaused(true)
+        alert('Test paused successfully! You can resume it later from the Assigned Tests page.')
+        router.push('/dashboard/tests/assigned')
+      } else {
+        alert('Error pausing test: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error pausing test:', error)
+      alert('Failed to pause test')
+    } finally {
+      setPausing(false)
+    }
+  }
+
+  const handleResume = async () => {
+    setPausing(true)
+    try {
+      const response = await fetch(`/api/student/assigned-tests/${testId}/resume`, {
+        method: 'POST'
+      })
+
+      const data = await response.json()
+      if (response.ok) {
+        setIsPaused(false)
+        if (data.attemptId) {
+          setAttemptId(data.attemptId)
+        }
+        // Recalculate timer if timed test
+        if (test?.isTimed && test.studentStatus.startedAt) {
+          const startTime = new Date(test.studentStatus.startedAt).getTime()
+          const elapsed = Math.floor((Date.now() - startTime) / 1000)
+          const remaining = (test.timeLimitMinutes! * 60) - elapsed
+          setTimeRemaining(Math.max(0, remaining))
+        }
+      } else {
+        alert('Error resuming test: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error resuming test:', error)
+      alert('Failed to resume test')
+    } finally {
+      setPausing(false)
+    }
   }
 
   const handleSubmitTest = async (autoSubmit = false) => {
@@ -309,14 +377,35 @@ export default function TakeAssignedTestPage() {
         <div className="px-4 py-4 max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900">{test.title}</h1>
-            {test.isTimed && timeRemaining !== null && (
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                timeRemaining < 300 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-              }`}>
-                <FiClock className="w-5 h-5" />
-                <span className="font-semibold">{formatTime(timeRemaining)}</span>
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              {test.isTimed && timeRemaining !== null && (
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                  timeRemaining < 300 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                }`}>
+                  <FiClock className="w-5 h-5" />
+                  <span className="font-semibold">{formatTime(timeRemaining)}</span>
+                  {isPaused && <span className="text-sm ml-2">(Paused)</span>}
+                </div>
+              )}
+              {!isPaused && (
+                <button
+                  onClick={handlePause}
+                  disabled={pausing}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
+                </button>
+              )}
+              {isPaused && (
+                <button
+                  onClick={handleResume}
+                  disabled={pausing}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {pausing ? 'Resuming...' : '▶️ Resume Test'}
+                </button>
+              )}
+            </div>
           </div>
           <div className="mt-2">
             <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
@@ -417,14 +506,34 @@ export default function TakeAssignedTestPage() {
               </button>
 
               {currentQuestionIndex === test.questionCount - 1 ? (
-                <button
-                  onClick={() => handleSubmitTest()}
-                  disabled={submitting}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
-                >
-                  {submitting ? 'Submitting...' : 'Submit Test'}
-                  <FiCheck className="w-5 h-5" />
-                </button>
+                <div className="flex gap-3 w-full">
+                  {!isPaused && (
+                    <button
+                      onClick={handlePause}
+                      disabled={pausing || submitting}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
+                    >
+                      {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
+                    </button>
+                  )}
+                  {isPaused && (
+                    <button
+                      onClick={handleResume}
+                      disabled={pausing || submitting}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
+                    >
+                      {pausing ? 'Resuming...' : '▶️ Resume Test'}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleSubmitTest()}
+                    disabled={submitting || isPaused}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
+                  >
+                    {submitting ? 'Submitting...' : 'Submit Test'}
+                    <FiCheck className="w-5 h-5" />
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={() => setCurrentQuestionIndex(Math.min(test.questionCount - 1, currentQuestionIndex + 1))}

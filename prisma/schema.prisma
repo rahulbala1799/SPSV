@@ -31,6 +31,7 @@ enum TestType {
 
 enum TestSessionStatus {
   IN_PROGRESS
+  PAUSED
   COMPLETED
   ABANDONED
 }
@@ -68,6 +69,7 @@ enum TestAssignmentStatus {
 enum StudentTestStatus {
   NOT_STARTED
   IN_PROGRESS
+  PAUSED
   COMPLETED
   EXPIRED
 }
@@ -318,6 +320,7 @@ model TestSession {
   industryPercentage Decimal?
   areaPercentage    Decimal?
   startedAt         DateTime          @default(now())
+  pausedAt          DateTime?         // When test was paused
   completedAt       DateTime?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -544,6 +547,7 @@ model AssignedTestAttempt {
   
   // Attempt details
   startedAt       DateTime                @default(now())
+  pausedAt        DateTime?               // When test was paused (for timed tests)
   completedAt     DateTime?
   timeSpentSeconds Int?                  // Total time spent (for timed tests)
   

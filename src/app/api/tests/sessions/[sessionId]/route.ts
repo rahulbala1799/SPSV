@@ -28,6 +28,27 @@ export async function GET(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
+    // Calculate actual remaining time for in-progress sessions (not paused)
+    let actualTimeRemaining = session.timeRemaining
+    if (session.status === 'IN_PROGRESS') {
+      const now = new Date()
+      const startedAt = session.startedAt
+      const elapsedSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000)
+      const calculatedRemaining = session.timeAllotted - elapsedSeconds
+      
+      // Use the minimum of stored timeRemaining and calculated remaining time
+      // This ensures we don't give extra time if the stored value is outdated
+      actualTimeRemaining = Math.max(0, Math.min(session.timeRemaining, calculatedRemaining))
+      
+      // Update the database with the correct remaining time if it's different
+      if (actualTimeRemaining !== session.timeRemaining) {
+        await prisma.testSession.update({
+          where: { id: session.id },
+          data: { timeRemaining: actualTimeRemaining }
+        })
+      }
+    }
+
     return NextResponse.json({
       session: {
         id: session.id,
@@ -35,7 +56,7 @@ export async function GET(
         status: session.status,
         totalQuestions: session.totalQuestions,
         timeAllotted: session.timeAllotted,
-        timeRemaining: session.timeRemaining,
+        timeRemaining: actualTimeRemaining,
         startedAt: session.startedAt
       },
       questions: session.questions.map(q => ({

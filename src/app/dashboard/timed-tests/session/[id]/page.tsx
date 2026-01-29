@@ -27,6 +27,8 @@ export default function TestSessionPage() {
   const [saving, setSaving] = useState(false)
   const [showReview, setShowReview] = useState(false)
   const [warning, setWarning] = useState<number | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
+  const [pausing, setPausing] = useState(false)
 
   useEffect(() => {
     loadSession()
@@ -60,9 +62,21 @@ export default function TestSessionPage() {
       const res = await fetch(`/api/tests/sessions/${params.id}`)
       const data = await res.json()
       if (res.ok) {
+        // Check if session is completed or abandoned
+        if (data.session.status === 'COMPLETED' || data.session.status === 'ABANDONED') {
+          router.push(`/dashboard/timed-tests/results/${params.id}`)
+          return
+        }
+
+        // Check if session is paused
+        if (data.session.status === 'PAUSED') {
+          setIsPaused(true)
+        }
+
         setSession(data.session)
         setQuestions(data.questions)
-        setTimeRemaining(data.session.timeRemaining)
+        const remainingTime = Math.max(0, data.session.timeRemaining)
+        setTimeRemaining(remainingTime)
         
         // Restore answers
         const savedAnswers: Record<string, string> = {}
@@ -70,6 +84,12 @@ export default function TestSessionPage() {
           savedAnswers[a.questionId] = a.selectedAnswer
         })
         setAnswers(savedAnswers)
+
+        // Check if time has expired after loading data (only if not paused)
+        if (remainingTime <= 0 && data.session.status === 'IN_PROGRESS') {
+          // Time expired, auto-submit
+          setTimeout(() => handleSubmit(true), 100)
+        }
       } else {
         alert('Error loading session: ' + data.error)
         router.push('/dashboard/timed-tests')
@@ -124,6 +144,60 @@ export default function TestSessionPage() {
   function handleWarning(minutes: number) {
     setWarning(minutes)
     setTimeout(() => setWarning(null), 5000)
+  }
+
+  async function handlePause() {
+    if (!confirm('Save progress and pause this test? You can resume it later from the Timed Tests page.')) {
+      return
+    }
+
+    setPausing(true)
+    try {
+      const res = await fetch(`/api/tests/sessions/${params.id}/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeRemaining
+        })
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        setIsPaused(true)
+        setSession((prev: any) => ({ ...prev, status: 'PAUSED' }))
+        alert('Test paused successfully! You can resume it later from the Timed Tests page.')
+        router.push('/dashboard/timed-tests')
+      } else {
+        alert('Error pausing test: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error pausing test:', error)
+      alert('Failed to pause test')
+    } finally {
+      setPausing(false)
+    }
+  }
+
+  async function handleResume() {
+    setPausing(true)
+    try {
+      const res = await fetch(`/api/tests/sessions/${params.id}/resume`, {
+        method: 'POST'
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        setIsPaused(false)
+        setSession((prev: any) => ({ ...prev, status: 'IN_PROGRESS' }))
+      } else {
+        alert('Error resuming test: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error resuming test:', error)
+      alert('Failed to resume test')
+    } finally {
+      setPausing(false)
+    }
   }
 
   async function handleSubmit(autoSubmit = false) {
@@ -213,8 +287,27 @@ export default function TestSessionPage() {
                       timeRemaining={timeRemaining}
                       onExpire={handleTimerExpire}
                       onWarning={handleWarning}
+                      paused={isPaused}
                     />
                   </div>
+                  {!isPaused && (
+                    <button
+                      onClick={handlePause}
+                      disabled={pausing}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {pausing ? 'Pausing...' : 'Save & Continue Later'}
+                    </button>
+                  )}
+                  {isPaused && (
+                    <button
+                      onClick={handleResume}
+                      disabled={pausing}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {pausing ? 'Resuming...' : 'Resume Test'}
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -333,13 +426,34 @@ export default function TestSessionPage() {
           </button>
         </div>
 
-        {/* Review & Submit Button */}
-        <button
-          onClick={() => setShowReview(true)}
-          className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
-        >
-          Review & Submit Test
-        </button>
+        {/* Action Buttons */}
+        <div className="flex gap-4 mt-6">
+          {!isPaused && (
+            <button
+              onClick={handlePause}
+              disabled={pausing}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
+            </button>
+          )}
+          {isPaused && (
+            <button
+              onClick={handleResume}
+              disabled={pausing}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {pausing ? 'Resuming...' : '▶️ Resume Test'}
+            </button>
+          )}
+          <button
+            onClick={() => setShowReview(true)}
+            disabled={isPaused}
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Review & Submit Test
+          </button>
+        </div>
       </main>
 
       {/* Review Modal */}

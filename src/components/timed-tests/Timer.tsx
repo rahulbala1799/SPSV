@@ -6,9 +6,10 @@ interface TimerProps {
   timeRemaining: number // in seconds
   onExpire: () => void
   onWarning?: (minutes: number) => void
+  paused?: boolean // Whether timer is paused
 }
 
-export default function Timer({ timeRemaining, onExpire, onWarning }: TimerProps) {
+export default function Timer({ timeRemaining, onExpire, onWarning, paused = false }: TimerProps) {
   const [time, setTime] = useState(timeRemaining)
   const [warningsShown, setWarningsShown] = useState<Set<number>>(new Set())
 
@@ -17,6 +18,10 @@ export default function Timer({ timeRemaining, onExpire, onWarning }: TimerProps
   }, [timeRemaining])
 
   useEffect(() => {
+    if (paused) {
+      return // Don't run timer when paused
+    }
+
     if (time <= 0) {
       onExpire()
       return
@@ -48,7 +53,7 @@ export default function Timer({ timeRemaining, onExpire, onWarning }: TimerProps
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [time, onExpire, onWarning, warningsShown])
+  }, [time, onExpire, onWarning, warningsShown, paused])
 
   const minutes = Math.floor(time / 60)
   const seconds = time % 60
@@ -60,8 +65,13 @@ export default function Timer({ timeRemaining, onExpire, onWarning }: TimerProps
   else if (totalMinutes < 30) colorClass = 'text-yellow-600'
 
   return (
-    <div className={`text-2xl font-mono font-bold ${colorClass}`}>
-      {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+    <div className="flex items-center gap-2">
+      <div className={`text-2xl font-mono font-bold ${colorClass}`}>
+        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+      </div>
+      {paused && (
+        <span className="text-sm text-gray-500 font-medium">(Paused)</span>
+      )}
     </div>
   )
 }

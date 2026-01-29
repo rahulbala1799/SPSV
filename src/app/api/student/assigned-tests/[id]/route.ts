@@ -76,9 +76,9 @@ export async function GET(
       explanation: null // Don't show explanation until completed
     }))
 
-    // Get attempt ID if test is in progress
+    // Get attempt ID if test is in progress or paused
     let attemptId = null
-    if (assignment.status === 'IN_PROGRESS') {
+    if (assignment.status === 'IN_PROGRESS' || assignment.status === 'PAUSED') {
       const attempt = await prisma.assignedTestAttempt.findFirst({
         where: {
           testId: params.id,

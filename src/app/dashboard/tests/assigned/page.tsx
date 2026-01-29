@@ -69,6 +69,7 @@ export default function AssignedTestsPage() {
     const styles = {
       NOT_STARTED: 'bg-blue-100 text-blue-800',
       IN_PROGRESS: 'bg-yellow-100 text-yellow-800',
+      PAUSED: 'bg-orange-100 text-orange-800',
       COMPLETED: 'bg-green-100 text-green-800',
       EXPIRED: 'bg-red-100 text-red-800'
     }
@@ -79,6 +80,7 @@ export default function AssignedTestsPage() {
     const texts = {
       NOT_STARTED: 'Not Started',
       IN_PROGRESS: 'In Progress',
+      PAUSED: 'Paused',
       COMPLETED: 'Completed',
       EXPIRED: 'Expired'
     }
@@ -88,6 +90,7 @@ export default function AssignedTestsPage() {
   const getStatusIcon = (status: string) => {
     if (status === 'COMPLETED') return <FiCheckCircle className="w-5 h-5" />
     if (status === 'IN_PROGRESS') return <FiAlertCircle className="w-5 h-5" />
+    if (status === 'PAUSED') return <FiClock className="w-5 h-5" />
     return <FiClock className="w-5 h-5" />
   }
 
@@ -199,7 +202,7 @@ export default function AssignedTestsPage() {
                     {test.status === 'COMPLETED' && test.completedAt && (
                       <span>Completed on {formatDate(test.completedAt)}</span>
                     )}
-                    {test.status === 'IN_PROGRESS' && test.startedAt && (
+                    {(test.status === 'IN_PROGRESS' || test.status === 'PAUSED') && test.startedAt && (
                       <span>Started on {formatDate(test.startedAt)}</span>
                     )}
                     {test.status === 'NOT_STARTED' && (
@@ -217,11 +220,14 @@ export default function AssignedTestsPage() {
                         ? 'bg-blue-600 hover:bg-blue-700 text-white'
                         : test.status === 'IN_PROGRESS'
                         ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                        : test.status === 'PAUSED'
+                        ? 'bg-orange-600 hover:bg-orange-700 text-white'
                         : 'bg-green-600 hover:bg-green-700 text-white'
                     }`}
                   >
                     {test.status === 'COMPLETED' ? 'View Results' :
                      test.status === 'IN_PROGRESS' ? 'Continue Test' :
+                     test.status === 'PAUSED' ? 'Resume Test' :
                      'Start Test'}
                     <FiArrowRight className="w-4 h-4" />
                   </Link>
