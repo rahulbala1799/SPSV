@@ -547,13 +547,12 @@ export default function TakeAssignedTestPage() {
               {currentQuestionIndex === test.questionCount - 1 ? (
                 <button
                   onClick={() => handleSubmitTest()}
-                    disabled={submitting || isPaused}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
-                  >
-                    {submitting ? 'Submitting...' : 'Submit Test'}
-                    <FiCheck className="w-5 h-5" />
-                  </button>
-                </div>
+                  disabled={submitting || isPaused}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
+                >
+                  {submitting ? 'Submitting...' : 'Submit Test'}
+                  <FiCheck className="w-5 h-5" />
+                </button>
               ) : (
                 <button
                   onClick={() => setCurrentQuestionIndex(Math.min(test.questionCount - 1, currentQuestionIndex + 1))}
