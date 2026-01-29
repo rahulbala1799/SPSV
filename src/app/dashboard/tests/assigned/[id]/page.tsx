@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock, FiCheck, FiChevronLeft, FiChevronRight, FiList } from 'react-icons/fi'
-import { FaRegFlag } from 'react-icons/fa'
+import { FaRegFlag, FaFlag } from 'react-icons/fa'
 
 interface Question {
   id: string
@@ -48,6 +48,7 @@ export default function TakeAssignedTestPage() {
   const [isPaused, setIsPaused] = useState(false)
   const [pausing, setPausing] = useState(false)
   const [flagging, setFlagging] = useState(false)
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchTest()
@@ -300,7 +301,12 @@ export default function TakeAssignedTestPage() {
       })
       
       if (res.ok) {
-        // Silent success - don't show the user if it was already flagged
+        // Update flagged state to show filled icon
+        setFlaggedQuestions(prev => {
+          const newSet = new Set(prev)
+          newSet.add(questionId)
+          return newSet
+        })
       }
     } catch (error) {
       console.error('Error flagging question:', error)
@@ -472,10 +478,18 @@ export default function TakeAssignedTestPage() {
                 <button
                   onClick={() => handleFlagQuestion(currentQuestion.id)}
                   disabled={flagging}
-                  className={`p-2 rounded-lg transition-all text-gray-400 hover:bg-gray-100 hover:text-gray-600 ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  title="Flag for review"
+                  className={`p-2 rounded-lg transition-all ${
+                    flaggedQuestions.has(currentQuestion.id)
+                      ? 'text-red-600 hover:bg-red-50'
+                      : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  } ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title={flaggedQuestions.has(currentQuestion.id) ? 'Flagged for review' : 'Flag for review'}
                 >
-                  <FaRegFlag className="w-5 h-5" />
+                  {flaggedQuestions.has(currentQuestion.id) ? (
+                    <FaFlag className="w-5 h-5" />
+                  ) : (
+                    <FaRegFlag className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {/* Progress bar */}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock } from 'react-icons/fi'
-import { FaRegFlag } from 'react-icons/fa'
+import { FaRegFlag, FaFlag } from 'react-icons/fa'
 import Timer from '@/components/timed-tests/Timer'
 
 interface Question {
@@ -32,6 +32,7 @@ export default function TestSessionPage() {
   const [isPaused, setIsPaused] = useState(false)
   const [pausing, setPausing] = useState(false)
   const [flagging, setFlagging] = useState(false)
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     loadSession()
@@ -218,7 +219,12 @@ export default function TestSessionPage() {
       })
       
       if (res.ok) {
-        // Silent success - don't show the user if it was already flagged
+        // Update flagged state to show filled icon
+        setFlaggedQuestions(prev => {
+          const newSet = new Set(prev)
+          newSet.add(questionBankId)
+          return newSet
+        })
       }
     } catch (error) {
       console.error('Error flagging question:', error)
@@ -317,15 +323,6 @@ export default function TestSessionPage() {
                       paused={isPaused}
                     />
                   </div>
-                  {!isPaused && (
-                    <button
-                      onClick={handlePause}
-                      disabled={pausing}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {pausing ? 'Pausing...' : 'Save & Continue Later'}
-                    </button>
-                  )}
                   {isPaused && (
                     <button
                       onClick={handleResume}
@@ -404,10 +401,18 @@ export default function TestSessionPage() {
                   <button
                     onClick={() => handleFlagQuestion(currentQuestion.questionBankId!)}
                     disabled={flagging}
-                    className={`p-2 rounded-lg transition-all text-gray-400 hover:bg-gray-100 hover:text-gray-600 ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    title="Flag for review"
+                    className={`p-2 rounded-lg transition-all ${
+                      flaggedQuestions.has(currentQuestion.questionBankId!)
+                        ? 'text-red-600 hover:bg-red-50'
+                        : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                    } ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={flaggedQuestions.has(currentQuestion.questionBankId!) ? 'Flagged for review' : 'Flag for review'}
                   >
-                    <FaRegFlag className="w-5 h-5" />
+                    {flaggedQuestions.has(currentQuestion.questionBankId!) ? (
+                      <FaFlag className="w-5 h-5" />
+                    ) : (
+                      <FaRegFlag className="w-5 h-5" />
+                    )}
                   </button>
                 )}
               </div>
