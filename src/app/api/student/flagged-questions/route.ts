@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       orderBy: { flaggedAt: 'desc' },
     })
 
-    // Format response
+    // Format response with complete question data
     const flaggedQuestions = flags.map(flag => ({
       id: flag.id,
       questionId: flag.questionId,
@@ -75,7 +75,12 @@ export async function GET(request: NextRequest) {
       question: flag.question ? {
         id: flag.question.id,
         questionText: flag.question.questionText,
+        questionNumber: flag.question.questionNumber,
+        options: flag.question.options,
+        correctAnswer: flag.question.correctAnswer,
+        explanation: flag.question.explanation,
         chapterId: flag.question.chapterId,
+        category: flag.question.category,
         chapter: {
           id: flag.question.chapter.id,
           title: flag.question.chapter.title,
@@ -84,6 +89,12 @@ export async function GET(request: NextRequest) {
       questionBank: flag.questionBank ? {
         id: flag.questionBank.id,
         questionText: flag.questionBank.questionText,
+        optionA: flag.questionBank.optionA,
+        optionB: flag.questionBank.optionB,
+        optionC: flag.questionBank.optionC,
+        optionD: flag.questionBank.optionD,
+        correctAnswer: flag.questionBank.correctAnswer,
+        explanation: flag.questionBank.explanation,
         category: flag.questionBank.category,
       } : null,
     }))
