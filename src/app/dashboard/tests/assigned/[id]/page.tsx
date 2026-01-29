@@ -420,27 +420,6 @@ export default function TakeAssignedTestPage() {
                 </div>
               )}
             </div>
-            {/* Pause/Resume button moved below title on mobile */}
-            <div className="flex gap-2">
-              {!isPaused && (
-                <button
-                  onClick={handlePause}
-                  disabled={pausing}
-                  className="flex-1 md:flex-none px-3 py-2 md:px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
-                </button>
-              )}
-              {isPaused && (
-                <button
-                  onClick={handleResume}
-                  disabled={pausing}
-                  className="flex-1 md:flex-none px-3 py-2 md:px-4 bg-green-600 hover:bg-green-700 text-white text-xs md:text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {pausing ? 'Resuming...' : '▶️ Resume Test'}
-                </button>
-              )}
-            </div>
           </div>
           <div className="mt-2">
             <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
