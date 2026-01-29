@@ -78,6 +78,7 @@ export function ActivityTimelineSection({ studentId }: Props) {
         return { icon: <FiPlayCircle className="w-5 h-5" />, color: 'text-blue-600 bg-blue-100' }
       case 'TEST_COMPLETE':
       case 'TIMED_TEST_COMPLETE':
+      case 'ASSIGNED_TEST_COMPLETE':
         return { icon: <FiFileText className="w-5 h-5" />, color: 'text-purple-600 bg-purple-100' }
       default:
         return { icon: <FiClock className="w-5 h-5" />, color: 'text-gray-600 bg-gray-100' }
@@ -92,6 +93,8 @@ export function ActivityTimelineSection({ studentId }: Props) {
         return `Score: ${activity.metadata.score}% (${activity.metadata.correctAnswers}/${activity.metadata.totalQuestions})`
       case 'TIMED_TEST_COMPLETE':
         return `Score: ${activity.metadata.percentage}% (${activity.metadata.score}/${activity.metadata.totalQuestions})`
+      case 'ASSIGNED_TEST_COMPLETE':
+        return `Score: ${activity.metadata.percentage}% (${activity.metadata.correctAnswers}/${activity.metadata.totalQuestions})`
       default:
         return null
     }

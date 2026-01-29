@@ -74,6 +74,13 @@ enum StudentTestStatus {
   EXPIRED
 }
 
+enum FlaggedFrom {
+  CHAPTER
+  TIMED_TEST
+  UNTIMED_TEST
+  ASSIGNED_TEST
+}
+
 // User model for authentication
 model User {
   id            String    @id @default(cuid())
@@ -123,6 +130,7 @@ model Student {
   dailyActivities  DailyActivity[]
   assignedTests   AssignedTestStudent[]
   assignedTestAttempts AssignedTestAttempt[]
+  flaggedQuestions FlaggedQuestion[]
 
   @@map("students")
 }
@@ -178,6 +186,7 @@ model Question {
   testQuestions TestQuestion[]
   assignedTestQuestions AssignedTestQuestion[]
   assignedTestAnswers   AssignedTestAnswer[]
+  flaggedQuestions FlaggedQuestion[]
   
   @@unique([chapterId, questionNumber])
   @@index([category])
@@ -295,6 +304,7 @@ model QuestionBank {
   updatedAt     DateTime            @updatedAt
   
   testQuestions TimedTestQuestion[]
+  flaggedQuestions FlaggedQuestion[]
   
   @@index([category])
   @@index([category, isActive])
@@ -580,4 +590,35 @@ model AssignedTestAnswer {
   @@unique([attemptId, questionId])
   @@index([attemptId])
   @@map("assigned_test_answers")
+}
+
+// Flagged Questions - Track questions flagged by students
+model FlaggedQuestion {
+  id            String    @id @default(cuid())
+  studentId     String
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  // Support both Question and QuestionBank
+  questionId    String?   // For Question model (chapters, untimed, assigned tests)
+  question      Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  questionBankId String?  // For QuestionBank model (timed tests)
+  questionBank  QuestionBank? @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
+  
+  // Track where the question was flagged from
+  flaggedFrom   FlaggedFrom @default(CHAPTER)
+  
+  // Metadata
+  flaggedAt     DateTime  @default(now())
+  unflaggedAt   DateTime? // When unflagging occurred (if applicable)
+  isActive      Boolean   @default(true) // false when unflagged
+  
+  // Notes: Only one of questionId or questionBankId should be set
+  // Unique constraints are handled via partial indexes in migration SQL
+  // (Prisma doesn't support partial unique indexes directly)
+  
+  @@index([studentId, isActive])
+  @@index([questionId])
+  @@index([questionBankId])
+  @@map("flagged_questions")
 }

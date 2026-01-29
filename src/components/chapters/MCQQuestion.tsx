@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { MCQOption } from './MCQOption'
+import { FaFlag, FaRegFlag } from 'react-icons/fa'
 
 interface Option {
   id: string
@@ -24,6 +25,7 @@ interface MCQQuestionProps {
   onSelectAnswer: (answerId: string) => void
   onSubmitAnswer: () => void
   submitting?: boolean
+  showFlagOption?: boolean // Show flag/unflag buttons (chapter context only)
 }
 
 export function MCQQuestion({
@@ -33,19 +35,110 @@ export function MCQQuestion({
   isCorrect,
   onSelectAnswer,
   onSubmitAnswer,
-  submitting = false
+  submitting = false,
+  showFlagOption = false
 }: MCQQuestionProps) {
+  const [isFlagged, setIsFlagged] = useState(false)
+  const [flagging, setFlagging] = useState(false)
+  const [flagStatusLoaded, setFlagStatusLoaded] = useState(false)
+
+  // Load flag status for chapter context
+  useEffect(() => {
+    if (showFlagOption) {
+      setFlagStatusLoaded(false) // Reset when question changes
+      loadFlagStatus()
+    } else {
+      // Reset when not showing flag option
+      setIsFlagged(false)
+      setFlagStatusLoaded(false)
+    }
+  }, [question.id, showFlagOption])
+
+  const loadFlagStatus = async () => {
+    try {
+      const response = await fetch(`/api/questions/${question.id}/flag-status`)
+      const data = await response.json()
+      if (response.ok) {
+        setIsFlagged(data.isFlagged)
+      }
+    } catch (error) {
+      console.error('Error loading flag status:', error)
+    } finally {
+      setFlagStatusLoaded(true) // Always set to true so button shows
+    }
+  }
+
+  const handleToggleFlag = async () => {
+    if (flagging) return
+
+    setFlagging(true)
+    try {
+      if (isFlagged) {
+        // Unflag
+        const response = await fetch('/api/questions/unflag', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId: question.id })
+        })
+        const data = await response.json()
+        if (response.ok && data.success) {
+          setIsFlagged(false)
+        }
+      } else {
+        // Flag
+        const response = await fetch('/api/questions/flag', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            questionId: question.id,
+            flaggedFrom: 'CHAPTER'
+          })
+        })
+        const data = await response.json()
+        if (response.ok && data.success) {
+          setIsFlagged(true)
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling flag:', error)
+    } finally {
+      setFlagging(false)
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
       {/* Question Header */}
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-            Question {question.questionNumber}
-          </span>
-          <span className="text-sm font-medium text-gray-500">
-            {question.points} point{question.points !== 1 ? 's' : ''}
-          </span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              Question {question.questionNumber}
+            </span>
+            <span className="text-sm font-medium text-gray-500">
+              {question.points} point{question.points !== 1 ? 's' : ''}
+            </span>
+            {isFlagged && showFlagOption && (
+              <span className="flex items-center gap-1 text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">
+                <FaFlag className="w-3 h-3" />
+                Flagged
+              </span>
+            )}
+          </div>
+          {showFlagOption && (
+            <button
+              onClick={handleToggleFlag}
+              disabled={flagging}
+              className={`p-2 rounded-lg transition-all ${
+                isFlagged
+                  ? 'text-red-600 hover:bg-red-50'
+                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+              } ${flagging ? 'opacity-50 cursor-not-allowed' : ''} ${!flagStatusLoaded ? 'opacity-50' : ''}`}
+              title={isFlagged ? 'Unflag question' : 'Flag for review'}
+            >
+              {isFlagged ? <FaFlag className="w-5 h-5" /> : <FaRegFlag className="w-5 h-5" />}
+            </button>
+          )}
         </div>
         <h2 className="text-xl font-bold text-gray-900 leading-relaxed">
           {question.questionText}

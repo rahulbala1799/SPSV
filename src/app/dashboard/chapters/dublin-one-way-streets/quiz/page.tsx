@@ -248,6 +248,7 @@ function QuizContent() {
             onSelectAnswer={(answerId) => handleSelectAnswer(currentQuestion.id, answerId)}
             onSubmitAnswer={() => handleSubmitAnswer(currentQuestion.id)}
             submitting={submitting}
+            showFlagOption={true}
           />
         )}
 

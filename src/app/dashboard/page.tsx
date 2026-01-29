@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { 
-  FiBook, 
-  FiClipboard, 
+import {
+  FiBook,
+  FiClipboard,
   FiTrendingUp, 
   FiClock, 
   FiCheckCircle,
@@ -13,7 +13,8 @@ import {
   FiLogOut,
   FiUser,
   FiMenu,
-  FiX
+  FiX,
+  FiFlag
 } from 'react-icons/fi'
 
 interface ProgressOverview {
@@ -197,6 +198,16 @@ export default function StudentDashboard() {
                   <span>My Profile</span>
                 </div>
               </Link>
+              <Link
+                href="/dashboard/flagged-questions"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                onClick={() => setMenuOpen(false)}
+              >
+                <div className="flex items-center gap-3">
+                  <FiFlag className="w-5 h-5" />
+                  <span>Flagged Questions</span>
+                </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg"
@@ -320,6 +331,23 @@ export default function StudentDashboard() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Progress</h3>
             <p className="text-sm text-gray-600">Track your learning journey</p>
+          </Link>
+
+          {/* Flagged Questions */}
+          <Link
+            href="/dashboard/flagged-questions"
+            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:bg-red-600 transition-colors">
+                <FiFlag className="w-6 h-6 text-red-600 group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-xs font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                Review
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Flagged Questions</h3>
+            <p className="text-sm text-gray-600">Review questions you've flagged for study</p>
           </Link>
         </div>
 

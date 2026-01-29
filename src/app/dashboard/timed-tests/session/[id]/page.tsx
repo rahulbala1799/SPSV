@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock } from 'react-icons/fi'
+import { FaRegFlag } from 'react-icons/fa'
 import Timer from '@/components/timed-tests/Timer'
 
 interface Question {
   id: string
+  questionBankId?: string
   orderNumber: number
   questionText: string
   options: { A: string; B: string; C: string; D: string }
@@ -29,6 +31,7 @@ export default function TestSessionPage() {
   const [warning, setWarning] = useState<number | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [pausing, setPausing] = useState(false)
+  const [flagging, setFlagging] = useState(false)
 
   useEffect(() => {
     loadSession()
@@ -200,6 +203,30 @@ export default function TestSessionPage() {
     }
   }
 
+  async function handleFlagQuestion(questionBankId: string) {
+    if (flagging) return
+    
+    setFlagging(true)
+    try {
+      const res = await fetch('/api/questions/flag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questionBankId,
+          flaggedFrom: 'TIMED_TEST'
+        })
+      })
+      
+      if (res.ok) {
+        // Silent success - don't show the user if it was already flagged
+      }
+    } catch (error) {
+      console.error('Error flagging question:', error)
+    } finally {
+      setFlagging(false)
+    }
+  }
+
   async function handleSubmit(autoSubmit = false) {
     if (!autoSubmit) {
       const unanswered = questions.filter(q => !answers[q.id])
@@ -360,17 +387,29 @@ export default function TestSessionPage() {
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             {/* Question Header */}
             <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  Question {currentQuestion.orderNumber}
-                </span>
-                <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                  currentQuestion.category === 'INDUSTRY' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-blue-100 text-blue-800'
-                }`}>
-                  {currentQuestion.category === 'INDUSTRY' ? 'Industry Knowledge' : 'Area Knowledge'}
-                </span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    Question {currentQuestion.orderNumber}
+                  </span>
+                  <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+                    currentQuestion.category === 'INDUSTRY' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {currentQuestion.category === 'INDUSTRY' ? 'Industry Knowledge' : 'Area Knowledge'}
+                  </span>
+                </div>
+                {currentQuestion.questionBankId && (
+                  <button
+                    onClick={() => handleFlagQuestion(currentQuestion.questionBankId!)}
+                    disabled={flagging}
+                    className={`p-2 rounded-lg transition-all text-gray-400 hover:bg-gray-100 hover:text-gray-600 ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title="Flag for review"
+                  >
+                    <FaRegFlag className="w-5 h-5" />
+                  </button>
+                )}
               </div>
               <h2 className="text-xl font-bold text-gray-900 leading-relaxed">
                 {currentQuestion.questionText}

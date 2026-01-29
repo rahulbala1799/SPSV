@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheck, FiX, FiClock, FiCheckCircle } from 'react-icons/fi'
+import { FaRegFlag } from 'react-icons/fa'
 import { v4 as uuidv4 } from 'uuid'
 
 interface Question {
@@ -44,6 +45,7 @@ export default function TakeTestPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [flagging, setFlagging] = useState(false)
 
   const fetchTest = async () => {
     try {
@@ -182,6 +184,30 @@ export default function TakeTestPage() {
     setSelectedAnswer(testAttempt?.questions[index].selectedAnswer || null)
   }
 
+  const handleFlagQuestion = async (questionId: string) => {
+    if (flagging) return
+    
+    setFlagging(true)
+    try {
+      const res = await fetch('/api/questions/flag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questionId,
+          flaggedFrom: 'UNTIMED_TEST'
+        })
+      })
+      
+      if (res.ok) {
+        // Silent success - don't show the user if it was already flagged
+      }
+    } catch (error) {
+      console.error('Error flagging question:', error)
+    } finally {
+      setFlagging(false)
+    }
+  }
+
   useEffect(() => {
     fetchTest()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -304,16 +330,26 @@ export default function TakeTestPage() {
         {/* Question Card */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full">
-                Question {currentQuestion.questionOrder}
-              </span>
-              {currentQuestion.selectedAnswer && (
-                <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                  <FiCheckCircle className="w-4 h-4" />
-                  Answered
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full">
+                  Question {currentQuestion.questionOrder}
                 </span>
-              )}
+                {currentQuestion.selectedAnswer && (
+                  <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                    <FiCheckCircle className="w-4 h-4" />
+                    Answered
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => handleFlagQuestion(currentQuestion.id)}
+                disabled={flagging}
+                className={`p-2 rounded-lg transition-all text-gray-400 hover:bg-gray-100 hover:text-gray-600 ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="Flag for review"
+              >
+                <FaRegFlag className="w-5 h-5" />
+              </button>
             </div>
             <h2 className="text-xl font-semibold text-gray-900 leading-relaxed">
               {currentQuestion.questionText}

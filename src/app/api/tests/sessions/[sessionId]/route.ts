@@ -61,6 +61,7 @@ export async function GET(
       },
       questions: session.questions.map(q => ({
         id: q.id,
+        questionBankId: q.questionBankId,
         orderNumber: q.orderNumber,
         questionText: q.questionText,
         options: {

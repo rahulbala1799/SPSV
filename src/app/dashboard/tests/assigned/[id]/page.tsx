@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock, FiCheck, FiChevronLeft, FiChevronRight, FiList } from 'react-icons/fi'
+import { FaRegFlag } from 'react-icons/fa'
 
 interface Question {
   id: string
@@ -46,6 +47,7 @@ export default function TakeAssignedTestPage() {
   const [showQuestionNav, setShowQuestionNav] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [pausing, setPausing] = useState(false)
+  const [flagging, setFlagging] = useState(false)
 
   useEffect(() => {
     fetchTest()
@@ -283,6 +285,30 @@ export default function TakeAssignedTestPage() {
     return Math.round((answers.size / test.questionCount) * 100)
   }
 
+  const handleFlagQuestion = async (questionId: string) => {
+    if (flagging) return
+    
+    setFlagging(true)
+    try {
+      const res = await fetch('/api/questions/flag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questionId,
+          flaggedFrom: 'ASSIGNED_TEST'
+        })
+      })
+      
+      if (res.ok) {
+        // Silent success - don't show the user if it was already flagged
+      }
+    } catch (error) {
+      console.error('Error flagging question:', error)
+    } finally {
+      setFlagging(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
@@ -375,23 +401,26 @@ export default function TakeAssignedTestPage() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 py-4 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">{test.title}</h1>
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-bold text-gray-900">{test.title}</h1>
               {test.isTimed && timeRemaining !== null && (
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                <div className={`flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base ${
                   timeRemaining < 300 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
                 }`}>
-                  <FiClock className="w-5 h-5" />
+                  <FiClock className="w-4 h-4 md:w-5 md:h-5" />
                   <span className="font-semibold">{formatTime(timeRemaining)}</span>
-                  {isPaused && <span className="text-sm ml-2">(Paused)</span>}
+                  {isPaused && <span className="text-xs md:text-sm ml-1 md:ml-2">(Paused)</span>}
                 </div>
               )}
+            </div>
+            {/* Pause/Resume button moved below title on mobile */}
+            <div className="flex gap-2">
               {!isPaused && (
                 <button
                   onClick={handlePause}
                   disabled={pausing}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 md:flex-none px-3 py-2 md:px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
                 </button>
@@ -400,7 +429,7 @@ export default function TakeAssignedTestPage() {
                 <button
                   onClick={handleResume}
                   disabled={pausing}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 md:flex-none px-3 py-2 md:px-4 bg-green-600 hover:bg-green-700 text-white text-xs md:text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {pausing ? 'Resuming...' : '▶️ Resume Test'}
                 </button>
@@ -429,15 +458,25 @@ export default function TakeAssignedTestPage() {
           <div className="mb-6">
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-600">
-                  Question {currentQuestionIndex + 1} of {test.questionCount}
-                </span>
-                {selectedAnswerForCurrent && (
-                  <span className="text-sm text-green-600 flex items-center gap-1">
-                    <FiCheck className="w-4 h-4" />
-                    Answered
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-600">
+                    Question {currentQuestionIndex + 1} of {test.questionCount}
                   </span>
-                )}
+                  {selectedAnswerForCurrent && (
+                    <span className="text-sm text-green-600 flex items-center gap-1">
+                      <FiCheck className="w-4 h-4" />
+                      Answered
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleFlagQuestion(currentQuestion.id)}
+                  disabled={flagging}
+                  className={`p-2 rounded-lg transition-all text-gray-400 hover:bg-gray-100 hover:text-gray-600 ${flagging ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title="Flag for review"
+                >
+                  <FaRegFlag className="w-5 h-5" />
+                </button>
               </div>
               {/* Progress bar */}
               <div className="w-full bg-gray-200 rounded-full h-1.5">
@@ -506,27 +545,8 @@ export default function TakeAssignedTestPage() {
               </button>
 
               {currentQuestionIndex === test.questionCount - 1 ? (
-                <div className="flex gap-3 w-full">
-                  {!isPaused && (
-                    <button
-                      onClick={handlePause}
-                      disabled={pausing || submitting}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
-                    >
-                      {pausing ? 'Pausing...' : '💾 Save & Continue Later'}
-                    </button>
-                  )}
-                  {isPaused && (
-                    <button
-                      onClick={handleResume}
-                      disabled={pausing || submitting}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
-                    >
-                      {pausing ? 'Resuming...' : '▶️ Resume Test'}
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleSubmitTest()}
+                <button
+                  onClick={() => handleSubmitTest()}
                     disabled={submitting || isPaused}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 font-semibold"
                   >

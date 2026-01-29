@@ -119,7 +119,44 @@ export async function GET(
       }
     })
 
-    // 4. Chapter starts
+    // 4. Assigned test completions
+    const assignedTests = await prisma.assignedTestAttempt.findMany({
+      where: {
+        studentId,
+        completedAt: { not: null }
+      },
+      include: {
+        test: {
+          select: {
+            id: true,
+            title: true
+          }
+        }
+      },
+      orderBy: { completedAt: 'desc' },
+      take: limit
+    })
+
+    assignedTests.forEach(test => {
+      if (test.completedAt) {
+        activities.push({
+          type: 'ASSIGNED_TEST_COMPLETE',
+          timestamp: test.completedAt,
+          description: `Completed ${test.test.title || 'Assigned Test'}`,
+          metadata: {
+            attemptId: test.id,
+            testId: test.testId,
+            testTitle: test.test.title,
+            score: test.score,
+            percentage: Number(test.percentageScore) || (test.score || 0),
+            correctAnswers: test.correctAnswers,
+            totalQuestions: test.totalQuestions
+          }
+        })
+      }
+    })
+
+    // 5. Chapter starts
     const startedChapters = await prisma.chapterProgress.findMany({
       where: {
         studentId,
@@ -166,7 +203,7 @@ export async function GET(
     const activityByType = {
       chaptersCompleted: activities.filter(a => a.type === 'CHAPTER_COMPLETE').length,
       testsCompleted: activities.filter(a => 
-        a.type === 'TEST_COMPLETE' || a.type === 'TIMED_TEST_COMPLETE'
+        a.type === 'TEST_COMPLETE' || a.type === 'TIMED_TEST_COMPLETE' || a.type === 'ASSIGNED_TEST_COMPLETE'
       ).length,
       chaptersStarted: activities.filter(a => a.type === 'CHAPTER_START').length
     }
