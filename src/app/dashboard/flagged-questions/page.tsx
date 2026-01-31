@@ -237,6 +237,7 @@ export default function FlaggedQuestionsPage() {
       'chapter_schools_libraries_universities': 'schools-libraries-universities',
       'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
       'chapter_routes': 'routes',
+      'chapter_areas_and_roads': 'areas-and-roads',
     }
     return slugMap[chapterId] || chapterId
   }

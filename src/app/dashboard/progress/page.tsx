@@ -180,7 +180,8 @@ export default function ProgressPage() {
       'chapter_industry_8': 'industry-8',
       'chapter_schools_libraries_universities': 'schools-libraries-universities',
       'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
-      'chapter_routes': 'routes'
+      'chapter_routes': 'routes',
+      'chapter_areas_and_roads': 'areas-and-roads'
     }
     return routeMap[chapterId] || chapterId.replace('chapter_', '').replace(/_/g, '-')
   }
