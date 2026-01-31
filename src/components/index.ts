@@ -41,6 +41,8 @@ export type { PricingCardProps, PricingPlan } from './PricingCard';
 export { Header } from './Header';
 export type { HeaderProps } from './Header';
 
+export { SaaSHero } from './SaaSHero';
+
 export { TimetableModal } from './TimetableModal';
 
 export { EnrollmentModal } from './EnrollmentModal';
