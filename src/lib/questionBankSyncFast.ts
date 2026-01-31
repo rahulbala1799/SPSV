@@ -153,11 +153,12 @@ export async function deactivateQuestionInBank(questionId: string) {
 }
 
 /**
- * Sync all questions from specific chapters (for initial sync or chapter publish)
+ * Sync all questions from a specific chapter (for initial sync or chapter publish)
  * Still uses sourceQuestionId for efficient upserts
  */
-export async function syncChapterQuestions(chapterIds: string[]) {
+export async function syncChapterQuestions(chapterId: string | string[]) {
   const startTime = Date.now()
+  const chapterIds = Array.isArray(chapterId) ? chapterId : [chapterId]
   
   // Get all questions from the specified chapters
   const questions = await prisma.question.findMany({
@@ -175,5 +176,34 @@ export async function syncChapterQuestions(chapterIds: string[]) {
     ...results,
     duration: Date.now() - startTime,
     questionsProcessed: questionIds.length
+  }
+}
+
+/**
+ * Deactivate all questions from a chapter in QuestionBank
+ * Use this when a chapter is unpublished or deleted
+ */
+export async function deactivateChapterQuestions(chapterId: string | string[]) {
+  try {
+    const chapterIds = Array.isArray(chapterId) ? chapterId : [chapterId]
+    
+    // Get all questions from the chapter
+    const questions = await prisma.question.findMany({
+      where: { chapterId: { in: chapterIds } },
+      select: { id: true }
+    })
+
+    // Deactivate all in QuestionBank
+    await prisma.questionBank.updateMany({
+      where: {
+        sourceQuestionId: { in: questions.map(q => q.id) }
+      },
+      data: { isActive: false }
+    })
+
+    return { success: true, count: questions.length }
+  } catch (error) {
+    console.error('Error deactivating chapter questions:', error)
+    throw error
   }
 }

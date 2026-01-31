@@ -29,8 +29,8 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: FiHome },
     { name: 'Students', href: '/admin/students', icon: FiUsers },
-    { name: 'Questions', href: '/admin/questions', icon: FiMessageSquare },
-    { name: 'MCQ Builder', href: '/admin/mcq-builder', icon: FiFileText },
+    { name: 'Content', href: '/admin/content', icon: FiFileText },
+    { name: 'MCQ Builder', href: '/admin/mcq-builder', icon: FiClipboard },
     { name: 'Analytics', href: '/admin/analytics', icon: FiBarChart2 },
     { name: 'Settings', href: '/admin/settings', icon: FiSettings },
   ]
