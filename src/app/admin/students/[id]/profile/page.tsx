@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { FiArrowLeft, FiMail, FiPhone, FiCalendar, FiEdit2, FiClock, FiBookOpen, FiFileText, FiHelpCircle } from 'react-icons/fi'
 import { ChapterProgressSection } from '@/components/admin/student-profile/ChapterProgressSection'
 import { TestPerformanceSection } from '@/components/admin/student-profile/TestPerformanceSection'
@@ -45,6 +46,7 @@ export default function StudentProfilePage() {
   const studentId = params.id as string
 
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [student, setStudent] = useState<StudentProfile | null>(null)
   const [stats, setStats] = useState<StudentStats | null>(null)
@@ -64,6 +66,8 @@ export default function StudentProfilePage() {
         router.push('/login')
         return
       }
+
+      setCurrentUser(adminData.user)
 
       // Fetch student profile
       const response = await fetch(`/api/admin/students/${studentId}`)
@@ -119,28 +123,32 @@ export default function StudentProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading student profile...</p>
+      <AdminLayout user={currentUser}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading student profile...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   if (error || !student) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Student not found'}</p>
+      <AdminLayout user={currentUser}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error || 'Student not found'}</p>
           <Link
             href="/admin/students"
-            className="text-green-600 hover:underline"
+            className="text-emerald-600 hover:underline font-medium"
           >
             Back to Students
           </Link>
         </div>
       </div>
+      </AdminLayout>
     )
   }
 
@@ -160,10 +168,10 @@ export default function StudentProfilePage() {
     : 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <AdminLayout user={currentUser}>
+      <div className="p-8">
+        {/* Header */}
+        <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
@@ -395,7 +403,7 @@ export default function StudentProfilePage() {
         <div className="mb-8">
           <ActivityTimelineSection studentId={studentId} />
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }

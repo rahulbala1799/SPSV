@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import {
   FiPlus,
   FiEdit2,
@@ -50,6 +50,7 @@ interface Chapter {
 export default function QuestionsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set())
@@ -75,6 +76,7 @@ export default function QuestionsPage() {
         return
       }
 
+      setCurrentUser(authData.user)
       await fetchQuestions()
     } catch (error) {
       console.error('Error:', error)
@@ -227,105 +229,61 @@ export default function QuestionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+      <AdminLayout user={currentUser}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading questions...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <AdminLayout user={currentUser}>
+      <div className="p-8">
+        {/* Header */}
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Question Management</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Question Management</h1>
+              <p className="text-gray-600">
                 Manage all questions and chapters across the platform
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleSyncQuestionBank}
-                disabled={syncing}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                title="Full sync of all questions (use only for initial setup or troubleshooting)"
-              >
-                <FiRefreshCw className={`w-5 h-5 ${syncing ? 'animate-spin' : ''}`} />
-                Full Sync (All Questions)
-              </button>
-            </div>
+            <button
+              onClick={handleSyncQuestionBank}
+              disabled={syncing}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+              title="Full sync of all questions (use only for initial setup or troubleshooting)"
+            >
+              <FiRefreshCw className={`w-5 h-5 ${syncing ? 'animate-spin' : ''}`} />
+              Full Sync
+            </button>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex items-center gap-4 border-t border-gray-200 pt-4">
-            <Link
-              href="/admin"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/admin/students"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Students
-            </Link>
-            <Link
-              href="/admin/mcq-builder"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              MCQ Builder
-            </Link>
-            <Link
-              href="/admin/questions"
-              className="px-4 py-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors font-medium"
-            >
-              Questions
-            </Link>
-            <Link
-              href="/admin/settings"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Settings
-            </Link>
-          </nav>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Bar */}
-        <div className="mb-6 flex gap-3">
-          <div className="flex-1 relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none"
             />
           </div>
-          <button
-            onClick={handleSearch}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-          >
-            Search
-          </button>
         </div>
 
         {/* Chapters and Questions */}
         <div className="space-y-4">
           {chapters.map((chapter) => (
-            <div key={chapter.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={chapter.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Chapter Header */}
-              <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 flex-1">
                     <button
@@ -480,13 +438,15 @@ export default function QuestionsPage() {
         </div>
 
         {chapters.length === 0 && (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <FiBook className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">No chapters found</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FiBook className="w-10 h-10 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No chapters found</h2>
             <p className="text-gray-600 mb-6">Create your first chapter to start adding questions</p>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Question Edit/Add Modal */}
       {(editingQuestion || addingToChapter) && (

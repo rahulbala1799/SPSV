@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { 
   FiPlus, 
   FiEdit, 
@@ -11,7 +12,8 @@ import {
   FiClock, 
   FiUsers,
   FiCheckCircle,
-  FiXCircle
+  FiXCircle,
+  FiTarget,
 } from 'react-icons/fi'
 
 interface Test {
@@ -34,6 +36,7 @@ interface Test {
 export default function MCQBuilderPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const [tests, setTests] = useState<Test[]>([])
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
@@ -53,6 +56,7 @@ export default function MCQBuilderPage() {
         return
       }
 
+      setCurrentUser(authData.user)
       // Fetch tests
       await fetchTests()
     } catch (error) {
@@ -107,79 +111,48 @@ export default function MCQBuilderPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+      <AdminLayout user={currentUser}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading tests...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <AdminLayout user={currentUser}>
+      <div className="p-8">
+        {/* Header */}
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">MCQ Builder</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Create and manage custom MCQ tests for students
-              </p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">MCQ Test Builder</h1>
+              <p className="text-gray-600">Create and manage timed tests for students</p>
             </div>
             <Link
               href="/admin/mcq-builder/create"
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <FiPlus className="w-5 h-5" />
               Create New Test
             </Link>
           </div>
-          {/* Navigation */}
-          <nav className="flex items-center gap-4 border-t border-gray-200 pt-4">
-            <Link
-              href="/admin"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/admin/students"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Students
-            </Link>
-            <Link
-              href="/admin/mcq-builder"
-              className="px-4 py-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors font-medium"
-            >
-              MCQ Builder
-            </Link>
-            <Link
-              href="/admin/settings"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Settings
-            </Link>
-          </nav>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {tests.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FiPlus className="w-8 h-8 text-gray-400" />
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FiTarget className="w-10 h-10 text-emerald-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">No tests created yet</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No tests created yet</h2>
             <p className="text-gray-600 mb-6">
               Create your first MCQ test to assign to students
             </p>
             <Link
               href="/admin/mcq-builder/create"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <FiPlus className="w-5 h-5" />
               Create First Test
@@ -188,7 +161,7 @@ export default function MCQBuilderPage() {
         ) : (
           <div className="space-y-4">
             {tests.map((test) => (
-              <div key={test.id} className="bg-white rounded-lg shadow-md p-6">
+              <div key={test.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-300">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -300,7 +273,7 @@ export default function MCQBuilderPage() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }
