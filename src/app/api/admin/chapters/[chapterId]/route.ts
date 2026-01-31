@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
-import { syncQuestionsToQuestionBank } from '@/lib/questionBankSync'
+import { syncChapterQuestions } from '@/lib/questionBankSyncFast'
 
 /**
  * GET /api/admin/chapters/[chapterId]
@@ -127,51 +127,40 @@ export async function PATCH(
         data: { category },
       })
 
-      // Re-sync to QuestionBank
+      // Re-sync to QuestionBank (fast sync using sourceQuestionId)
       if (updatedChapter.isActive) {
         try {
-          await syncQuestionsToQuestionBank([params.chapterId])
+          await syncChapterQuestions([params.chapterId])
         } catch (syncError) {
           console.error('Error syncing to QuestionBank:', syncError)
         }
       }
     }
 
-    // If isActive changed to true, sync to QuestionBank
+    // If isActive changed to true, sync to QuestionBank (fast sync)
     if (isActive === true && !existingChapter.isActive) {
       try {
-        await syncQuestionsToQuestionBank([params.chapterId])
+        await syncChapterQuestions([params.chapterId])
       } catch (syncError) {
         console.error('Error syncing to QuestionBank:', syncError)
       }
     }
 
-    // If isActive changed to false, deactivate questions in QuestionBank
+    // If isActive changed to false, deactivate questions in QuestionBank (fast lookup)
     if (isActive === false && existingChapter.isActive) {
       try {
         const questions = await prisma.question.findMany({
           where: { chapterId: params.chapterId },
-          select: { questionText: true, category: true },
+          select: { id: true },
         })
 
-        for (const question of questions) {
-          const timedCategory =
-            question.category === 'INDUSTRY_KNOWLEDGE'
-              ? 'INDUSTRY'
-              : question.category === 'AREA_KNOWLEDGE'
-              ? 'AREA_KNOWLEDGE'
-              : null
-
-          if (timedCategory) {
-            await prisma.questionBank.updateMany({
-              where: {
-                questionText: question.questionText,
-                category: timedCategory,
-              },
-              data: { isActive: false },
-            })
-          }
-        }
+        // Fast deactivate using sourceQuestionId
+        await prisma.questionBank.updateMany({
+          where: {
+            sourceQuestionId: { in: questions.map(q => q.id) },
+          },
+          data: { isActive: false },
+        })
       } catch (syncError) {
         console.error('Error deactivating questions in QuestionBank:', syncError)
       }
@@ -208,8 +197,7 @@ export async function DELETE(
       include: {
         questions: {
           select: {
-            questionText: true,
-            category: true,
+            id: true,
           },
         },
       },
@@ -222,27 +210,16 @@ export async function DELETE(
       )
     }
 
-    // Deactivate all questions in QuestionBank before deleting
-    if (existingChapter.isActive) {
+    // Deactivate all questions in QuestionBank before deleting (fast lookup)
+    if (existingChapter.isActive && existingChapter.questions.length > 0) {
       try {
-        for (const question of existingChapter.questions) {
-          const timedCategory =
-            question.category === 'INDUSTRY_KNOWLEDGE'
-              ? 'INDUSTRY'
-              : question.category === 'AREA_KNOWLEDGE'
-              ? 'AREA_KNOWLEDGE'
-              : null
-
-          if (timedCategory) {
-            await prisma.questionBank.updateMany({
-              where: {
-                questionText: question.questionText,
-                category: timedCategory,
-              },
-              data: { isActive: false },
-            })
-          }
-        }
+        const questionIds = existingChapter.questions.map(q => q.id)
+        await prisma.questionBank.updateMany({
+          where: {
+            sourceQuestionId: { in: questionIds },
+          },
+          data: { isActive: false },
+        })
       } catch (syncError) {
         console.error('Error deactivating questions in QuestionBank:', syncError)
       }

@@ -289,6 +289,7 @@ model TestQuestion {
 // Question Bank - Master repository of all available questions for timed tests
 model QuestionBank {
   id            String              @id @default(cuid())
+  sourceQuestionId String?          // Link to original Question for fast sync
   questionText  String
   optionA       String
   optionB       String
@@ -308,6 +309,7 @@ model QuestionBank {
   
   @@index([category])
   @@index([category, isActive])
+  @@index([sourceQuestionId])
   @@map("question_bank")
 }
 

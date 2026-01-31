@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
-import { syncQuestionsToQuestionBank } from '@/lib/questionBankSync'
+import { syncChapterQuestions } from '@/lib/questionBankSyncFast'
 
 /**
  * POST /api/admin/chapters/[chapterId]/publish
@@ -55,10 +55,10 @@ export async function POST(
       data: { isActive: true },
     })
 
-    // Sync all questions to QuestionBank
+    // Sync all questions to QuestionBank (fast sync using sourceQuestionId)
     let syncResult
     try {
-      syncResult = await syncQuestionsToQuestionBank([params.chapterId])
+      syncResult = await syncChapterQuestions([params.chapterId])
     } catch (syncError) {
       console.error('Error syncing to QuestionBank:', syncError)
       return NextResponse.json(

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
-import { syncQuestionsToQuestionBank } from '@/lib/questionBankSync'
+import { syncSingleQuestion } from '@/lib/questionBankSyncFast'
 
 /**
  * GET /api/admin/questions
@@ -190,10 +190,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Auto-sync to QuestionBank if chapter is active
+    // Auto-sync to QuestionBank if chapter is active (fast single-question sync)
     if (chapter.isActive) {
       try {
-        await syncQuestionsToQuestionBank([chapterId])
+        await syncSingleQuestion(question.id)
       } catch (syncError) {
         console.error('Error syncing to QuestionBank:', syncError)
         // Don't fail the request if sync fails

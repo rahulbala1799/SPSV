@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
-import { syncQuestionsToQuestionBank } from '@/lib/questionBankSync'
+import { syncSingleQuestion, deactivateQuestionInBank } from '@/lib/questionBankSyncFast'
 
 /**
  * GET /api/admin/questions/[questionId]
@@ -116,10 +116,10 @@ export async function PATCH(
       data: updateData,
     })
 
-    // Auto-sync to QuestionBank if chapter is active
+    // Auto-sync to QuestionBank if chapter is active (fast single-question sync)
     if (existingQuestion.chapter.isActive) {
       try {
-        await syncQuestionsToQuestionBank([existingQuestion.chapterId])
+        await syncSingleQuestion(params.questionId)
       } catch (syncError) {
         console.error('Error syncing to QuestionBank:', syncError)
         // Don't fail the request if sync fails
@@ -169,32 +169,10 @@ export async function DELETE(
       where: { id: params.questionId },
     })
 
-    // Deactivate corresponding QuestionBank entry if it exists
+    // Deactivate corresponding QuestionBank entry (fast lookup by sourceQuestionId)
     if (existingQuestion.chapter.isActive) {
       try {
-        // Find and deactivate the QuestionBank entry
-        const timedCategory =
-          existingQuestion.category === 'INDUSTRY_KNOWLEDGE'
-            ? 'INDUSTRY'
-            : existingQuestion.category === 'AREA_KNOWLEDGE'
-            ? 'AREA_KNOWLEDGE'
-            : existingQuestion.chapter.category === 'INDUSTRY_KNOWLEDGE'
-            ? 'INDUSTRY'
-            : existingQuestion.chapter.category === 'AREA_KNOWLEDGE'
-            ? 'AREA_KNOWLEDGE'
-            : null
-
-        if (timedCategory) {
-          await prisma.questionBank.updateMany({
-            where: {
-              questionText: existingQuestion.questionText,
-              category: timedCategory,
-            },
-            data: {
-              isActive: false,
-            },
-          })
-        }
+        await deactivateQuestionInBank(params.questionId)
       } catch (syncError) {
         console.error('Error deactivating in QuestionBank:', syncError)
         // Don't fail the request if sync fails
