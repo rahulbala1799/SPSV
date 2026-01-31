@@ -652,6 +652,7 @@ export default function CreateTestPage() {
             )}
           </div>
         </div>
+      </main>
       </div>
     </AdminLayout>
   )

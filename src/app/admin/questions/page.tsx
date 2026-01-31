@@ -487,7 +487,7 @@ export default function QuestionsPage() {
           </div>
         </div>
       )}
-    </div>
+    </AdminLayout>
   )
 }
 
