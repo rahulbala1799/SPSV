@@ -14,7 +14,6 @@ import {
   FiActivity,
   FiZap,
   FiStar,
-  FiTrophy,
 } from 'react-icons/fi'
 
 interface StudentRanking {
@@ -139,7 +138,7 @@ export default function AnalyticsPage() {
     if (rank === 1)
       return (
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold shadow-lg">
-          <FiTrophy className="w-6 h-6" />
+          <FiAward className="w-6 h-6" />
         </div>
       )
     if (rank === 2)
@@ -198,7 +197,7 @@ export default function AnalyticsPage() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
-              <FiTrophy className="w-6 h-6" />
+              <FiAward className="w-6 h-6" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Analytics & Leaderboards</h1>
