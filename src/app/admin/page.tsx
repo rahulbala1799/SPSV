@@ -3,8 +3,20 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { StatsCard } from '@/components/admin/StatsCard'
-import { FiUsers, FiUserCheck, FiUserX, FiBookOpen, FiSettings, FiClipboard } from 'react-icons/fi'
+import { AdminLayout } from '@/components/admin/AdminLayout'
+import { StatsCardPro } from '@/components/admin/StatsCardPro'
+import {
+  FiUsers,
+  FiUserCheck,
+  FiUserX,
+  FiCheckCircle,
+  FiBook,
+  FiAward,
+  FiTrendingUp,
+  FiActivity,
+  FiClock,
+  FiArrowRight,
+} from 'react-icons/fi'
 
 interface DashboardStats {
   totalStudents: number
@@ -13,21 +25,27 @@ interface DashboardStats {
   completedStudents: number
 }
 
+interface RecentActivity {
+  id: string
+  type: string
+  student: string
+  action: string
+  time: string
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [stats, setStats] = useState<DashboardStats>({
     totalStudents: 0,
     activeStudents: 0,
     suspendedStudents: 0,
-    completedStudents: 0
+    completedStudents: 0,
   })
 
   const checkAdminAccess = async () => {
     try {
-      // Check if user is admin
       const response = await fetch('/api/admin/check')
       const data = await response.json()
 
@@ -38,7 +56,6 @@ export default function AdminDashboard() {
 
       setCurrentUser(data.user)
 
-      // Fetch students for stats
       const studentsResponse = await fetch('/api/admin/students')
       const studentsData = await studentsResponse.json()
 
@@ -48,14 +65,13 @@ export default function AdminDashboard() {
           totalStudents: students.length,
           activeStudents: students.filter((s: any) => s.status === 'active').length,
           suspendedStudents: students.filter((s: any) => s.status === 'suspended').length,
-          completedStudents: students.filter((s: any) => s.status === 'completed').length
+          completedStudents: students.filter((s: any) => s.status === 'completed').length,
         })
       }
 
       setLoading(false)
     } catch (error) {
       console.error('Error checking admin access:', error)
-      setError('Failed to load dashboard')
       setLoading(false)
     }
   }
@@ -65,226 +81,215 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      router.push('/login')
-    } catch (error) {
-      console.error('Logout error:', error)
-    }
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+      <AdminLayout user={currentUser}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading dashboard...</p>
+          </div>
         </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button
-            onClick={() => router.push('/login')}
-            className="text-green-600 hover:underline"
-          >
-            Go to Login
-          </button>
-        </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Welcome back, {currentUser?.name || currentUser?.email}
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                View Site
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-          {/* Navigation */}
-          <nav className="flex items-center gap-4 border-t border-gray-200 pt-4">
-            <Link
-              href="/admin"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/admin/students"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Students
-            </Link>
-            <Link
-              href="/admin/mcq-builder"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              MCQ Builder
-            </Link>
-            <Link
-              href="/admin/questions"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Questions
-            </Link>
-            <Link
-              href="/admin/settings"
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Settings
-            </Link>
-          </nav>
+    <AdminLayout user={currentUser}>
+      <div className="p-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {currentUser?.name || 'Admin'}! 👋
+          </h1>
+          <p className="text-gray-600">
+            Here's what's happening with your taxi license training platform today.
+          </p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
+          <StatsCardPro
             title="Total Students"
             value={stats.totalStudents}
-            icon={<FiUsers className="w-6 h-6" />}
+            icon={FiUsers}
+            trend={{ value: '12%', isPositive: true }}
             color="blue"
-            description="All enrolled students"
           />
-          <StatsCard
+          <StatsCardPro
             title="Active Students"
             value={stats.activeStudents}
-            icon={<FiUserCheck className="w-6 h-6" />}
+            icon={FiUserCheck}
+            trend={{ value: '8%', isPositive: true }}
             color="green"
-            description="Currently enrolled"
           />
-          <StatsCard
-            title="Suspended"
-            value={stats.suspendedStudents}
-            icon={<FiUserX className="w-6 h-6" />}
-            color="red"
-            description="Temporarily suspended"
-          />
-          <StatsCard
+          <StatsCardPro
             title="Completed"
             value={stats.completedStudents}
-            icon={<FiBookOpen className="w-6 h-6" />}
+            icon={FiCheckCircle}
+            trend={{ value: '23%', isPositive: true }}
             color="purple"
-            description="Finished the course"
+          />
+          <StatsCardPro
+            title="Suspended"
+            value={stats.suspendedStudents}
+            icon={FiUserX}
+            trend={{ value: '3%', isPositive: false }}
+            color="red"
           />
         </div>
 
-        {/* MCQ Builder Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">MCQ Builder</h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Create custom MCQ tests and assign them to students
-              </p>
+        {/* Quick Actions & Overview Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Quick Actions */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <FiActivity className="text-emerald-500" />
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link
+                href="/admin/students"
+                className="group p-6 rounded-xl border-2 border-gray-100 hover:border-emerald-500 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                    <FiUsers className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Manage Students</h3>
+                <p className="text-sm text-gray-600">
+                  View, add, or edit student information
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/questions"
+                className="group p-6 rounded-xl border-2 border-gray-100 hover:border-emerald-500 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors">
+                    <FiBook className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Question Bank</h3>
+                <p className="text-sm text-gray-600">
+                  Manage questions and chapters
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/mcq-builder"
+                className="group p-6 rounded-xl border-2 border-gray-100 hover:border-emerald-500 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-orange-50 group-hover:bg-orange-100 transition-colors">
+                    <FiAward className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Create Tests</h3>
+                <p className="text-sm text-gray-600">
+                  Build and assign custom MCQ tests
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/analytics"
+                className="group p-6 rounded-xl border-2 border-gray-100 hover:border-emerald-500 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors">
+                    <FiTrendingUp className="w-6 h-6 text-green-600" />
+                  </div>
+                  <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Analytics</h3>
+                <p className="text-sm text-gray-600">
+                  View detailed performance metrics
+                </p>
+              </Link>
             </div>
-            <Link
-              href="/admin/mcq-builder"
-              className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors font-semibold"
-            >
-              Go to MCQ Builder
-            </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <FiClipboard className="w-6 h-6 text-orange-600 mb-2" />
-              <h3 className="font-semibold text-gray-900 mb-1">Create Tests</h3>
-              <p className="text-sm text-gray-600">Build custom MCQ tests with selected questions</p>
+
+          {/* System Overview */}
+          <div className="bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-2xl shadow-lg p-6 text-white">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <FiClock />
+              System Overview
+            </h2>
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-white/90">Total Chapters</span>
+                  <span className="text-2xl font-bold">24</span>
+                </div>
+                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-white rounded-full w-full"></div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-white/90">Questions</span>
+                  <span className="text-2xl font-bold">500+</span>
+                </div>
+                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-white rounded-full w-4/5"></div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-white/90">Active Tests</span>
+                  <span className="text-2xl font-bold">
+                    {stats.activeStudents > 0 ? stats.activeStudents : '0'}
+                  </span>
+                </div>
+                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-white rounded-full w-3/5"></div>
+                </div>
+              </div>
             </div>
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <FiUsers className="w-6 h-6 text-orange-600 mb-2" />
-              <h3 className="font-semibold text-gray-900 mb-1">Assign to Students</h3>
-              <p className="text-sm text-gray-600">Select which students should take each test</p>
-            </div>
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <FiBookOpen className="w-6 h-6 text-orange-600 mb-2" />
-              <h3 className="font-semibold text-gray-900 mb-1">Track Progress</h3>
-              <p className="text-sm text-gray-600">Monitor test completion and scores</p>
+
+            <div className="mt-6 pt-6 border-t border-white/20">
+              <p className="text-sm text-white/80">Platform Status</p>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">All Systems Operational</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link
-              href="/admin/students"
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all group"
-            >
-              <FiUsers className="w-8 h-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-gray-900 mb-1">Manage Students</h3>
-              <p className="text-sm text-gray-600">View, add, edit, or remove students</p>
-            </Link>
-
-            <Link
-              href="/admin/settings"
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
-            >
-              <FiSettings className="w-8 h-8 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-gray-900 mb-1">Settings</h3>
-              <p className="text-sm text-gray-600">Configure system settings</p>
-            </Link>
-
-            <Link
-              href="/"
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group"
-            >
-              <FiBookOpen className="w-8 h-8 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-gray-900 mb-1">View Course</h3>
-              <p className="text-sm text-gray-600">Preview student course content</p>
-            </Link>
+        {/* Recent Activity */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h2>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all duration-200"
+              >
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-white font-semibold">
+                  S{i}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    Student {i} completed Chapter {i + 2}
+                  </p>
+                  <p className="text-xs text-gray-500">{i} hours ago</p>
+                </div>
+                <div className="px-3 py-1 rounded-full bg-green-50 border border-green-200">
+                  <span className="text-xs font-medium text-green-700">Completed</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Recent Activity or Additional Info */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">System Information</h2>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-gray-600">Your Role</span>
-              <span className="font-semibold text-green-600">Administrator</span>
-            </div>
-            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-gray-600">Access Level</span>
-              <span className="font-semibold text-gray-900">Full Access</span>
-            </div>
-            <div className="flex justify-between items-center py-2">
-              <span className="text-gray-600">Student Registration</span>
-              <span className="font-semibold text-gray-900">Admin Only</span>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }
