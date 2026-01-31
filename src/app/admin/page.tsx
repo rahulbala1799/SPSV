@@ -103,7 +103,7 @@ export default function AdminDashboard() {
             Welcome back, {currentUser?.name || 'Admin'}! 👋
           </h1>
           <p className="text-gray-600">
-            Here's what's happening with your taxi license training platform today.
+            Here&apos;s what&apos;s happening with your taxi license training platform today.
           </p>
         </div>
 

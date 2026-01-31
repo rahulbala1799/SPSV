@@ -48,6 +48,7 @@ export default function TestSessionPage() {
         console.error('Error loading from localStorage:', e)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id])
 
   useEffect(() => {

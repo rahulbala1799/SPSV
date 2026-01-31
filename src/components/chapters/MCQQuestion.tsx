@@ -52,6 +52,7 @@ export function MCQQuestion({
       setIsFlagged(false)
       setFlagStatusLoaded(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id, showFlagOption])
 
   const loadFlagStatus = async () => {

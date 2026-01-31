@@ -11,6 +11,7 @@ export default function AnswerReviewPage() {
 
   useEffect(() => {
     fetchResults()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function fetchResults() {
