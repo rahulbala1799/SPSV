@@ -455,7 +455,7 @@ export default function QuestionsPage() {
       {(editingQuestion || addingToChapter) && (
         <QuestionModal
           question={editingQuestion}
-          chapterId={addingToChapter || editingQuestion?.id}
+          chapterId={addingToChapter || editingQuestion?.id || null}
           chapters={chapters}
           onSave={handleSaveQuestion}
           onClose={() => {
