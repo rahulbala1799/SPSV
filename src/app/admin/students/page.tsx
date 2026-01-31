@@ -318,15 +318,14 @@ export default function StudentsPage() {
       </div>
 
       {/* Add Student Modal */}
-      {showAddModal && (
-        <AddStudentModal
-          onClose={() => setShowAddModal(false)}
-          onSuccess={() => {
-            setShowAddModal(false)
-            fetchStudents()
-          }}
-        />
-      )}
+      <AddStudentModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={() => {
+          setShowAddModal(false)
+          fetchStudents()
+        }}
+      />
 
       {/* Delete Confirmation */}
       {deleteConfirm && (
