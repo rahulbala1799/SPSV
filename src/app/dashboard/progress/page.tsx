@@ -177,7 +177,8 @@ export default function ProgressPage() {
       'chapter_industry_part3': 'industry-part3',
       'chapter_industry_5': 'industry-5',
       'chapter_industry_7': 'industry-7',
-      'chapter_industry_8': 'industry-8'
+      'chapter_industry_8': 'industry-8',
+      'chapter_schools_libraries_universities': 'schools-libraries-universities'
     }
     return routeMap[chapterId] || chapterId.replace('chapter_', '').replace(/_/g, '-')
   }

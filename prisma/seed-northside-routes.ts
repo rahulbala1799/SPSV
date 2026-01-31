@@ -788,12 +788,12 @@ async function main() {
       questionNumber: 55,
       options: [
         { id: 'A', text: 'Griffith Avenue' },
-        { id: 'B', text: 'Malahide Road' },
+        { id: 'B', text: 'Richmond Road' },
         { id: 'C', text: 'Drumcondra Road' },
         { id: 'D', text: 'Ballybough Road' }
       ],
       correctAnswer: 'B',
-      explanation: 'Malahide Road runs from Drumcondra to Fairview in Dublin.',
+      explanation: 'Richmond Road runs from Drumcondra to Fairview in Dublin.',
       points: 1,
       difficulty: 'medium'
     },

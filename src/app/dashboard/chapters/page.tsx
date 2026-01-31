@@ -80,7 +80,8 @@ export default function ChaptersPage() {
           'chapter_churches_cemeteries': 'churches-cemeteries',
           'chapter_embassies': 'embassies',
           'chapter_tourist_attractions': 'tourist-attractions',
-          'chapter_hospitals': 'hospitals'
+          'chapter_hospitals': 'hospitals',
+          'chapter_schools_libraries_universities': 'schools-libraries-universities'
         }
 
         data.chapterProgress.forEach((cp: any) => {
