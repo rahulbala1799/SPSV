@@ -18,11 +18,12 @@ export async function GET(request: NextRequest) {
         },
         chapterProgress: {
           select: {
-            status: true,
-            timeSpent: true,
-            questionsAttempted: true,
-            questionsCorrect: true,
-            lastAccessedAt: true,
+            progressStatus: true,
+            timeSpentSeconds: true,
+            totalQuestions: true,
+            correctAnswers: true,
+            lastAccessed: true,
+            isCompleted: true,
           },
         },
         testSessions: {
@@ -49,21 +50,21 @@ export async function GET(request: NextRequest) {
     // Calculate rankings by different metrics
     const studentMetrics = students.map((student) => {
       const totalTimeSpent = student.chapterProgress.reduce(
-        (sum, cp) => sum + (cp.timeSpent || 0),
+        (sum, cp) => sum + (cp.timeSpentSeconds || 0),
         0
       )
       const totalQuestions = student.chapterProgress.reduce(
-        (sum, cp) => sum + (cp.questionsAttempted || 0),
+        (sum, cp) => sum + (cp.totalQuestions || 0),
         0
       )
       const totalCorrect = student.chapterProgress.reduce(
-        (sum, cp) => sum + (cp.questionsCorrect || 0),
+        (sum, cp) => sum + (cp.correctAnswers || 0),
         0
       )
       const accuracy = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0
 
       const completedChapters = student.chapterProgress.filter(
-        (cp) => cp.status === 'COMPLETED'
+        (cp) => cp.isCompleted === true
       ).length
       const totalChapters = student.chapterProgress.length
       const completionRate = totalChapters > 0 ? (completedChapters / totalChapters) * 100 : 0
