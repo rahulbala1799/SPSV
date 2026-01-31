@@ -37,11 +37,11 @@ export async function GET(request: NextRequest) {
         },
         activities: {
           select: {
-            type: true,
-            createdAt: true,
+            activityType: true,
+            timestamp: true,
           },
           orderBy: {
-            createdAt: 'desc',
+            timestamp: 'desc',
           },
         },
       },
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 
       // Calculate streak (consecutive days with activity)
       const activityDates = student.activities.map((a) =>
-        new Date(a.createdAt).toDateString()
+        new Date(a.timestamp).toDateString()
       )
       const uniqueDates = [...new Set(activityDates)]
       let streak = 0
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
       // Check if active in last 7 days
       const lastActivity = student.activities[0]
       const isActive = lastActivity
-        ? new Date(lastActivity.createdAt).getTime() >
+        ? new Date(lastActivity.timestamp).getTime() >
           Date.now() - 7 * 24 * 60 * 60 * 1000
         : false
 
