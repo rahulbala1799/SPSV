@@ -110,12 +110,13 @@ export default function ContentManagementPage() {
   const handleSaveChapter = async (chapterData: any) => {
     setSaving(true)
     try {
-      const url = editingChapter.id
-        ? `/api/admin/content/chapters/${editingChapter.id}`
+      const chapterId = editingChapter?.id
+      const url = chapterId
+        ? `/api/admin/content/chapters/${chapterId}`
         : '/api/admin/content/chapters'
       
       const response = await fetch(url, {
-        method: editingChapter.id ? 'PATCH' : 'POST',
+        method: chapterId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(chapterData),
       })
@@ -396,7 +397,7 @@ export default function ContentManagementPage() {
         {/* Chapter Edit Modal */}
         {editingChapter && (
           <ChapterModal
-            chapter={editingChapter.id ? editingChapter : null}
+            chapter={editingChapter?.id ? editingChapter : null}
             onSave={handleSaveChapter}
             onClose={() => setEditingChapter(null)}
             saving={saving}

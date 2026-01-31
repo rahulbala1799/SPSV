@@ -23,6 +23,8 @@ interface DashboardStats {
   activeStudents: number
   suspendedStudents: number
   completedStudents: number
+  totalQuestions: number
+  totalChapters: number
 }
 
 interface RecentActivity {
@@ -42,6 +44,8 @@ export default function AdminDashboard() {
     activeStudents: 0,
     suspendedStudents: 0,
     completedStudents: 0,
+    totalQuestions: 0,
+    totalChapters: 0,
   })
 
   const checkAdminAccess = async () => {
@@ -56,8 +60,16 @@ export default function AdminDashboard() {
 
       setCurrentUser(data.user)
 
-      const studentsResponse = await fetch('/api/admin/students')
+      const [studentsResponse, questionsResponse] = await Promise.all([
+        fetch('/api/admin/students'),
+        fetch('/api/admin/questions')
+      ])
+
       const studentsData = await studentsResponse.json()
+      let questionsData = { totalQuestions: 0, chapters: [] }
+      if (questionsResponse.ok) {
+        questionsData = await questionsResponse.json()
+      }
 
       if (studentsResponse.ok && studentsData.students) {
         const students = studentsData.students
@@ -66,6 +78,8 @@ export default function AdminDashboard() {
           activeStudents: students.filter((s: any) => s.status === 'active').length,
           suspendedStudents: students.filter((s: any) => s.status === 'suspended').length,
           completedStudents: students.filter((s: any) => s.status === 'completed').length,
+          totalQuestions: questionsData.totalQuestions || 0,
+          totalChapters: questionsData.chapters?.length || 0,
         })
       }
 
@@ -224,7 +238,7 @@ export default function AdminDashboard() {
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-white/90">Total Chapters</span>
-                  <span className="text-2xl font-bold">24</span>
+                  <span className="text-2xl font-bold">{stats.totalChapters}</span>
                 </div>
                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                   <div className="h-full bg-white rounded-full w-full"></div>
@@ -234,7 +248,7 @@ export default function AdminDashboard() {
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-white/90">Questions</span>
-                  <span className="text-2xl font-bold">500+</span>
+                  <span className="text-2xl font-bold">{stats.totalQuestions}</span>
                 </div>
                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                   <div className="h-full bg-white rounded-full w-4/5"></div>
