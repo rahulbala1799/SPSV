@@ -43,6 +43,8 @@ export type { HeaderProps } from './Header';
 
 export { SaaSHero } from './SaaSHero';
 
+export { HowItWorksModal } from './HowItWorksModal';
+
 export { TimetableModal } from './TimetableModal';
 
 export { EnrollmentModal } from './EnrollmentModal';

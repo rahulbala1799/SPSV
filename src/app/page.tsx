@@ -24,6 +24,7 @@ import { Header } from '@/components/Header';
 import { SaaSHero } from '@/components/SaaSHero';
 import { EnrollmentModal } from '@/components/EnrollmentModal';
 import { CoursesModal } from '@/components/CoursesModal';
+import { HowItWorksModal } from '@/components/HowItWorksModal';
 import { StudentDashboardDemo } from '@/components/demos/StudentDashboardDemo';
 import { QuizInterfaceDemo } from '@/components/demos/QuizInterfaceDemo';
 import { 
@@ -39,6 +40,7 @@ import {
 export default function Home() {
   const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
   const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
+  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -162,7 +164,7 @@ export default function Home() {
       {/* SaaS Hero Section */}
       <SaaSHero
         onGetStarted={() => setIsEnrollmentModalOpen(true)}
-        onWatchDemo={() => setIsCoursesModalOpen(true)}
+        onWatchDemo={() => setIsHowItWorksModalOpen(true)}
       />
 
       {/* Method Benefits Bar */}
@@ -403,7 +405,7 @@ export default function Home() {
                 </div>
               </div>
               <button
-                onClick={() => setIsCoursesModalOpen(true)}
+                onClick={() => setIsHowItWorksModalOpen(true)}
                 className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105"
               >
                 <span className="flex items-center gap-2">
@@ -662,6 +664,11 @@ export default function Home() {
       <CoursesModal
         isOpen={isCoursesModalOpen}
         onClose={() => setIsCoursesModalOpen(false)}
+      />
+      <HowItWorksModal
+        isOpen={isHowItWorksModalOpen}
+        onClose={() => setIsHowItWorksModalOpen(false)}
+        onEnroll={() => setIsEnrollmentModalOpen(true)}
       />
     </main>
   );
