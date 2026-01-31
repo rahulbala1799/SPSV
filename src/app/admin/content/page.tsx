@@ -37,6 +37,7 @@ interface Chapter {
   chapterNumber: number
   type: string
   category: string | null
+  duration: number | null
   isActive: boolean
   questionCount: number
   questions?: Question[]
