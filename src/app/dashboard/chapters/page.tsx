@@ -94,7 +94,8 @@ export default function ChaptersPage() {
           'chapter_tourist_attractions': 'tourist-attractions',
           'chapter_hospitals': 'hospitals',
           'chapter_schools_libraries_universities': 'schools-libraries-universities',
-          'chapter_dublin_roads_navigation': 'dublin-roads-navigation'
+          'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
+          'chapter_routes': 'routes'
         }
 
         // Convert API chapters to display format and separate by category
