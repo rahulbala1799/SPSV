@@ -26,15 +26,6 @@ export async function GET(request: NextRequest) {
             isCompleted: true,
           },
         },
-        testSessions: {
-          where: {
-            status: 'COMPLETED',
-          },
-          select: {
-            score: true,
-            completedAt: true,
-          },
-        },
         activities: {
           select: {
             activityType: true,
