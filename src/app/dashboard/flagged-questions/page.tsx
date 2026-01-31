@@ -235,6 +235,7 @@ export default function FlaggedQuestionsPage() {
       'chapter_industry_7': 'industry-7',
       'chapter_industry_8': 'industry-8',
       'chapter_schools_libraries_universities': 'schools-libraries-universities',
+      'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
     }
     return slugMap[chapterId] || chapterId
   }
