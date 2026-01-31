@@ -105,28 +105,28 @@ export function QuizInterfaceDemo() {
   }
 
   return (
-    <div className="w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-emerald-500/20">
+    <div className="w-full bg-white rounded-2xl md:rounded-3xl shadow-xl md:shadow-2xl overflow-hidden border-2 md:border-4 border-emerald-500/20">
       {/* Quiz Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-white p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <FiBook className="w-6 h-6" />
+      <div className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-white p-4 md:p-5 lg:p-6">
+        <div className="flex items-center justify-between mb-3 md:mb-4 gap-2">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+              <FiBook className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <div>
-              <h3 className="text-xl font-bold">{question.category}</h3>
-              <p className="text-emerald-100 text-sm">Practice Quiz</p>
+            <div className="min-w-0">
+              <h3 className="text-base md:text-lg lg:text-xl font-bold truncate">{question.category}</h3>
+              <p className="text-emerald-100 text-xs md:text-sm">Practice Quiz</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-            <FiClock className="w-5 h-5" />
-            <span className="font-bold">12:45</span>
+          <div className="flex items-center gap-1 md:gap-2 bg-white/20 backdrop-blur-sm px-3 md:px-4 py-2 rounded-lg flex-shrink-0">
+            <FiClock className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="font-bold text-sm md:text-base">12:45</span>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
+        <div className="space-y-1 md:space-y-2">
+          <div className="flex items-center justify-between text-xs md:text-sm">
             <span>
               Question {currentQuestion + 1} of {demoQuestions.length}
             </span>
@@ -142,32 +142,32 @@ export function QuizInterfaceDemo() {
       </div>
 
       {/* Quiz Content */}
-      <div className="p-8">
+      <div className="p-4 md:p-6 lg:p-8">
         {/* Question */}
-        <div className="mb-8">
-          <div className="flex items-start gap-4 mb-6">
-            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold flex-shrink-0">
+        <div className="mb-6 md:mb-8">
+          <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold flex-shrink-0 text-sm md:text-base">
               {currentQuestion + 1}
             </div>
-            <div className="flex-1">
-              <h4 className="text-2xl font-bold text-gray-900 leading-relaxed">{question.questionText}</h4>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-relaxed">{question.questionText}</h4>
             </div>
           </div>
 
           {/* Options */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {question.options.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleAnswerSelect(option.id)}
                 disabled={showExplanation}
-                className={`w-full p-5 rounded-xl border-2 transition-all duration-300 text-left ${getOptionStyle(
+                className={`w-full p-3 md:p-4 lg:p-5 rounded-lg md:rounded-xl border-2 transition-all duration-300 text-left ${getOptionStyle(
                   option.id
                 )} ${!showExplanation ? 'cursor-pointer' : 'cursor-default'}`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
                   <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold flex-shrink-0 ${
+                    className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold flex-shrink-0 text-sm md:text-base ${
                       showExplanation && option.id === question.correctAnswer
                         ? 'bg-green-500 text-white'
                         : showExplanation && selectedAnswer === option.id && !isCorrect
@@ -177,7 +177,7 @@ export function QuizInterfaceDemo() {
                   >
                     {option.id}
                   </div>
-                  <span className="flex-1 text-lg text-gray-900">{option.text}</span>
+                  <span className="flex-1 text-sm md:text-base lg:text-lg text-gray-900 min-w-0">{option.text}</span>
                   {getOptionIcon(option.id)}
                 </div>
               </button>
@@ -188,66 +188,67 @@ export function QuizInterfaceDemo() {
         {/* Explanation */}
         {showExplanation && (
           <div
-            className={`p-6 rounded-2xl border-2 mb-6 ${
+            className={`p-4 md:p-5 lg:p-6 rounded-xl md:rounded-2xl border-2 mb-4 md:mb-6 ${
               isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
             }`}
           >
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-2 md:gap-3 mb-3">
               {isCorrect ? (
                 <>
-                  <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                    <FiCheckCircle className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                    <FiCheckCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
-                  <div>
-                    <h5 className="text-xl font-bold text-green-900">Correct! Well done! 🎉</h5>
-                    <p className="text-green-700 text-sm">You got this one right</p>
+                  <div className="min-w-0">
+                    <h5 className="text-lg md:text-xl font-bold text-green-900">Correct! Well done! 🎉</h5>
+                    <p className="text-green-700 text-xs md:text-sm">You got this one right</p>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center">
-                    <FiXCircle className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
+                    <FiXCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
-                  <div>
-                    <h5 className="text-xl font-bold text-red-900">Not quite right</h5>
-                    <p className="text-red-700 text-sm">
+                  <div className="min-w-0">
+                    <h5 className="text-lg md:text-xl font-bold text-red-900">Not quite right</h5>
+                    <p className="text-red-700 text-xs md:text-sm">
                       The correct answer is <strong>{question.correctAnswer}</strong>
                     </p>
                   </div>
                 </>
               )}
             </div>
-            <div className="mt-4 p-4 bg-white rounded-lg">
-              <p className="text-sm font-semibold text-gray-700 mb-2">💡 Explanation:</p>
-              <p className="text-gray-700 leading-relaxed">{question.explanation}</p>
+            <div className="mt-3 md:mt-4 p-3 md:p-4 bg-white rounded-lg">
+              <p className="text-xs md:text-sm font-semibold text-gray-700 mb-2">💡 Explanation:</p>
+              <p className="text-gray-700 leading-relaxed text-sm md:text-base">{question.explanation}</p>
             </div>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3 lg:gap-4">
           {!showExplanation ? (
-            <button className="flex-1 px-6 py-4 bg-gray-100 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+            <button className="flex-1 px-4 md:px-6 py-3 md:py-4 bg-gray-100 text-gray-400 rounded-lg md:rounded-xl font-medium cursor-not-allowed text-sm md:text-base">
               Select an answer to continue
             </button>
           ) : (
             <>
-              <button className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors flex items-center gap-2">
-                <FiFlag className="w-5 h-5" />
-                Flag for Review
+              <button className="px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 text-gray-700 rounded-lg md:rounded-xl font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm md:text-base">
+                <FiFlag className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Flag for Review</span>
+                <span className="sm:hidden">Flag</span>
               </button>
               {currentQuestion < demoQuestions.length - 1 ? (
                 <button
                   onClick={handleNext}
-                  className="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 px-4 md:px-6 py-3 md:py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg md:rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm md:text-base"
                 >
                   Next Question
-                  <FiArrowRight className="w-5 h-5" />
+                  <FiArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               ) : (
-                <button className="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                <button className="flex-1 px-4 md:px-6 py-3 md:py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg md:rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm md:text-base">
                   Finish Quiz
-                  <FiCheckCircle className="w-5 h-5" />
+                  <FiCheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               )}
             </>
@@ -255,22 +256,22 @@ export function QuizInterfaceDemo() {
         </div>
 
         {/* Stats Footer */}
-        <div className="mt-8 grid grid-cols-3 gap-4">
-          <div className="p-4 bg-emerald-50 rounded-xl text-center">
-            <div className="text-2xl font-bold text-emerald-700">
+        <div className="mt-6 md:mt-8 grid grid-cols-3 gap-2 md:gap-3 lg:gap-4">
+          <div className="p-3 md:p-4 bg-emerald-50 rounded-lg md:rounded-xl text-center">
+            <div className="text-xl md:text-2xl font-bold text-emerald-700">
               {answered.filter((i) => demoQuestions[i] && selectedAnswer === demoQuestions[i].correctAnswer).length}
             </div>
-            <div className="text-xs text-emerald-600">Correct</div>
+            <div className="text-[10px] md:text-xs text-emerald-600">Correct</div>
           </div>
-          <div className="p-4 bg-red-50 rounded-xl text-center">
-            <div className="text-2xl font-bold text-red-700">
+          <div className="p-3 md:p-4 bg-red-50 rounded-lg md:rounded-xl text-center">
+            <div className="text-xl md:text-2xl font-bold text-red-700">
               {answered.filter((i) => demoQuestions[i] && selectedAnswer !== demoQuestions[i].correctAnswer).length}
             </div>
-            <div className="text-xs text-red-600">Incorrect</div>
+            <div className="text-[10px] md:text-xs text-red-600">Incorrect</div>
           </div>
-          <div className="p-4 bg-gray-100 rounded-xl text-center">
-            <div className="text-2xl font-bold text-gray-700">{demoQuestions.length - answered.length}</div>
-            <div className="text-xs text-gray-600">Remaining</div>
+          <div className="p-3 md:p-4 bg-gray-100 rounded-lg md:rounded-xl text-center">
+            <div className="text-xl md:text-2xl font-bold text-gray-700">{demoQuestions.length - answered.length}</div>
+            <div className="text-[10px] md:text-xs text-gray-600">Remaining</div>
           </div>
         </div>
       </div>

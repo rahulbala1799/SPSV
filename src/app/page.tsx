@@ -67,33 +67,33 @@ export default function Home() {
   const features: Feature[] = [
     {
       icon: <FaChalkboardTeacher />,
-      title: 'Expert Tutors',
-      description: 'Learn from experienced instructors who know the SPSV test inside out. Our tutors have helped hundreds pass on their first attempt.',
+      title: 'Smart Learning Platform',
+      description: 'AI-powered adaptive learning that identifies your weak areas and creates a personalized study plan for maximum efficiency.',
     },
     {
       icon: <FaBook />,
-      title: 'Comprehensive Materials',
-      description: 'Complete study guides, practice questions, and mock tests covering both Industry Knowledge and Area Knowledge sections.',
+      title: '500+ Practice Questions',
+      description: 'Comprehensive question bank covering every topic. New questions added monthly based on latest exam patterns.',
     },
     {
       icon: <FaBullseye />,
-      title: '95% Pass Rate',
-      description: 'Our students consistently achieve a 95% first-time pass rate - significantly higher than the national average.',
+      title: 'Real-Time Progress Tracking',
+      description: 'Advanced analytics dashboard shows your performance, accuracy, and readiness across all topics with AI predictions.',
     },
     {
       icon: <FaBuilding />,
-      title: 'Central Location',
-      description: 'Conveniently located classroom in Dublin 15, Blanchardstown with easy access via public transport.',
+      title: 'Learn Anywhere, Anytime',
+      description: 'Access the platform 24/7 from any device - phone, tablet, or computer. Learn at your own pace, on your schedule.',
     },
     {
       icon: <FaMapMarkedAlt />,
-      title: 'Dublin Area Expertise',
-      description: 'Master Dublin routes, one-way streets, landmarks, and navigation with our local area specialists.',
+      title: 'Interactive Dublin Maps',
+      description: 'Digital route visualization, landmark quizzes, and street-view integration for mastering Area Knowledge.',
     },
     {
       icon: <FaBookOpen />,
-      title: 'Complete Materials',
-      description: 'All study materials, practice tests, and resources provided as part of your course enrollment.',
+      title: 'Expert Support + Classes',
+      description: 'Platform access PLUS optional in-person classes in Dublin 15. Best of both worlds - digital efficiency meets human expertise.',
     },
   ];
 
@@ -120,67 +120,67 @@ export default function Home() {
 
   const courseHighlights = [
     {
+      icon: '💻',
+      title: '24/7 Platform Access',
+      description: 'Learn anytime, anywhere. Your personal learning environment is always available on any device.',
+    },
+    {
+      icon: '📈',
+      title: 'AI Performance Tracking',
+      description: 'Advanced analytics predict your pass probability and recommend exactly what to study next.',
+    },
+    {
+      icon: '⚡',
+      title: 'Instant Progress Updates',
+      description: 'See your improvement in real-time. Every question answered updates your readiness score immediately.',
+    },
+    {
+      icon: '🎯',
+      title: 'Personalized Study Plans',
+      description: 'AI creates custom learning paths based on your progress, learning speed, and knowledge gaps.',
+    },
+    {
       icon: '🏫',
-      title: 'Professional Classroom',
-      description: 'Learn in our modern, fully-equipped classroom in Dublin 15, Blanchardstown with interactive learning tools.',
+      title: 'Optional Live Classes',
+      description: 'Platform access PLUS in-person sessions in Dublin 15 for those who want classroom interaction.',
     },
     {
-      icon: '👥',
-      title: 'Small Class Sizes',
-      description: 'Maximum 6 people per batch ensuring personalized attention and interactive learning.',
-    },
-    {
-      icon: '📅',
-      title: 'Flexible Scheduling',
-      description: 'Two time slots available Monday to Thursday: Morning (09:30-12:30) and Afternoon (14:30-17:00).',
-    },
-    {
-      icon: '🎓',
-      title: 'Structured Curriculum',
-      description: 'Proven teaching methodology covering both Industry and Area Knowledge systematically.',
-    },
-    {
-      icon: '🚗',
-      title: 'Practical Training',
-      description: 'Real Dublin route practice sessions and hands-on navigation exercises included.',
-    },
-    {
-      icon: '💼',
-      title: 'Career Support',
-      description: 'Job placement assistance and industry connections to help you start driving immediately.',
+      icon: '🔄',
+      title: 'Lifetime Updates',
+      description: 'New questions, updated content, and platform improvements included at no extra cost.',
     },
   ];
 
   const preparationFeatures = [
     {
-      icon: '📚',
-      title: 'Structured Lessons',
-      description: 'Our carefully designed curriculum breaks down complex topics into easy-to-understand lessons that build on each other.',
-    },
-    {
-      icon: '📖',
-      title: 'Easy-to-Grasp Materials',
-      description: 'Study materials designed for clarity - no jargon, no confusion. Everything explained in simple, practical terms.',
-    },
-    {
       icon: '🎯',
-      title: 'Focused Preparation',
-      description: 'We focus specifically on what you need to pass the SPSV test - no unnecessary information, just what matters.',
+      title: 'Adaptive Learning Engine',
+      description: 'AI identifies your knowledge gaps and automatically adjusts difficulty, focusing study time where you need it most.',
     },
     {
-      icon: '💡',
-      title: 'Interactive Learning',
-      description: 'Engage with the material through discussions, practice questions, and real-world examples that make learning stick.',
+      icon: '📊',
+      title: 'Performance Analytics',
+      description: 'Real-time dashboards show accuracy rates, time spent, and predicted pass probability across all exam topics.',
     },
     {
-      icon: '✅',
-      title: 'Progress Tracking',
-      description: 'Regular assessments and feedback help you identify areas for improvement and track your readiness for the test.',
+      icon: '🔄',
+      title: 'Spaced Repetition System',
+      description: 'Questions resurface at scientifically-optimized intervals to maximize long-term retention and exam readiness.',
     },
     {
-      icon: '🤝',
-      title: 'Personalized Support',
-      description: 'Get help when you need it. Our tutors are available to answer questions and provide guidance throughout your journey.',
+      icon: '📱',
+      title: 'Mobile-First Design',
+      description: 'Study on the go with our mobile-optimized platform. Practice during breaks, commutes, or anywhere you have 5 minutes.',
+    },
+    {
+      icon: '⚡',
+      title: 'Instant Feedback Loop',
+      description: 'Get immediate explanations for every answer. Learn from mistakes instantly rather than waiting for class corrections.',
+    },
+    {
+      icon: '👥',
+      title: 'Expert Support Available',
+      description: 'Platform includes direct access to instructors via chat. Optional in-person classes in Dublin 15 for hands-on learning.',
     },
   ];
 
@@ -191,23 +191,26 @@ export default function Home() {
       
       {/* Hero Section */}
       <Hero
-        title="Master the SPSV Test with Dublin's #1 Tutoring School"
-        subtitle="Join SPSV Mastery Class Dublin and pass your taxi driver test with confidence. Expert tutors, proven methods, 95% pass rate."
-        primaryCTA="Enroll Now"
-        secondaryCTA="View Courses"
+        title="Ireland's Most Advanced SPSV Learning Platform"
+        subtitle="Master the taxi driver test with our intelligent learning platform. 500+ practice questions, AI-powered progress tracking, and expert guidance. Join 1000+ successful students."
+        primaryCTA="Start Free Trial"
+        secondaryCTA="See Platform Demo"
         onPrimaryClick={() => setIsEnrollmentModalOpen(true)}
         onSecondaryClick={() => setIsCoursesModalOpen(true)}
       />
 
-      {/* Preparation Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-emerald-50 to-green-50">
+      {/* Platform Features Section */}
+      <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-emerald-50 to-green-50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              How We Help You Achieve Your Pass
+          <div className="text-center mb-8 md:mb-12">
+            <div className="inline-block px-4 py-2 bg-emerald-600 text-white rounded-full font-semibold text-sm mb-4">
+              💻 Intelligent Platform
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 px-4">
+              Everything You Need to Pass in One Platform
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our proven approach combines structured lessons, easy-to-grasp study materials, and comprehensive support to ensure you&apos;re fully prepared for success.
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+              Our cutting-edge learning platform combines AI-powered study tools, comprehensive content, and expert instruction to guarantee your success.
             </p>
           </div>
           
@@ -244,22 +247,25 @@ export default function Home() {
       {/* Why Choose Us Section */}
       <div id="features">
         <CourseFeature
-          title="Why Choose SPSV Mastery Class Dublin?"
-          subtitle="We don't just give you materials - we teach you how to pass. Our expert tutors provide personalized guidance every step of the way."
+          title="Why Choose SPSV Mastery Platform?"
+          subtitle="More than just study materials - a complete intelligent learning system that adapts to you. Technology meets expert instruction for guaranteed results."
           features={features}
         />
       </div>
 
-      {/* What You'll Learn Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-emerald-900 to-green-900 text-white">
+      {/* What's Included Section */}
+      <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-emerald-900 to-green-900 text-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                What You&apos;ll Learn
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="text-center md:text-left px-4">
+              <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full font-semibold text-sm text-emerald-200 mb-4">
+                📚 Complete Coverage
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
+                Master Every Topic
               </h2>
-              <p className="text-xl text-green-100 mb-8">
-                Our comprehensive curriculum covers everything you need to ace both sections of the SPSV test.
+              <p className="text-lg md:text-xl text-green-100 mb-6 md:mb-8">
+                Our intelligent platform covers 100% of the SPSV exam syllabus with adaptive learning technology.
               </p>
               <div className="space-y-6">
                 <div className="flex gap-4 items-start">
@@ -313,78 +319,78 @@ export default function Home() {
       </section>
 
       {/* Student Dashboard Demo Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-12 md:py-16 lg:py-20 px-3 md:px-4 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-sm mb-4">
-              📱 Live Demo
+          <div className="text-center mb-8 md:mb-12 px-2">
+            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-xs md:text-sm mb-4">
+              📱 Live Interactive Demo
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
               Your Personal Learning Dashboard
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto">
               Track your progress, monitor your performance, and stay motivated with our interactive student dashboard. See exactly what you get when you enroll!
             </p>
           </div>
           
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <StudentDashboardDemo />
           </div>
 
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-50 text-emerald-700 rounded-full font-medium">
-              <span>✨</span>
-              <span>This is a live, interactive preview of the actual student dashboard</span>
-              <span>✨</span>
+          <div className="text-center px-2">
+            <div className="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-emerald-50 text-emerald-700 rounded-full font-medium text-xs md:text-sm lg:text-base flex-wrap justify-center">
+              <span className="hidden sm:inline">✨</span>
+              <span className="text-center">This is a live, interactive preview of the actual student dashboard</span>
+              <span className="hidden sm:inline">✨</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Quiz Interface Demo Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600">
+      <section className="py-12 md:py-16 lg:py-20 px-3 md:px-4 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 text-white">
-            <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-sm mb-4">
-              🎯 Try It Yourself
+          <div className="text-center mb-8 md:mb-12 text-white px-2">
+            <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-xs md:text-sm mb-4">
+              🎯 Try It Yourself - Live Demo
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Interactive Learning Experience
+            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 md:mb-4">
+              Interactive Quiz Platform
             </h2>
-            <p className="text-xl text-emerald-100 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-emerald-100 max-w-3xl mx-auto">
               Practice with hundreds of real exam-style questions. Get instant feedback, detailed explanations, and track your accuracy across all topics.
             </p>
           </div>
           
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <QuizInterfaceDemo />
           </div>
 
-          <div className="text-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                What Makes Our Learning Platform Special?
+          <div className="text-center px-2">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">
+                What Makes Our Platform Special?
               </h3>
-              <div className="grid md:grid-cols-3 gap-6 text-white">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">📚</div>
-                  <h4 className="font-bold mb-2">500+ Questions</h4>
-                  <p className="text-emerald-100 text-sm">
-                    Comprehensive question bank covering all exam topics
+              <div className="grid sm:grid-cols-3 gap-4 md:gap-6 text-white">
+                <div className="text-center p-3 md:p-0">
+                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">📚</div>
+                  <h4 className="font-bold mb-1 md:mb-2 text-sm md:text-base">500+ Questions</h4>
+                  <p className="text-emerald-100 text-xs md:text-sm">
+                    Comprehensive bank covering all exam topics
                   </p>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl mb-3">💡</div>
-                  <h4 className="font-bold mb-2">Detailed Explanations</h4>
-                  <p className="text-emerald-100 text-sm">
-                    Learn from mistakes with in-depth answer explanations
+                <div className="text-center p-3 md:p-0">
+                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">💡</div>
+                  <h4 className="font-bold mb-1 md:mb-2 text-sm md:text-base">Detailed Explanations</h4>
+                  <p className="text-emerald-100 text-xs md:text-sm">
+                    Learn from mistakes with in-depth explanations
                   </p>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl mb-3">📊</div>
-                  <h4 className="font-bold mb-2">Progress Tracking</h4>
-                  <p className="text-emerald-100 text-sm">
-                    Monitor your performance and identify weak areas
+                <div className="text-center p-3 md:p-0">
+                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">📊</div>
+                  <h4 className="font-bold mb-1 md:mb-2 text-sm md:text-base">Progress Tracking</h4>
+                  <p className="text-emerald-100 text-xs md:text-sm">
+                    Monitor performance and identify weak areas
                   </p>
                 </div>
               </div>
@@ -412,15 +418,20 @@ export default function Home() {
         />
       </div>
 
-      {/* Course Highlights */}
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+      {/* Platform Benefits */}
+      <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-            Our Classroom Experience
-          </h2>
-          <p className="text-xl text-center text-gray-300 mb-12">
-            Professional training in a dedicated learning environment
-          </p>
+          <div className="text-center mb-8 md:mb-12">
+            <div className="inline-block px-4 py-2 bg-emerald-500/20 backdrop-blur-sm rounded-full font-semibold text-sm text-emerald-300 mb-4">
+              🚀 Platform Features
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-4">
+              Everything You Need, All in One Place
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 px-4">
+              A complete learning ecosystem designed for SPSV success
+            </p>
+          </div>
           
           {/* Classroom Image */}
           <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
@@ -449,32 +460,35 @@ export default function Home() {
       </section>
 
       {/* Enrollment CTA Section */}
-      <section id="enrollment" className="py-20 px-4 bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600">
+      <section id="enrollment" className="py-16 md:py-20 px-4 bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-white text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Join Our Next Class?
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="text-white text-center md:text-left px-4">
+              <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-sm mb-4">
+                🎓 Get Started Today
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
+                Start Your Free Trial
               </h2>
-              <p className="text-2xl mb-8 text-green-100">
-                Register your interest and we&apos;ll contact you with class schedules and details.
+              <p className="text-xl md:text-2xl mb-6 md:mb-8 text-green-100">
+                Get instant platform access. No credit card required. Start learning in 60 seconds.
               </p>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <span className="text-lg">Classes starting soon</span>
+                  <span className="text-xl md:text-2xl">✓</span>
+                  <span className="text-base md:text-lg">Instant platform access - start immediately</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <span className="text-lg">Multiple time slots available</span>
+                  <span className="text-xl md:text-2xl">✓</span>
+                  <span className="text-base md:text-lg">500+ practice questions unlocked</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <span className="text-lg">No obligation consultation</span>
+                  <span className="text-xl md:text-2xl">✓</span>
+                  <span className="text-base md:text-lg">AI progress tracking from day one</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <span className="text-lg">All materials included</span>
+                  <span className="text-xl md:text-2xl">✓</span>
+                  <span className="text-base md:text-lg">Optional in-person classes available</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg mb-6">
@@ -497,9 +511,9 @@ export default function Home() {
             </div>
             <div>
               <Form
-                title="Register Your Interest"
+                title="Start Your Free Trial"
                 fields={enrollmentFields}
-                submitLabel="Contact Me About Classes"
+                submitLabel="Get Instant Access"
                 onSubmit={handleEnrollment}
               />
             </div>
@@ -582,30 +596,36 @@ export default function Home() {
       </section>
 
       {/* Final CTA Banner */}
-      <section className="py-12 px-4 bg-green-600 text-white">
+      <section className="py-12 md:py-16 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Don&apos;t Wait - Classes Fill Up Fast!
+          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-sm mb-4">
+            🚀 Limited Time Offer
+          </div>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 px-4">
+            Join 1000+ Students Who Passed with SPSV Mastery
           </h2>
-          <p className="text-xl mb-6">
-            Contact us today to learn about upcoming class schedules
+          <p className="text-lg md:text-xl mb-6 md:mb-8 px-4">
+            Start your free trial today - no credit card, no commitment, just results
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
             <a
               href="tel:+353894034222"
-              className="bg-white text-green-700 hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors text-lg text-center"
+              className="bg-white text-emerald-700 hover:bg-gray-100 font-bold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-base md:text-lg text-center"
             >
-              Get Class Information
+              📞 Start Free Trial
             </a>
-                <a 
-                  href="https://wa.me/353894034222"
+            <a 
+              href="https://wa.me/353894034222"
               target="_blank"
               rel="noopener noreferrer"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-700 transition-colors text-lg text-center"
+              className="border-2 border-white text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-semibold hover:bg-white hover:text-emerald-700 transition-all text-base md:text-lg text-center"
             >
-              Book Free Consultation
+              💬 Chat on WhatsApp
             </a>
           </div>
+          <p className="mt-6 text-sm md:text-base text-emerald-100 px-4">
+            ⚡ Setup takes less than 60 seconds • 💳 No credit card required • 🎯 Cancel anytime
+          </p>
         </div>
       </section>
     </main>
