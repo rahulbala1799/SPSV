@@ -144,9 +144,15 @@ export default function AdminDashboard() {
             </Link>
             <Link
               href="/admin/mcq-builder"
-              className="px-4 py-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors font-medium"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               MCQ Builder
+            </Link>
+            <Link
+              href="/admin/questions"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Questions
             </Link>
             <Link
               href="/admin/settings"

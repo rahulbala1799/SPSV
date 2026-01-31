@@ -74,6 +74,12 @@ export default function SettingsPage() {
               MCQ Builder
             </Link>
             <Link
+              href="/admin/questions"
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Questions
+            </Link>
+            <Link
               href="/admin/settings"
               className="px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors font-medium"
             >
