@@ -15,6 +15,7 @@ import {
   FiBook,
   FiRefreshCw,
   FiSave,
+  FiUpload,
 } from 'react-icons/fi'
 
 interface Question {
@@ -57,6 +58,7 @@ export default function QuestionsPage() {
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'question' | 'chapter'; id: string } | null>(null)
   const [syncing, setSyncing] = useState(false)
+  const [syncingQuestionId, setSyncingQuestionId] = useState<string | null>(null)
 
   useEffect(() => {
     checkAdminAndFetchData()
@@ -188,7 +190,7 @@ export default function QuestionsPage() {
 
       if (response.ok) {
         alert(
-          `Sync complete!\nCreated: ${data.sync.created}\nUpdated: ${data.sync.updated}\nSkipped: ${data.sync.skipped}`
+          `Full Sync complete!\nCreated: ${data.sync.created}\nUpdated: ${data.sync.updated}\nSkipped: ${data.sync.skipped}`
         )
       } else {
         alert(data.error || 'Sync failed')
@@ -198,6 +200,28 @@ export default function QuestionsPage() {
       alert('Sync failed')
     } finally {
       setSyncing(false)
+    }
+  }
+
+  const handleSyncSingleQuestion = async (questionId: string) => {
+    try {
+      setSyncingQuestionId(questionId)
+      const response = await fetch(`/api/admin/questions/${questionId}/sync`, {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert(`✅ ${data.message}\nTime: ${data.duration}ms`)
+      } else {
+        alert(data.error || 'Sync failed')
+      }
+    } catch (error) {
+      console.error('Error syncing question:', error)
+      alert('Sync failed')
+    } finally {
+      setSyncingQuestionId(null)
     }
   }
 
@@ -229,9 +253,10 @@ export default function QuestionsPage() {
                 onClick={handleSyncQuestionBank}
                 disabled={syncing}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                title="Full sync of all questions (use only for initial setup or troubleshooting)"
               >
                 <FiRefreshCw className={`w-5 h-5 ${syncing ? 'animate-spin' : ''}`} />
-                Sync QuestionBank
+                Full Sync (All Questions)
               </button>
             </div>
           </div>
@@ -417,6 +442,18 @@ export default function QuestionsPage() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleSyncSingleQuestion(question.id)}
+                              disabled={syncingQuestionId === question.id}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                              title="Sync this question to QuestionBank (instant)"
+                            >
+                              {syncingQuestionId === question.id ? (
+                                <FiRefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <FiUpload className="w-4 h-4" />
+                              )}
+                            </button>
                             <button
                               onClick={() => setEditingQuestion(question)}
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
