@@ -27,10 +27,24 @@ interface ChapterProgress {
   hasStarted: boolean
 }
 
+interface ChapterFromAPI {
+  chapterId: string
+  chapterTitle: string
+  chapterNumber: number
+  description: string
+  totalQuestionsInChapter: number
+  isCompleted: boolean
+  score: number | null
+  correctAnswers: number
+  totalQuestions: number
+  hasStarted: boolean
+}
+
 export default function ChaptersPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [progressData, setProgressData] = useState<Map<string, ChapterProgress>>(new Map())
+  const [industryChapters, setIndustryChapters] = useState<Chapter[]>([])
+  const [areaChapters, setAreaChapters] = useState<Chapter[]>([])
 
   const checkAccess = async () => {
     try {
@@ -47,8 +61,8 @@ export default function ChaptersPage() {
         return
       }
 
-      // Load progress data
-      await loadProgressData()
+      // Load chapters from API
+      await loadChapters()
 
       setLoading(false)
     } catch (error) {
@@ -57,14 +71,12 @@ export default function ChaptersPage() {
     }
   }
 
-  const loadProgressData = async () => {
+  const loadChapters = async () => {
     try {
       const response = await fetch('/api/student/progress')
       const data = await response.json()
 
       if (response.ok && data.chapterProgress) {
-        const progressMap = new Map<string, ChapterProgress>()
-        
         // Map chapter IDs to route IDs
         const chapterIdMap: Record<string, string> = {
           'chapter_industry_part1': 'industry-part1',
@@ -85,22 +97,69 @@ export default function ChaptersPage() {
           'chapter_dublin_roads_navigation': 'dublin-roads-navigation'
         }
 
-        data.chapterProgress.forEach((cp: any) => {
-          const routeId = chapterIdMap[cp.chapterId] || cp.chapterId
-          progressMap.set(routeId, {
-            chapterId: cp.chapterId,
-            isCompleted: cp.isCompleted,
+        // Convert API chapters to display format and separate by category
+        const industry: Chapter[] = []
+        const area: Chapter[] = []
+
+        // Industry Knowledge chapter IDs
+        const industryIds = [
+          'chapter_industry_part1',
+          'chapter_industry_part2',
+          'chapter_industry_part3',
+          'chapter_industry_5',
+          'chapter_industry_7',
+          'chapter_industry_8'
+        ]
+
+        data.chapterProgress.forEach((cp: ChapterFromAPI) => {
+          const routeId = chapterIdMap[cp.chapterId] || cp.chapterId.replace('chapter_', '').replace(/_/g, '-')
+          const chapter: Chapter = {
+            id: routeId,
+            title: cp.chapterTitle,
+            description: cp.description,
+            duration: `${cp.totalQuestionsInChapter} questions`,
+            completed: cp.isCompleted,
+            locked: false,
             score: cp.score,
-            totalQuestions: cp.totalQuestions,
-            correctAnswers: cp.correctAnswers,
+            questionsAnswered: cp.totalQuestions,
+            totalQuestions: cp.totalQuestionsInChapter,
             hasStarted: cp.hasStarted
-          })
+          }
+
+          // Separate by category based on chapter ID
+          if (industryIds.includes(cp.chapterId)) {
+            industry.push(chapter)
+          } else {
+            area.push(chapter)
+          }
         })
 
-        setProgressData(progressMap)
+        // Sort by chapter number
+        industry.sort((a, b) => {
+          const aNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
+            chapterIdMap[cp.chapterId] === a.id
+          )?.chapterNumber || 0
+          const bNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
+            chapterIdMap[cp.chapterId] === b.id
+          )?.chapterNumber || 0
+          return aNum - bNum
+        })
+
+        area.sort((a, b) => {
+          const aNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
+            chapterIdMap[cp.chapterId] === a.id
+          )?.chapterNumber || 0
+          const bNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
+            chapterIdMap[cp.chapterId] === b.id
+          )?.chapterNumber || 0
+          return aNum - bNum
+        })
+
+        setIndustryChapters(industry)
+        setAreaChapters(area)
       }
     } catch (error) {
-      console.error('Error loading progress:', error)
+      console.error('Error loading chapters:', error)
     }
   }
 
@@ -108,142 +167,6 @@ export default function ChaptersPage() {
     checkAccess()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // Helper function to enrich chapters with progress data
-  const enrichWithProgress = (chapters: Chapter[]): Chapter[] => {
-    return chapters.map(chapter => {
-      const progress = progressData.get(chapter.id as string)
-      return {
-        ...chapter,
-        completed: progress?.isCompleted || false,
-        score: progress?.score,
-        questionsAnswered: progress?.totalQuestions,
-        totalQuestions: progress?.totalQuestions,
-        hasStarted: progress?.hasStarted || false
-      }
-    })
-  }
-
-  const industryChaptersBase: Chapter[] = [
-    {
-      id: 'industry-part1',
-      title: 'Industry Knowledge - Part 1',
-      description: 'SPSV regulations, National Transport Authority, licensing basics and vehicle requirements',
-      duration: '25 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'industry-part2',
-      title: 'Industry Knowledge - Part 2',
-      description: 'Driver licence applications, vetting process, vehicle specifications and safety requirements',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'industry-part3',
-      title: 'Industry Knowledge - Part 3',
-      description: 'SPSV licensing procedures, vehicle requirements and advertising regulations',
-      duration: '25 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'industry-5',
-      title: 'Working as an SPSV Operator',
-      description: 'SPSV vehicle licensing, equipment requirements, passenger regulations, and compliance',
-      duration: '40 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'industry-7',
-      title: 'Taximeter Fares',
-      description: 'National Maximum Taxi Fare, tariff rates, booking fees, and fare regulations',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'industry-8',
-      title: 'Delivering Customer Satisfaction',
-      description: 'Customer service standards, fare regulations, complaint procedures, and passenger rights',
-      duration: '45 min',
-      completed: false,
-      locked: false
-    },
-  ]
-
-  const areaChaptersBase: Chapter[] = [
-    {
-      id: 'southside-full',
-      title: 'Southside Full',
-      description: 'Test your knowledge of roads, landmarks, and locations in Dublin\'s Southside area',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'dublin-one-way-streets',
-      title: 'Dublin One Way Streets',
-      description: 'Test your knowledge of one-way street directions in Dublin city center',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'southside-streets-2',
-      title: 'Southside Streets 2',
-      description: 'Test your knowledge of landmarks, locations, and one-way streets in Dublin\'s Southside area',
-      duration: '45 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'northside-routes',
-      title: 'Northside Routes',
-      description: 'Test your knowledge of routes, areas, landmarks, and locations in Dublin\'s Northside area',
-      duration: '50 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'churches-cemeteries',
-      title: 'Churches and Cemeteries',
-      description: 'Test your knowledge of churches, cemeteries, and religious sites in Dublin',
-      duration: '30 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'embassies',
-      title: 'Embassies',
-      description: 'Test your knowledge of embassy locations in Dublin',
-      duration: '35 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'tourist-attractions',
-      title: 'Tourist Attractions & Landmarks',
-      description: 'Test your knowledge of tourist attractions, landmarks, museums, and cultural sites in Dublin',
-      duration: '40 min',
-      completed: false,
-      locked: false
-    },
-    {
-      id: 'hospitals',
-      title: 'Hospitals',
-      description: 'Test your knowledge of hospital locations in Dublin',
-      duration: '35 min',
-      completed: false,
-      locked: false
-    },
-  ]
-
-  const industryChapters = enrichWithProgress(industryChaptersBase)
-  const areaChapters = enrichWithProgress(areaChaptersBase)
 
   if (loading) {
     return (
