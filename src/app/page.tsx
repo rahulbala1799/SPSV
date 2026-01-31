@@ -11,6 +11,8 @@ import { Testimonial, TestimonialItem } from '@/components/Testimonial';
 import { EnrollmentModal } from '@/components/EnrollmentModal';
 import { CoursesModal } from '@/components/CoursesModal';
 import { Button } from '@/components/Button';
+import { StudentDashboardDemo } from '@/components/demos/StudentDashboardDemo';
+import { QuizInterfaceDemo } from '@/components/demos/QuizInterfaceDemo';
 
 export default function Home() {
   const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
@@ -303,6 +305,87 @@ export default function Home() {
                 <div className="bg-white/10 p-4 rounded-lg">
                   <div className="text-3xl font-bold text-green-300">2 Sections</div>
                   <div className="text-sm">Must pass both to get licensed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Student Dashboard Demo Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-sm mb-4">
+              📱 Live Demo
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Your Personal Learning Dashboard
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Track your progress, monitor your performance, and stay motivated with our interactive student dashboard. See exactly what you get when you enroll!
+            </p>
+          </div>
+          
+          <div className="mb-8">
+            <StudentDashboardDemo />
+          </div>
+
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-50 text-emerald-700 rounded-full font-medium">
+              <span>✨</span>
+              <span>This is a live, interactive preview of the actual student dashboard</span>
+              <span>✨</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quiz Interface Demo Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 text-white">
+            <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-sm mb-4">
+              🎯 Try It Yourself
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Interactive Learning Experience
+            </h2>
+            <p className="text-xl text-emerald-100 max-w-3xl mx-auto">
+              Practice with hundreds of real exam-style questions. Get instant feedback, detailed explanations, and track your accuracy across all topics.
+            </p>
+          </div>
+          
+          <div className="mb-8">
+            <QuizInterfaceDemo />
+          </div>
+
+          <div className="text-center">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                What Makes Our Learning Platform Special?
+              </h3>
+              <div className="grid md:grid-cols-3 gap-6 text-white">
+                <div className="text-center">
+                  <div className="text-4xl mb-3">📚</div>
+                  <h4 className="font-bold mb-2">500+ Questions</h4>
+                  <p className="text-emerald-100 text-sm">
+                    Comprehensive question bank covering all exam topics
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">💡</div>
+                  <h4 className="font-bold mb-2">Detailed Explanations</h4>
+                  <p className="text-emerald-100 text-sm">
+                    Learn from mistakes with in-depth answer explanations
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">📊</div>
+                  <h4 className="font-bold mb-2">Progress Tracking</h4>
+                  <p className="text-emerald-100 text-sm">
+                    Monitor your performance and identify weak areas
+                  </p>
                 </div>
               </div>
             </div>
