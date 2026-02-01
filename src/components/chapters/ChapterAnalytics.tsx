@@ -1,18 +1,29 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { 
   FiArrowLeft, FiTrendingUp, FiTrendingDown, FiTarget, FiCheckCircle, 
-  FiAlertCircle, FiClock, FiBarChart2, FiChevronDown, FiChevronUp,
-  FiX
+  FiAlertCircle, FiClock, FiBarChart2, FiChevronDown,
+  FiZap, FiAward
 } from 'react-icons/fi'
 import { FaFlag, FaRegFlag } from 'react-icons/fa'
 
 interface QuestionOption {
   id: string
   text: string
+}
+
+interface FullQuestion {
+  id: string
+  questionText: string
+  questionNumber: number
+  options: QuestionOption[]
+  correctAnswer?: string
+  explanation?: string
+  points: number
+  difficulty: string
 }
 
 interface QuestionStat {
@@ -55,16 +66,6 @@ interface Analytics {
   }
 }
 
-interface FullQuestion {
-  id: string
-  questionText: string
-  questionNumber: number
-  options: QuestionOption[]
-  correctAnswer?: string
-  explanation?: string
-  points: number
-}
-
 interface ChapterAnalyticsProps {
   chapterId: string
   chapterSlug: string
@@ -75,15 +76,16 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [analytics, setAnalytics] = useState<Analytics | null>(null)
+  const [allQuestions, setAllQuestions] = useState<Record<string, FullQuestion>>({})
+  const [questionsLoaded, setQuestionsLoaded] = useState(false)
   const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
-  const [fullQuestion, setFullQuestion] = useState<FullQuestion | null>(null)
-  const [loadingQuestion, setLoadingQuestion] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [answered, setAnswered] = useState(false)
   const [answerResult, setAnswerResult] = useState<{ isCorrect: boolean; correctAnswer: string; explanation?: string } | null>(null)
-  const [isFlagged, setIsFlagged] = useState(false)
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set())
   const [flagging, setFlagging] = useState(false)
+  const expandedRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     checkAccessAndLoad()
@@ -105,7 +107,10 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
         return
       }
 
-      await loadAnalytics()
+      await Promise.all([
+        loadAnalytics(),
+        loadAllQuestions()
+      ])
     } catch (error) {
       console.error('Error:', error)
       router.push('/login')
@@ -127,57 +132,74 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
     }
   }
 
-  const handleExpandQuestion = async (questionId: string) => {
+  // Preload ALL questions at once for instant access
+  const loadAllQuestions = async () => {
+    try {
+      const response = await fetch(`/api/chapters/${chapterId}/questions`)
+      const data = await response.json()
+
+      if (response.ok && data.questions) {
+        const questionsMap: Record<string, FullQuestion> = {}
+        data.questions.forEach((q: FullQuestion) => {
+          questionsMap[q.id] = q
+        })
+        setAllQuestions(questionsMap)
+        
+        // Also load flag statuses for all questions
+        const flagStatuses = await Promise.all(
+          data.questions.map(async (q: FullQuestion) => {
+            try {
+              const res = await fetch(`/api/questions/${q.id}/flag-status`)
+              const flagData = await res.json()
+              return { id: q.id, isFlagged: flagData.isFlagged }
+            } catch {
+              return { id: q.id, isFlagged: false }
+            }
+          })
+        )
+        
+        const flaggedSet = new Set<string>()
+        flagStatuses.forEach(({ id, isFlagged }) => {
+          if (isFlagged) flaggedSet.add(id)
+        })
+        setFlaggedQuestions(flaggedSet)
+      }
+    } catch (error) {
+      console.error('Error loading questions:', error)
+    } finally {
+      setQuestionsLoaded(true)
+    }
+  }
+
+  const handleExpandQuestion = (questionId: string) => {
     if (expandedQuestionId === questionId) {
-      // Collapse
+      // Collapse with animation
       setExpandedQuestionId(null)
-      setFullQuestion(null)
       setSelectedAnswer(null)
       setAnswered(false)
       setAnswerResult(null)
       return
     }
 
-    // Expand and load full question
+    // Expand - questions already loaded!
     setExpandedQuestionId(questionId)
     setSelectedAnswer(null)
     setAnswered(false)
     setAnswerResult(null)
-    setLoadingQuestion(true)
-
-    try {
-      // Fetch full question with options
-      const response = await fetch(`/api/chapters/${chapterId}/questions?questionId=${questionId}`)
-      const data = await response.json()
-
-      if (response.ok && data.questions && data.questions.length > 0) {
-        setFullQuestion(data.questions[0])
-        
-        // Load flag status
-        try {
-          const flagResponse = await fetch(`/api/questions/${questionId}/flag-status`)
-          const flagData = await flagResponse.json()
-          if (flagResponse.ok) {
-            setIsFlagged(flagData.isFlagged)
-          }
-        } catch (e) {
-          console.error('Error loading flag status:', e)
-        }
-      }
-    } catch (error) {
-      console.error('Error loading question:', error)
-    } finally {
-      setLoadingQuestion(false)
-    }
+    
+    // Scroll to expanded question after a brief delay
+    setTimeout(() => {
+      expandedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
   }
 
   const handleSubmitAnswer = async () => {
-    if (!fullQuestion || !selectedAnswer || submitting) return
+    if (!expandedQuestionId || !selectedAnswer || submitting) return
 
     setSubmitting(true)
     try {
       const response = await fetch(
-        `/api/chapters/${chapterId}/questions/${fullQuestion.id}/answer`,
+        `/api/chapters/${chapterId}/questions/${expandedQuestionId}/answer`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -196,7 +218,7 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
         })
         
         // Refresh analytics after answering
-        await loadAnalytics()
+        loadAnalytics()
       } else {
         alert(data.error || 'Failed to submit answer')
       }
@@ -208,33 +230,39 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
     }
   }
 
-  const handleToggleFlag = async () => {
-    if (!fullQuestion || flagging) return
+  const handleToggleFlag = async (questionId: string) => {
+    if (flagging) return
 
     setFlagging(true)
+    const isFlagged = flaggedQuestions.has(questionId)
+    
     try {
       if (isFlagged) {
         const response = await fetch('/api/questions/unflag', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ questionId: fullQuestion.id })
+          body: JSON.stringify({ questionId })
         })
         const data = await response.json()
         if (response.ok && data.success) {
-          setIsFlagged(false)
+          setFlaggedQuestions(prev => {
+            const next = new Set(prev)
+            next.delete(questionId)
+            return next
+          })
         }
       } else {
         const response = await fetch('/api/questions/flag', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            questionId: fullQuestion.id,
+            questionId,
             flaggedFrom: 'CHAPTER'
           })
         })
         const data = await response.json()
         if (response.ok && data.success) {
-          setIsFlagged(true)
+          setFlaggedQuestions(prev => new Set(prev).add(questionId))
         }
       }
     } catch (error) {
@@ -246,312 +274,339 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">Loading analytics...</p>
+        </div>
       </div>
     )
   }
 
   if (!analytics) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <FiBarChart2 className="w-8 h-8 text-gray-400" />
+          <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-slate-700">
+            <FiBarChart2 className="w-10 h-10 text-slate-500" />
           </div>
-          <p className="text-gray-600 mb-4">No analytics data available yet.</p>
+          <p className="text-slate-400 mb-4">No analytics data yet</p>
           <Link 
             href={`/dashboard/chapters/${chapterSlug}`} 
-            className="text-emerald-600 hover:text-emerald-700 font-medium"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors"
           >
-            Start practicing to see your stats →
+            Start practicing →
           </Link>
         </div>
       </div>
     )
   }
 
-  const { overview, questionStats, weakestQuestions, strongestQuestions } = analytics
+  const { overview, questionStats } = analytics
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
-        <div className="px-4 py-4">
+      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50">
+        <div className="px-4 py-3">
           <div className="flex items-center gap-3">
             <Link
               href={`/dashboard/chapters/${chapterSlug}`}
-              className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              className="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
             >
-              <FiArrowLeft className="w-5 h-5 text-gray-600" />
+              <FiArrowLeft className="w-5 h-5 text-slate-300" />
             </Link>
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg font-bold text-gray-900 truncate">Analytics</h1>
-              <p className="text-sm text-gray-500 truncate">{chapterTitle}</p>
+              <h1 className="text-lg font-bold text-white truncate">{chapterTitle}</h1>
+              <p className="text-sm text-slate-400">Analytics & Practice</p>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
-        {/* Overview Stats - 2x2 grid on mobile */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100">
-            <div className="flex items-center gap-2 mb-1">
-              <FiTarget className="w-4 h-4 text-blue-500" />
-              <span className="text-xs text-gray-500">Progress</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{overview.progressPercentage}%</p>
-            <p className="text-xs text-gray-400">{overview.questionsAttempted}/{overview.totalQuestions} done</p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100">
-            <div className="flex items-center gap-2 mb-1">
-              <FiCheckCircle className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs text-gray-500">Success</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{overview.overallSuccessRate}%</p>
-            <p className="text-xs text-gray-400">All attempts</p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100">
-            <div className="flex items-center gap-2 mb-1">
-              <FiBarChart2 className="w-4 h-4 text-purple-500" />
-              <span className="text-xs text-gray-500">Attempts</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{overview.totalAttempts}</p>
-            <p className="text-xs text-gray-400">Avg: {overview.averageAttemptsPerQuestion}/Q</p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100">
-            <div className="flex items-center gap-2 mb-1">
-              <FiClock className="w-4 h-4 text-orange-500" />
-              <span className="text-xs text-gray-500">Study Time</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{overview.studyDuration}</p>
-            <p className="text-xs text-gray-400">days</p>
-          </div>
-        </div>
-
-        {/* Performance Breakdown */}
-        <div className="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-gray-100">
-          <h2 className="text-base font-bold text-gray-900 mb-3">Performance</h2>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="p-3 bg-emerald-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-emerald-600">{overview.questionsMastered}</p>
-              <p className="text-xs text-emerald-700">Mastered</p>
-            </div>
-            <div className="p-3 bg-amber-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-amber-600">{overview.questionsNeedReview}</p>
-              <p className="text-xs text-amber-700">Review</p>
-            </div>
-            <div className="p-3 bg-gray-100 rounded-xl text-center">
-              <p className="text-2xl font-bold text-gray-600">{overview.questionsNotAttempted}</p>
-              <p className="text-xs text-gray-600">New</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Weakest Questions */}
-        {weakestQuestions.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-gray-100">
-            <div className="flex items-center gap-2 mb-3">
-              <FiTrendingDown className="w-4 h-4 text-red-500" />
-              <h2 className="text-base font-bold text-gray-900">Need Attention</h2>
-            </div>
-            <div className="space-y-2">
-              {weakestQuestions.slice(0, 3).map((q) => (
-                <div key={q.questionId} className="flex items-center justify-between p-3 bg-red-50 rounded-xl">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Q{q.questionNumber}</p>
-                    <p className="text-sm text-gray-700 line-clamp-1">{q.questionText}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-bold text-red-600">{q.successRate}%</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* All Questions Statistics */}
-        <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100">
-          <h2 className="text-base font-bold text-gray-900 mb-3">All Questions</h2>
-          <p className="text-xs text-gray-500 mb-4">Tap a question to practice it</p>
+      <main className="px-4 py-5 max-w-2xl mx-auto pb-24">
+        
+        {/* Hero Stats Card */}
+        <div className="bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-3xl p-5 mb-5 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
           
-          <div className="space-y-2">
-            {questionStats.map((q) => {
-              const isExpanded = expandedQuestionId === q.questionId
-              
-              return (
-                <div 
-                  key={q.questionId} 
-                  className={`rounded-xl border-2 overflow-hidden transition-all ${
-                    q.status === 'mastered' 
-                      ? 'bg-emerald-50 border-emerald-200' 
-                      : q.status === 'needs_review'
-                      ? 'bg-amber-50 border-amber-200'
-                      : 'bg-gray-50 border-gray-200'
-                  }`}
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-emerald-100 text-sm font-medium">Your Progress</p>
+                <p className="text-4xl font-bold text-white">{overview.progressPercentage}%</p>
+              </div>
+              <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                <FiZap className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-white/90">
+                <span className="font-bold">{overview.questionsAttempted}</span>/{overview.totalQuestions} questions
+              </span>
+              <span className="text-white/90">
+                <span className="font-bold">{overview.overallSuccessRate}%</span> success
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-4 text-center">
+            <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <FiCheckCircle className="w-5 h-5 text-emerald-400" />
+            </div>
+            <p className="text-2xl font-bold text-white">{overview.questionsMastered}</p>
+            <p className="text-xs text-slate-400">Mastered</p>
+          </div>
+          
+          <div className="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-4 text-center">
+            <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <FiAlertCircle className="w-5 h-5 text-amber-400" />
+            </div>
+            <p className="text-2xl font-bold text-white">{overview.questionsNeedReview}</p>
+            <p className="text-xs text-slate-400">Review</p>
+          </div>
+          
+          <div className="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-4 text-center">
+            <div className="w-10 h-10 bg-slate-600/50 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <FiTarget className="w-5 h-5 text-slate-400" />
+            </div>
+            <p className="text-2xl font-bold text-white">{overview.questionsNotAttempted}</p>
+            <p className="text-xs text-slate-400">New</p>
+          </div>
+        </div>
+
+        {/* More Stats */}
+        <div className="flex gap-3 mb-6">
+          <div className="flex-1 bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <FiBarChart2 className="w-4 h-4 text-purple-400" />
+              <span className="text-xs text-slate-400">Total Attempts</span>
+            </div>
+            <p className="text-xl font-bold text-white">{overview.totalAttempts}</p>
+          </div>
+          
+          <div className="flex-1 bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <FiClock className="w-4 h-4 text-blue-400" />
+              <span className="text-xs text-slate-400">Study Time</span>
+            </div>
+            <p className="text-xl font-bold text-white">{overview.studyDuration} <span className="text-sm font-normal text-slate-400">days</span></p>
+          </div>
+        </div>
+
+        {/* Questions Section */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-white">All Questions</h2>
+            {!questionsLoaded && (
+              <span className="text-xs text-slate-400 flex items-center gap-2">
+                <div className="w-3 h-3 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+                Loading...
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-slate-400 mb-4">Tap any question to practice</p>
+        </div>
+
+        {/* Question Cards */}
+        <div className="space-y-3">
+          {questionStats.map((q) => {
+            const isExpanded = expandedQuestionId === q.questionId
+            const fullQuestion = allQuestions[q.questionId]
+            const isFlagged = flaggedQuestions.has(q.questionId)
+            
+            return (
+              <div 
+                key={q.questionId}
+                ref={isExpanded ? expandedRef : null}
+                className={`rounded-2xl overflow-hidden transition-all duration-300 ${
+                  isExpanded 
+                    ? 'bg-slate-800 border-2 border-emerald-500/50 shadow-lg shadow-emerald-500/10' 
+                    : 'bg-slate-800/50 border border-slate-700/50 hover:border-slate-600'
+                }`}
+              >
+                {/* Question Header */}
+                <button
+                  onClick={() => handleExpandQuestion(q.questionId)}
+                  className="w-full p-4 text-left"
+                  disabled={!questionsLoaded}
                 >
-                  {/* Question Header - Clickable */}
-                  <button
-                    onClick={() => handleExpandQuestion(q.questionId)}
-                    className="w-full p-3 text-left"
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Question Number */}
-                      <span className={`text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ${
-                        q.status === 'mastered' 
-                          ? 'bg-emerald-200 text-emerald-800' 
-                          : q.status === 'needs_review'
-                          ? 'bg-amber-200 text-amber-800'
-                          : 'bg-gray-200 text-gray-700'
-                      }`}>
-                        Q{q.questionNumber}
-                      </span>
-                      
-                      {/* Question Text */}
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm text-gray-800 ${isExpanded ? '' : 'line-clamp-2'}`}>
-                          {q.questionText}
+                  <div className="flex items-start gap-3">
+                    {/* Status Indicator */}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      q.status === 'mastered' 
+                        ? 'bg-emerald-500/20' 
+                        : q.status === 'needs_review'
+                        ? 'bg-amber-500/20'
+                        : 'bg-slate-700/50'
+                    }`}>
+                      {q.status === 'mastered' ? (
+                        <FiCheckCircle className="w-5 h-5 text-emerald-400" />
+                      ) : q.status === 'needs_review' ? (
+                        <FiAlertCircle className="w-5 h-5 text-amber-400" />
+                      ) : (
+                        <span className="text-sm font-bold text-slate-400">{q.questionNumber}</span>
+                      )}
+                    </div>
+                    
+                    {/* Question Text */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-slate-500">Q{q.questionNumber}</span>
+                        {isFlagged && (
+                          <FaFlag className="w-3 h-3 text-red-400" />
+                        )}
+                      </div>
+                      <p className={`text-sm text-slate-200 ${isExpanded ? '' : 'line-clamp-2'}`}>
+                        {q.questionText}
+                      </p>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {q.attemptCount > 0 && (
+                        <div className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                          q.successRate >= 80 
+                            ? 'bg-emerald-500/20 text-emerald-400' 
+                            : q.successRate >= 50 
+                            ? 'bg-amber-500/20 text-amber-400' 
+                            : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {q.successRate}%
+                        </div>
+                      )}
+                      <FiChevronDown className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                  </div>
+                </button>
+
+                {/* Expanded Content */}
+                <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                  {isExpanded && fullQuestion && (
+                    <div className="px-4 pb-4 border-t border-slate-700/50">
+                      {/* Full Question */}
+                      <div className="pt-4 pb-3">
+                        <p className="text-base text-white font-medium leading-relaxed">
+                          {fullQuestion.questionText}
                         </p>
                       </div>
 
-                      {/* Stats & Expand Icon */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {q.attemptCount > 0 ? (
-                          <div className="text-right">
-                            <p className={`text-sm font-bold ${
-                              q.successRate >= 80 ? 'text-emerald-600' : 
-                              q.successRate >= 50 ? 'text-amber-600' : 'text-red-600'
-                            }`}>
-                              {q.successRate}%
-                            </p>
-                            <p className="text-xs text-gray-400">{q.attemptCount}x</p>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-gray-400 italic">New</span>
-                        )}
-                        {isExpanded ? (
-                          <FiChevronUp className="w-5 h-5 text-gray-400" />
-                        ) : (
-                          <FiChevronDown className="w-5 h-5 text-gray-400" />
-                        )}
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Expanded Question Content */}
-                  {isExpanded && (
-                    <div className="px-3 pb-3 border-t border-gray-200/50">
-                      {loadingQuestion ? (
-                        <div className="py-8 text-center">
-                          <div className="w-8 h-8 border-3 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto" />
-                        </div>
-                      ) : fullQuestion ? (
-                        <div className="pt-3">
-                          {/* Full Question Text */}
-                          <p className="text-base font-medium text-gray-900 mb-4">
-                            {fullQuestion.questionText}
-                          </p>
-
-                          {/* Flag Button */}
-                          <div className="flex items-center justify-between mb-4">
-                            <button
-                              onClick={handleToggleFlag}
-                              disabled={flagging}
-                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                isFlagged
-                                  ? 'bg-red-100 text-red-600'
-                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                              } ${flagging ? 'opacity-50' : ''}`}
-                            >
-                              {isFlagged ? <FaFlag className="w-4 h-4" /> : <FaRegFlag className="w-4 h-4" />}
-                              {isFlagged ? 'Flagged' : 'Flag'}
-                            </button>
-                            
-                            {answered && answerResult && (
-                              <span className={`text-sm font-bold ${answerResult.isCorrect ? 'text-emerald-600' : 'text-red-600'}`}>
-                                {answerResult.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
-                              </span>
+                      {/* Flag Button */}
+                      <div className="flex items-center justify-between mb-4">
+                        <button
+                          onClick={() => handleToggleFlag(q.questionId)}
+                          disabled={flagging}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                            isFlagged
+                              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                              : 'bg-slate-700/50 text-slate-400 border border-slate-600/50 hover:bg-slate-700'
+                          } ${flagging ? 'opacity-50' : ''}`}
+                        >
+                          {isFlagged ? <FaFlag className="w-4 h-4" /> : <FaRegFlag className="w-4 h-4" />}
+                          {isFlagged ? 'Flagged' : 'Flag'}
+                        </button>
+                        
+                        {answered && answerResult && (
+                          <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${
+                            answerResult.isCorrect 
+                              ? 'bg-emerald-500/20 text-emerald-400' 
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {answerResult.isCorrect ? (
+                              <><FiCheckCircle className="w-4 h-4" /> Correct!</>
+                            ) : (
+                              <><FiAlertCircle className="w-4 h-4" /> Incorrect</>
                             )}
                           </div>
+                        )}
+                      </div>
 
-                          {/* Options */}
-                          <div className="space-y-2 mb-4">
-                            {fullQuestion.options.map((option) => {
-                              const isSelected = selectedAnswer === option.id
-                              const isCorrectAnswer = answered && answerResult?.correctAnswer === option.id
-                              const isWrongSelection = answered && isSelected && !answerResult?.isCorrect
-                              
-                              return (
-                                <button
-                                  key={option.id}
-                                  onClick={() => !answered && setSelectedAnswer(option.id)}
-                                  disabled={answered}
-                                  className={`w-full p-4 rounded-xl text-left transition-all ${
-                                    isCorrectAnswer
-                                      ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-900'
-                                      : isWrongSelection
-                                      ? 'bg-red-100 border-2 border-red-500 text-red-900'
-                                      : isSelected
-                                      ? 'bg-emerald-50 border-2 border-emerald-400'
-                                      : 'bg-white border-2 border-gray-200 hover:border-gray-300'
-                                  } ${answered ? 'cursor-default' : 'cursor-pointer'}`}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-                                      isCorrectAnswer
-                                        ? 'bg-emerald-500 text-white'
-                                        : isWrongSelection
-                                        ? 'bg-red-500 text-white'
-                                        : isSelected
-                                        ? 'bg-emerald-500 text-white'
-                                        : 'bg-gray-200 text-gray-600'
-                                    }`}>
-                                      {isCorrectAnswer ? '✓' : isWrongSelection ? '✗' : option.id.toUpperCase()}
-                                    </div>
-                                    <span className="text-sm">{option.text}</span>
-                                  </div>
-                                </button>
-                              )
-                            })}
-                          </div>
-
-                          {/* Submit / Explanation */}
-                          {!answered ? (
+                      {/* Options */}
+                      <div className="space-y-2 mb-4">
+                        {fullQuestion.options.map((option, idx) => {
+                          const isSelected = selectedAnswer === option.id
+                          const isCorrectAnswer = answered && answerResult?.correctAnswer === option.id
+                          const isWrongSelection = answered && isSelected && !answerResult?.isCorrect
+                          const optionLetter = String.fromCharCode(65 + idx)
+                          
+                          return (
                             <button
-                              onClick={handleSubmitAnswer}
-                              disabled={!selectedAnswer || submitting}
-                              className={`w-full py-3 px-4 rounded-xl font-bold text-white transition-all ${
-                                selectedAnswer && !submitting
-                                  ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg'
-                                  : 'bg-gray-300 cursor-not-allowed'
-                              }`}
+                              key={option.id}
+                              onClick={() => !answered && setSelectedAnswer(option.id)}
+                              disabled={answered}
+                              className={`w-full p-4 rounded-xl text-left transition-all duration-200 ${
+                                isCorrectAnswer
+                                  ? 'bg-emerald-500/20 border-2 border-emerald-500 ring-2 ring-emerald-500/20'
+                                  : isWrongSelection
+                                  ? 'bg-red-500/20 border-2 border-red-500 ring-2 ring-red-500/20'
+                                  : isSelected
+                                  ? 'bg-emerald-500/10 border-2 border-emerald-500/50'
+                                  : 'bg-slate-700/30 border-2 border-slate-600/50 hover:border-slate-500'
+                              } ${answered ? 'cursor-default' : 'cursor-pointer active:scale-[0.98]'}`}
                             >
-                              {submitting ? 'Submitting...' : 'Submit Answer'}
+                              <div className="flex items-start gap-3">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold transition-colors ${
+                                  isCorrectAnswer
+                                    ? 'bg-emerald-500 text-white'
+                                    : isWrongSelection
+                                    ? 'bg-red-500 text-white'
+                                    : isSelected
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-slate-600 text-slate-300'
+                                }`}>
+                                  {isCorrectAnswer ? '✓' : isWrongSelection ? '✗' : optionLetter}
+                                </div>
+                                <span className={`text-sm pt-1 ${
+                                  isCorrectAnswer || isWrongSelection || isSelected
+                                    ? 'text-white'
+                                    : 'text-slate-300'
+                                }`}>
+                                  {option.text}
+                                </span>
+                              </div>
                             </button>
-                          ) : answerResult?.explanation && (
-                            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                              <p className="text-xs font-bold text-blue-800 mb-1">Explanation</p>
-                              <p className="text-sm text-blue-700">{answerResult.explanation}</p>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="py-4 text-center text-gray-500 text-sm">
-                          Failed to load question
+                          )
+                        })}
+                      </div>
+
+                      {/* Submit / Result */}
+                      {!answered ? (
+                        <button
+                          onClick={handleSubmitAnswer}
+                          disabled={!selectedAnswer || submitting}
+                          className={`w-full py-4 px-4 rounded-xl font-bold text-white transition-all ${
+                            selectedAnswer && !submitting
+                              ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98]'
+                              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                          }`}
+                        >
+                          {submitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Checking...
+                            </span>
+                          ) : 'Submit Answer'}
+                        </button>
+                      ) : answerResult?.explanation && (
+                        <div className="p-4 bg-blue-500/10 rounded-xl border border-blue-500/30">
+                          <p className="text-xs font-bold text-blue-400 mb-1 flex items-center gap-1">
+                            <FiAward className="w-3 h-3" /> Explanation
+                          </p>
+                          <p className="text-sm text-blue-200">{answerResult.explanation}</p>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
-              )
-            })}
-          </div>
+              </div>
+            )
+          })}
         </div>
       </main>
     </div>
