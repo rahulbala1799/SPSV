@@ -24,6 +24,35 @@ export async function GET(
     const countParam = searchParams.get('count')
     const randomize = searchParams.get('random') === 'true'
     const strategy = searchParams.get('strategy') as 'mix' | 'new_only' | 'prioritize_new' | null
+    const questionId = searchParams.get('questionId') // For fetching a single question
+
+    // If questionId is provided, return just that question
+    if (questionId) {
+      const question = await prisma.question.findFirst({
+        where: { 
+          id: questionId,
+          chapterId: params.chapterId 
+        }
+      })
+
+      if (!question) {
+        return NextResponse.json(
+          { error: 'Question not found' },
+          { status: 404 }
+        )
+      }
+
+      return NextResponse.json({
+        questions: [{
+          id: question.id,
+          questionText: question.questionText,
+          questionNumber: question.questionNumber,
+          options: question.options as any,
+          points: question.points,
+          difficulty: question.difficulty
+        }]
+      }, { status: 200 })
+    }
 
     // Get all questions
     let questions = await prisma.question.findMany({
