@@ -6,7 +6,7 @@ import { ChapterSection } from '@/components/manual/ChapterSection';
 import { TableOfContents } from '@/components/manual/TableOfContents';
 import { ProgressTracker } from '@/components/manual/ProgressTracker';
 import { manualQuestions } from '@/data/manualQuestions';
-import { FaDownload, FaSearch, FaArrowUp } from 'react-icons/fa';
+import { FiDownload, FiSearch, FiArrowUp, FiBook, FiCheck } from 'react-icons/fi';
 
 // Load content from JSON file
 const loadManualContent = async () => {
@@ -29,12 +29,16 @@ export default function SPSVManualPage() {
   const [answeredCounts, setAnsweredCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const chapterRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load content on mount
   useEffect(() => {
     loadManualContent().then((sections) => {
-      // Map sections to chapters with questions
       const mappedChapters = sections.map((section: any) => {
         let chapterId = section.title.toLowerCase()
           .replace('chapter ', 'chapter-')
@@ -42,7 +46,6 @@ export default function SPSVManualPage() {
           .replace(/\s+/g, '-')
           .replace(/[^a-z0-9-]/g, '');
         
-        // Normalize chapter IDs to match question data
         if (chapterId === 'welcome') chapterId = 'welcome';
         else if (chapterId === 'terminology') chapterId = 'terminology';
         else if (chapterId.startsWith('chapter-1')) chapterId = 'chapter-1';
@@ -58,7 +61,6 @@ export default function SPSVManualPage() {
         else if (chapterId.startsWith('chapter-11')) chapterId = 'chapter-11';
         else if (chapterId === 'appendices') chapterId = 'appendices';
         
-        // Find questions for this chapter
         const chapterQuestions = manualQuestions.find(
           q => q.chapterId === chapterId
         )?.questions || [];
@@ -80,16 +82,11 @@ export default function SPSVManualPage() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const progress = JSON.parse(saved);
-      
-      // Count answered questions per chapter
       const counts: Record<string, number> = {};
       Object.entries(progress.chapters || {}).forEach(([chId, chData]: [string, any]) => {
         counts[chId] = Object.keys(chData.questions || {}).length;
       });
       setAnsweredCounts(counts);
-      
-      // DO NOT restore expanded state - let users control it manually
-      // Only restore question answers, not UI state
     }
   }, []);
 
@@ -108,7 +105,6 @@ export default function SPSVManualPage() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    // Also listen for custom events from ChapterQuestions
     window.addEventListener('questionAnswered', handleStorageChange);
     
     return () => {
@@ -134,7 +130,6 @@ export default function SPSVManualPage() {
       } else {
         newSet.add(chapterId);
         setActiveChapter(chapterId);
-        // Scroll to chapter
         setTimeout(() => {
           const element = chapterRefs.current[chapterId];
           if (element) {
@@ -165,7 +160,6 @@ export default function SPSVManualPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Filter chapters based on search
   const filteredChapters = chapters.filter(chapter =>
     chapter.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     chapter.summary.toLowerCase().includes(searchQuery.toLowerCase())
@@ -180,68 +174,109 @@ export default function SPSVManualPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <main className="min-h-screen bg-gray-50">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">SPSV Official Manual</h1>
-          <p className="text-xl text-green-100 max-w-3xl mx-auto mb-6">
-            Complete guide to SPSV regulations and requirements - Edition 8.0
-          </p>
-          <a
-            href="/nta.pdf"
-            download
-            className="inline-flex items-center gap-2 bg-white text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors"
-          >
-            <FaDownload />
-            Download PDF
-          </a>
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950 pt-20 pb-24">
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]" />
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                                linear-gradient(to bottom, rgba(16, 185, 129, 0.1) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}
+          />
         </div>
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm mb-6 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <FiBook className="w-4 h-4 text-emerald-400" />
+            <span className="text-emerald-300 text-sm font-medium">Official NTA Documentation</span>
+          </div>
+          
+          <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            SPSV{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+              Official Manual
+            </span>
+          </h1>
+          
+          <p className={`text-xl text-gray-300 max-w-2xl mx-auto mb-8 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            Complete guide to SPSV taxi driver regulations and requirements - Edition 8.0
+          </p>
+          
+          <div className={`flex flex-wrap justify-center gap-4 transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <a
+              href="/nta.pdf"
+              download
+              className="group px-6 py-3 bg-white rounded-xl font-bold text-gray-900 hover:bg-gray-100 transition-all flex items-center gap-3"
+            >
+              <FiDownload className="w-5 h-5 text-emerald-600" />
+              Download PDF
+            </a>
+            <div className="flex items-center gap-2 text-gray-400">
+              <FiCheck className="w-4 h-4 text-emerald-400" />
+              <span className="text-sm">Interactive chapters with practice questions</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent" />
       </section>
 
       {/* Main Content */}
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar - Table of Contents & Progress */}
+            {/* Sidebar */}
             <aside className="lg:col-span-1 space-y-6">
               {/* Search */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4">
                 <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search chapters..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
 
               {/* Table of Contents */}
-              <TableOfContents
-                chapters={progressData}
-                activeChapter={activeChapter}
-                onChapterClick={handleChapterClick}
-              />
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <TableOfContents
+                  chapters={progressData}
+                  activeChapter={activeChapter}
+                  onChapterClick={handleChapterClick}
+                />
+              </div>
 
               {/* Progress Tracker */}
-              <ProgressTracker chapters={progressData} />
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <ProgressTracker chapters={progressData} />
+              </div>
             </aside>
 
             {/* Main Content Area */}
             <div className="lg:col-span-3">
               {chapters.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-600">Loading manual content...</p>
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
+                  <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <FiBook className="w-8 h-8 text-emerald-600 animate-pulse" />
+                  </div>
+                  <p className="text-gray-600 text-lg">Loading manual content...</p>
                 </div>
               ) : (
-                <div>
+                <div className="space-y-4">
                   {filteredChapters.length === 0 ? (
-                    <div className="text-center py-12">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
                       <p className="text-gray-600">No chapters found matching your search.</p>
                     </div>
                   ) : (
@@ -276,10 +311,10 @@ export default function SPSVManualPage() {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition-colors z-50"
+          className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-2xl shadow-lg hover:shadow-xl hover:shadow-emerald-500/25 transition-all hover:scale-105 z-50 flex items-center justify-center"
           aria-label="Back to top"
         >
-          <FaArrowUp size={20} />
+          <FiArrowUp className="w-6 h-6" />
         </button>
       )}
     </main>

@@ -1,61 +1,157 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Header } from '@/components/Header';
-import { Button } from '@/components/Button';
-import { FaPhone, FaCreditCard, FaIdCard, FaFileAlt, FaCheckCircle, FaBook, FaMapMarkedAlt, FaClock, FaEuroSign, FaCalendarAlt, FaCertificate } from 'react-icons/fa';
+import { 
+  FiPhone, FiCreditCard, FiFileText, FiCheck, FiBook, FiMapPin, 
+  FiClock, FiDollarSign, FiCalendar, FiAward, FiAlertCircle,
+  FiArrowRight, FiDownload, FiUser, FiMessageCircle
+} from 'react-icons/fi';
 
 export default function TestGuidePage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const areaKnowledgeTopics = [
+    { title: 'Main Routes to Dublin City', questions: 11, hasMap: true },
+    { title: 'Interesting Places in Dublin', questions: 90, hasMap: true },
+    { title: 'Road Markings', questions: 8, hasMap: false },
+    { title: 'Places on Squares', questions: 13, hasMap: false },
+    { title: 'North & South Circular Roads', questions: 28, hasMap: true },
+    { title: 'Train Stations', questions: 7, hasMap: false },
+    { title: 'Residential Areas', questions: 63, hasMap: false },
+    { title: 'Dublin Hotels', questions: 192, hasMap: true },
+    { title: 'Dublin Hospitals', questions: 52, hasMap: true },
+    { title: 'Other Known Places', questions: 32, hasMap: false },
+    { title: 'Churches & Cathedrals', questions: 15, hasMap: true },
+    { title: 'Libraries', questions: 19, hasMap: false },
+    { title: 'Art Galleries', questions: 21, hasMap: false },
+    { title: 'Museums', questions: 28, hasMap: false },
+    { title: 'Schools', questions: 60, hasMap: false },
+    { title: 'Parks, Gardens & Cemeteries', questions: 30, hasMap: false },
+    { title: 'Embassies', questions: 15, hasMap: false },
+    { title: 'Sports Grounds', questions: 33, hasMap: false },
+    { title: 'Night Clubs & Pubs', questions: 96, hasMap: false },
+    { title: 'Restaurants', questions: 55, hasMap: false },
+    { title: 'Cinemas', questions: 12, hasMap: false },
+    { title: 'Casinos', questions: 23, hasMap: false },
+    { title: 'One Way Streets', questions: 127, hasMap: false },
+    { title: 'DART Stations', questions: 26, hasMap: false },
+    { title: 'Pedestrianised Streets', questions: 37, hasMap: false },
+  ];
+
+  const industryKnowledgeTopics = [
+    { title: 'Basic SPSV Industry Knowledge', questions: 98 },
+    { title: 'Vehicle', questions: 52 },
+    { title: 'Hire & Fares', questions: 54 },
+    { title: 'Customer Satisfaction', questions: 66 },
+    { title: 'Business', questions: 17 },
+    { title: 'Health and Safety', questions: 41 },
+  ];
+
+  const requiredDocuments = [
+    { title: 'FORM 15/18 Application Form', desc: 'Available from your local Garda station or can be printed online' },
+    { title: 'SPSV Driver&apos;s License Fee Payment', desc: 'Pay fees to NTA after passing. Receipt must be attached.' },
+    { title: 'Tax Clearance Certificate', desc: 'Arrange this certificate in advance from Revenue' },
+    { title: 'SPSV Skills Certificate', desc: 'Certificate received after passing the SPSV Skills Test' },
+    { title: 'Full Irish Licence Copy', desc: 'Class B minimum, must be at least one year old' },
+    { title: 'Police Clearance Certificate', desc: 'Required if you lived outside Ireland for more than one year' },
+    { title: 'NDLS Driving History', desc: 'Attach your NDLS driving history with the application' },
+    { title: 'Three Identical Photographs', desc: 'Size: 10cm by 7cm (passport-style photos)' },
+  ];
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <main className="min-h-screen bg-white">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="mb-8 flex justify-center">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950 pt-20 pb-32">
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]" />
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                                linear-gradient(to bottom, rgba(16, 185, 129, 0.1) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm mb-6 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <FiBook className="w-4 h-4 text-emerald-400" />
+                <span className="text-emerald-300 text-sm font-medium">Complete Taxi Driver Test Guide</span>
+              </div>
+              
+              <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                SPSV{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+                  Test Guide
+                </span>
+              </h1>
+              
+              <p className={`text-xl text-gray-300 mb-8 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                Everything you need to know about the Taxi Driver Test - booking, requirements, course contents, and what to expect
+              </p>
+            </div>
+            
+            <div className={`relative transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-emerald-500/20">
             <Image
               src="/testguide.png"
-              alt="SPSV Test Guide"
+                  alt="SPSV Taxi Driver Test Guide"
               width={600}
               height={400}
-              className="rounded-2xl shadow-2xl object-contain"
+                  className="w-full object-contain"
               priority
             />
+              </div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-emerald-500/20 rounded-2xl -z-10" />
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-cyan-500/20 rounded-xl -z-10" />
+            </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">SPSV Test Guide</h1>
-          <p className="text-xl text-green-100 max-w-3xl mx-auto">
-            Everything you need to know about the SPSV Skills Test, course contents, and requirements
-          </p>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
       </section>
 
+      {/* Main Content */}
+      <section className="py-20 px-4 -mt-16 relative z-20">
+        <div className="max-w-6xl mx-auto space-y-12">
+
       {/* Booking Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaPhone className="text-green-600 text-2xl" />
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FiPhone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Booking the SPSV Skills Test</h2>
-                <p className="text-gray-600 mt-2">How to register for your test</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Booking the SPSV Skills Test</h2>
+                <p className="text-gray-500 mt-1">How to register for your taxi driver test</p>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-emerald-50 to-cyan-50 rounded-2xl p-6 border border-emerald-100">
                 <div className="flex items-start gap-4">
-                  <FaPhone className="text-green-600 text-xl mt-1 flex-shrink-0" />
+                  <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <FiPhone className="w-6 h-6 text-white" />
+                  </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-2 text-lg">Contact NTA</h3>
-                    <p className="text-gray-700 mb-3">
-                      Call the National Transport Authority (NTA) to book your test:
-                    </p>
+                    <p className="text-gray-600 mb-3">Call the National Transport Authority to book your taxi driver test:</p>
                     <a 
                       href="tel:0818064000" 
-                      className="text-2xl font-bold text-green-600 hover:text-green-700 transition-colors inline-block"
+                      className="text-3xl font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
                     >
                       0818 064 000
                     </a>
@@ -63,37 +159,38 @@ export default function TestGuidePage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-3 mb-3">
-                    <FaCreditCard className="text-blue-600 text-xl" />
-                    <h3 className="font-bold text-gray-900">Test Fee</h3>
+                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <FiCreditCard className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="font-bold text-gray-900">Taxi Test Fee</h3>
                   </div>
-                  <p className="text-2xl font-bold text-blue-700 mb-2">€90</p>
-                  <p className="text-gray-700 text-sm">
-                    Payable by credit or debit card over the phone, or by postal order
-                  </p>
+                  <p className="text-4xl font-bold text-blue-600 mb-2">€90</p>
+                  <p className="text-sm text-gray-500">Payable by card or postal order</p>
                 </div>
 
-                <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
+                <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-3 mb-3">
-                    <FaIdCard className="text-purple-600 text-xl" />
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <FiUser className="w-5 h-5 text-purple-600" />
+                    </div>
                     <h3 className="font-bold text-gray-900">Required Information</h3>
                   </div>
-                  <p className="text-gray-700">
-                    You will need to provide your <strong>PPS Number</strong> when booking
-                  </p>
+                  <p className="text-gray-700">You need your <strong>PPS Number</strong> when booking</p>
                 </div>
               </div>
 
-              <div className="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
+              <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
                 <div className="flex items-start gap-4">
-                  <FaMapMarkedAlt className="text-yellow-600 text-xl mt-1 flex-shrink-0" />
+                  <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <FiMapPin className="w-5 h-5 text-white" />
+                  </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Test Centres</h3>
+                    <h3 className="font-bold text-gray-900 mb-1">Test Centres</h3>
                     <p className="text-gray-700">
-                      There are <strong>FIVE test centres</strong> located across Ireland. 
-                      You can choose any centre according to your convenience.
+                      <strong>5 test centres</strong> across Ireland. Choose any location convenient for you.
                     </p>
                   </div>
                 </div>
@@ -102,27 +199,31 @@ export default function TestGuidePage() {
           </div>
 
           {/* Test Overview */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">SPSV Skills Test Overview</h2>
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
+              Taxi Driver Test Overview
+            </h2>
             
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 text-center">
-                <div className="text-4xl font-bold text-green-700 mb-2">90</div>
-                <p className="text-gray-700 font-semibold">Total Questions</p>
+              <div className="bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl p-6 text-white text-center">
+                <div className="text-5xl font-bold mb-2">90</div>
+                <p className="font-semibold opacity-90">Total Questions</p>
               </div>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 text-center">
-                <div className="text-4xl font-bold text-blue-700 mb-2">90</div>
-                <p className="text-gray-700 font-semibold">Minutes Duration</p>
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl p-6 text-white text-center">
+                <div className="text-5xl font-bold mb-2">90</div>
+                <p className="font-semibold opacity-90">Minutes Duration</p>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200 text-center">
-                <div className="text-4xl font-bold text-purple-700 mb-2">75%</div>
-                <p className="text-gray-700 font-semibold">Pass Rate Required</p>
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white text-center">
+                <div className="text-5xl font-bold mb-2">75%</div>
+                <p className="font-semibold opacity-90">Pass Rate Required</p>
               </div>
             </div>
 
-            <div className="bg-red-50 rounded-xl p-6 border border-red-200">
+            <div className="bg-red-50 rounded-2xl p-6 border border-red-200">
               <div className="flex items-start gap-4">
-                <FaCheckCircle className="text-red-600 text-xl mt-1 flex-shrink-0" />
+                <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FiAlertCircle className="w-5 h-5 text-white" />
+                </div>
                 <div>
                   <h3 className="font-bold text-gray-900 mb-2">Important: Partial Pass</h3>
                   <p className="text-gray-700">
@@ -135,640 +236,231 @@ export default function TestGuidePage() {
           </div>
 
           {/* Section 1: Industry Knowledge */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaBook className="text-blue-600 text-2xl" />
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FiBook className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Section 1: Industry Knowledge</h2>
-                <p className="text-gray-600 mt-2">Regulations, licensing, and business operations</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Section 1: Industry Knowledge</h2>
+                <p className="text-gray-500 mt-1">Taxi regulations, licensing, and business operations</p>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaFileAlt className="text-blue-600" />
-                    Questions
-                  </h3>
-                  <p className="text-3xl font-bold text-blue-700">54 Questions</p>
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiFileText className="w-5 h-5 text-blue-600" />
+                  <span className="font-bold text-gray-900">Questions</span>
                 </div>
-                <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaCheckCircle className="text-green-600" />
-                    Pass Requirement
-                  </h3>
-                  <p className="text-3xl font-bold text-green-700">75%</p>
+                <p className="text-3xl font-bold text-blue-600">54 Questions</p>
+              </div>
+              <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiCheck className="w-5 h-5 text-emerald-600" />
+                  <span className="font-bold text-gray-900">Pass Requirement</span>
                 </div>
+                <p className="text-3xl font-bold text-emerald-600">75%</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {industryKnowledgeTopics.map((topic, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+                  <span className="text-gray-700 font-medium">{topic.title}</span>
+                  <span className="text-blue-600 font-bold">{topic.questions}</span>
+                </div>
+              ))}
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3">Study Material</h3>
-                <p className="text-gray-700 mb-4">
-                  Candidates should study the official manual for industry knowledge:
-                </p>
+            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                 <a
                   href="https://www.nationaltransport.ie/wp-content/uploads/2022/12/SPSV-Official-Manual-Edition-7.6.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
                 >
-                  <FaBook className="text-lg" />
-                  Download Official Manual (PDF)
+                <FiDownload className="w-5 h-5" />
+                Download Official SPSV Manual (PDF)
+                <FiArrowRight className="w-4 h-4" />
                 </a>
-              </div>
             </div>
           </div>
 
           {/* Section 2: Area Knowledge */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaMapMarkedAlt className="text-green-600 text-2xl" />
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FiMapPin className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Section 2: Area Knowledge</h2>
-                <p className="text-gray-600 mt-2">Routes, landmarks, and local geography</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Section 2: Area Knowledge</h2>
+                <p className="text-gray-500 mt-1">Dublin routes, landmarks, and local geography</p>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaFileAlt className="text-green-600" />
-                    Questions
-                  </h3>
-                  <p className="text-3xl font-bold text-green-700">36 Questions</p>
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiFileText className="w-5 h-5 text-emerald-600" />
+                  <span className="font-bold text-gray-900">Questions</span>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaCheckCircle className="text-blue-600" />
-                    Pass Requirement
-                  </h3>
-                  <p className="text-3xl font-bold text-blue-700">75%</p>
-                </div>
+                <p className="text-3xl font-bold text-emerald-600">36 Questions</p>
               </div>
-
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3">What You Need to Know</h3>
-                <p className="text-gray-700">
-                  Candidates should have comprehensive knowledge of the relevant county in which they are appearing for the test. 
-                  This includes routes, one-way streets, landmarks, and navigation.
-                </p>
+              <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiCheck className="w-5 h-5 text-blue-600" />
+                  <span className="font-bold text-gray-900">Pass Requirement</span>
+                </div>
+                <p className="text-3xl font-bold text-blue-600">75%</p>
               </div>
             </div>
           </div>
 
-          {/* Course Contents - Area Knowledge */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="mb-8 flex justify-center">
+          {/* Course Contents Image */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="mb-8 rounded-2xl overflow-hidden shadow-lg">
               <Image
                 src="/course-content.png"
-                alt="Course Content"
+                alt="Taxi Driver Test Course Content"
                 width={800}
                 height={400}
-                className="rounded-2xl shadow-xl object-contain w-full max-w-4xl"
+                className="w-full object-contain"
               />
             </div>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaMapMarkedAlt className="text-green-600 text-2xl" />
-              </div>
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Area Knowledge Course Contents</h2>
-                <p className="text-gray-600 mt-2">Comprehensive Dublin area knowledge topics covered in our course</p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Routes */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Main Routes to Dublin City</h3>
-                <p className="text-sm text-gray-600 mb-2">10 routes to Dublin city centre + street names</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">11</span>
-                  <span className="text-sm text-gray-600">questions</span>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Area Knowledge Topics Covered</h3>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {areaKnowledgeTopics.map((topic, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-700 font-medium text-sm">{topic.title}</span>
+                    {topic.hasMap && (
+                      <span className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">+map</span>
+                    )}
                 </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Places of Interest */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Interesting Places in Dublin</h3>
-                <p className="text-sm text-gray-600 mb-2">Hotels, pubs, restaurants, hospitals, etc.</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">90</span>
-                  <span className="text-sm text-gray-600">questions</span>
+                  <span className="text-emerald-600 font-bold">{topic.questions}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Road Markings */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Road Markings</h3>
-                <p className="text-sm text-gray-600 mb-2">Colour of roads in a map</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">8</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Places on Squares */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Places of Interest on Squares</h3>
-                <p className="text-sm text-gray-600 mb-2">Hotels, colleges, etc.</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">13</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Circular Roads */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">North & South Circular Roads</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin circular routes</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">28</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Train Stations */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Train Stations</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin train stations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">7</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Residential Areas */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Residential Areas</h3>
-                <p className="text-sm text-gray-600 mb-2">Adjoining residential areas</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">63</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Hotels */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Dublin Hotels</h3>
-                <p className="text-sm text-gray-600 mb-2">Comprehensive hotel locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">192</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Hospitals */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Dublin Hospitals</h3>
-                <p className="text-sm text-gray-600 mb-2">Hospital locations and details</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">52</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Other Known Places */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Other Known Places</h3>
-                <p className="text-sm text-gray-600 mb-2">Various landmarks and locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">32</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Churches and Cathedrals */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Churches & Cathedrals</h3>
-                <p className="text-sm text-gray-600 mb-2">Religious sites in Dublin</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">15</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">+ maps included</p>
-              </div>
-
-              {/* Libraries */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Libraries</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin library locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">19</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Art Galleries */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Art Galleries</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin art galleries</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">21</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Museums */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Museums</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin museum locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">28</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Schools */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Schools</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin school locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">60</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Parks, Gardens & Cemeteries */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Parks, Gardens & Cemeteries</h3>
-                <p className="text-sm text-gray-600 mb-2">Green spaces and memorial sites</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">30</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Embassies */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Embassies</h3>
-                <p className="text-sm text-gray-600 mb-2">Embassy locations in Dublin</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">15</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Sports Grounds */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Sports Grounds</h3>
-                <p className="text-sm text-gray-600 mb-2">Sports venues in Dublin</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">33</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Night Clubs & Pubs */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Night Clubs & Pubs</h3>
-                <p className="text-sm text-gray-600 mb-2">Entertainment venues</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">96</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Restaurants */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Restaurants</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin restaurant locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">55</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Cinemas */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Cinemas</h3>
-                <p className="text-sm text-gray-600 mb-2">Cinema locations in Dublin</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">12</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Casinos */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Casinos</h3>
-                <p className="text-sm text-gray-600 mb-2">Casino locations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">23</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* One Way Streets */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">One Way Streets</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin one-way street navigation</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">127</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* DART Stations */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">DART Stations</h3>
-                <p className="text-sm text-gray-600 mb-2">Dublin Area Rapid Transit stations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">26</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Pedestrianised Streets */}
-              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Pedestrianised Streets</h3>
-                <p className="text-sm text-gray-600 mb-2">Walking-only areas in Dublin</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-green-700">37</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Course Contents - Industry Knowledge */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaBook className="text-blue-600 text-2xl" />
-              </div>
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Industry Knowledge Course Contents</h2>
-                <p className="text-gray-600 mt-2">Comprehensive SPSV industry knowledge topics covered in our course</p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Basic Industry Knowledge */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Basic SPSV Industry Knowledge</h3>
-                <p className="text-sm text-gray-600 mb-2">Fundamental SPSV regulations and requirements</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">98</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Vehicle */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Vehicle</h3>
-                <p className="text-sm text-gray-600 mb-2">Vehicle requirements and specifications</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">52</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Hire & Fares */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Hire & Fares</h3>
-                <p className="text-sm text-gray-600 mb-2">Pricing structures and hire regulations</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">54</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Customer Satisfaction */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Customer Satisfaction</h3>
-                <p className="text-sm text-gray-600 mb-2">Service standards and customer care</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">66</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Business */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Business</h3>
-                <p className="text-sm text-gray-600 mb-2">Business operations and management</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">17</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
-
-              {/* Health and Safety */}
-              <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Health and Safety</h3>
-                <p className="text-sm text-gray-600 mb-2">Safety regulations and protocols</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-700">41</span>
-                  <span className="text-sm text-gray-600">questions</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           {/* At the Test Centre */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaCalendarAlt className="text-purple-600 text-2xl" />
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FiCalendar className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">At the Test Centre</h2>
-                <p className="text-gray-600 mt-2">What to bring and when to arrive</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">At the Test Centre</h2>
+                <p className="text-gray-500 mt-1">What to bring and when to arrive</p>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
-                <div className="flex items-start gap-4">
-                  <FaClock className="text-yellow-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Arrival Time</h3>
-                    <p className="text-gray-700 text-lg">
-                      Please arrive at the test centre <strong>30 minutes prior</strong> to your scheduled test time.
-                    </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+                    <FiClock className="w-5 h-5 text-white" />
                   </div>
+                  <h3 className="font-bold text-gray-900">Arrival Time</h3>
                 </div>
+                <p className="text-gray-700">
+                  Arrive <strong>30 minutes prior</strong> to your scheduled test time
+                </p>
               </div>
 
-              <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FaIdCard className="text-red-600" />
-                  Required Identification
-                </h3>
-                <p className="text-gray-700 mb-3">
-                  You must bring one of the following forms of identification:
-                </p>
-                <ul className="space-y-2">
+              <div className="bg-red-50 rounded-2xl p-6 border border-red-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                    <FiUser className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900">Required ID</h3>
+                </div>
+                <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start gap-2">
-                    <FaCheckCircle className="text-green-600 mt-1 flex-shrink-0" />
-                    <span className="text-gray-700">
-                      <strong>Full Irish Driving Licence</strong> (Class B or higher)
-                    </span>
+                    <FiCheck className="w-4 h-4 text-emerald-500 mt-1 flex-shrink-0" />
+                    <span><strong>Full Irish Driving Licence</strong> (Class B or higher)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <FaCheckCircle className="text-green-600 mt-1 flex-shrink-0" />
-                    <span className="text-gray-700">
-                      <strong>European Licence</strong> accepted by the National Transport Authority
-                    </span>
+                    <FiCheck className="w-4 h-4 text-emerald-500 mt-1 flex-shrink-0" />
+                    <span><strong>European Licence</strong> accepted by NTA</span>
                   </li>
                 </ul>
-                <p className="text-gray-600 text-sm mt-4 italic">
-                  <strong>Important:</strong> No other form of ID is accepted. Make sure you bring the correct identification.
-                </p>
               </div>
             </div>
           </div>
 
           {/* Documents Needed After Passing */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border border-gray-100">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaFileAlt className="text-indigo-600 text-2xl" />
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FiFileText className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Documents Needed After Passing</h2>
-                <p className="text-gray-600 mt-2">Prepare these documents to complete your SPSV driver application</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Documents Needed After Passing</h2>
+                <p className="text-gray-500 mt-1">Prepare these to complete your SPSV driver application</p>
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-xl p-6 border border-blue-200 mb-6">
+            <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 mb-6">
               <p className="text-gray-700">
-                <strong>Tip:</strong> We encourage candidates to arrange these documents in advance so that after passing 
-                the SPSV Skills Test, it becomes easier to submit your application immediately.
+                <strong className="text-blue-700">Pro Tip:</strong> Arrange these documents in advance so that after passing, 
+                you can submit your application immediately.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaFileAlt className="text-green-600 text-xl mt-1 flex-shrink-0" />
+            <div className="grid md:grid-cols-2 gap-4">
+              {requiredDocuments.map((doc, i) => (
+                <div key={i} className="p-5 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors border border-gray-100 hover:border-emerald-200">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FiCheck className="w-4 h-4 text-emerald-600" />
+              </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2">FORM 15/18 Application Form</h3>
-                    <p className="text-gray-700 text-sm">
-                      Available from your local Garda station or can be printed online
-                    </p>
+                      <h3 className="font-bold text-gray-900 mb-1">{doc.title}</h3>
+                      <p className="text-sm text-gray-500">{doc.desc}</p>
+              </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaEuroSign className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">SPSV Driver&apos;s License Fee Payment</h3>
-                    <p className="text-gray-700 text-sm">
-                      Pay fees to NTA after passing the test. Receipt must be attached to your application.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaCertificate className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Tax Clearance Certificate</h3>
-                    <p className="text-gray-700 text-sm">
-                      Arrange this certificate in advance
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaCheckCircle className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">SPSV Skills Certificate</h3>
-                    <p className="text-gray-700 text-sm">
-                      Certificate received after passing the SPSV Skills Test
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaIdCard className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Full Irish Licence Copy</h3>
-                    <p className="text-gray-700 text-sm">
-                      Class B minimum, must be at least one year old
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaFileAlt className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Police Clearance Certificate</h3>
-                    <p className="text-gray-700 text-sm">
-                      Required if you have lived outside Ireland for more than one year (for that country)
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaFileAlt className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">NDLS Driving History</h3>
-                    <p className="text-gray-700 text-sm">
-                      Attach your NDLS driving history with the application
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <FaIdCard className="text-green-600 text-xl mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Three Identical Photographs</h3>
-                    <p className="text-gray-700 text-sm">
-                      Size: 10cm by 7cm (passport-style photos)
-                    </p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
+        </div>
+      </section>
 
           {/* CTA Section */}
-          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-3xl p-8 md:p-12 text-white text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Journey?</h2>
-            <p className="text-xl mb-8 text-green-100 max-w-2xl mx-auto">
-              Join SPSV Mastery Class Dublin and get comprehensive preparation for your SPSV Skills Test
-            </p>
+      <section className="py-20 px-4 bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]" />
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Ready to Start Your{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+              Taxi Driver Journey?
+            </span>
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Join SPSV Mastery Class Dublin for comprehensive taxi test preparation
+          </p>
+          
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/"
-                className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors text-lg"
+              className="group px-8 py-4 bg-white rounded-xl font-bold text-gray-900 hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
               >
                 View Our Courses
+              <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="tel:+353894034222"
-                className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-lg"
+              className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-3"
               >
+              <FiPhone className="w-5 h-5" />
                 Call: +353 89 403 4222
               </a>
-            </div>
           </div>
         </div>
       </section>
