@@ -165,11 +165,7 @@ export async function GET(
         progressPercentage: Math.round((questionsAttempted / totalQuestions) * 100)
       },
       questionStats: questionStats.sort((a, b) => {
-        // Sort by: not attempted, needs review, mastered
-        if (a.status === 'not_attempted' && b.status !== 'not_attempted') return 1
-        if (a.status !== 'not_attempted' && b.status === 'not_attempted') return -1
-        if (a.status === 'needs_review' && b.status === 'mastered') return -1
-        if (a.status === 'mastered' && b.status === 'needs_review') return 1
+        // Sort by question number only (Q1, Q2, Q3...)
         return a.questionNumber - b.questionNumber
       }),
       weakestQuestions,
