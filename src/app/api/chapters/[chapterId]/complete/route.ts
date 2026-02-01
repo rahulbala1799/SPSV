@@ -97,6 +97,19 @@ export async function POST(
       console.log('[Analytics] Failed to track chapter completion:', err.message)
     })
 
+    // Check achievements (non-blocking)
+    const { checkAchievements } = await import('@/lib/achievements')
+    const achievementResult = await checkAchievements(student.id, {
+      action: 'chapter_completed',
+      data: {
+        chapterId: params.chapterId,
+        score: progress.score || 0
+      }
+    }).catch(err => {
+      console.log('[Achievements] Achievement check failed:', err.message)
+      return null
+    })
+
     return NextResponse.json({
       success: true,
       progress: {

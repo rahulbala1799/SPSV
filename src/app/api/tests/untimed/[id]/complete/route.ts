@@ -143,6 +143,18 @@ export async function POST(
       },
     })
 
+    // Check achievements (non-blocking)
+    const { checkAchievements } = await import('@/lib/achievements')
+    checkAchievements(student.id, {
+      action: 'test_completed',
+      data: {
+        testId: testId,
+        score: scorePercentage
+      }
+    }).catch(err => {
+      console.log('[Achievements] Achievement check failed:', err.message)
+    })
+
     // Calculate category breakdown
     const categoryBreakdown: Record<
       string,

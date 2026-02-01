@@ -208,6 +208,18 @@ export async function POST(
       }
     })
 
+    // Check achievements (non-blocking)
+    const { checkAchievements } = await import('@/lib/achievements')
+    checkAchievements(studentId, {
+      action: 'test_completed',
+      data: {
+        testId: params.id,
+        score: results.score
+      }
+    }).catch(err => {
+      console.log('[Achievements] Achievement check failed:', err.message)
+    })
+
     return NextResponse.json({
       success: true,
       results

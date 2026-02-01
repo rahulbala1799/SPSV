@@ -211,6 +211,19 @@ export async function POST(
       await calculateChapterTimeFromAnswers(student.id, params.chapterId).catch(err => {
         console.log('[Analytics] Time calculation failed:', err.message)
       })
+
+      // Check achievements (non-blocking)
+      const { checkAchievements } = await import('@/lib/achievements')
+      checkAchievements(student.id, {
+        action: 'question_answered',
+        data: {
+          questionId: question.id,
+          chapterId: params.chapterId,
+          isCorrect
+        }
+      }).catch(err => {
+        console.log('[Achievements] Achievement check failed:', err.message)
+      })
     }
 
     return NextResponse.json({
