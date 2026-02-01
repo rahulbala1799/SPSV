@@ -57,28 +57,36 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
   const [answerResult, setAnswerResult] = useState<{ isCorrect: boolean; correctAnswer: string; explanation?: string } | null>(null)
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set())
   const [flagging, setFlagging] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const expandedRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    loadAllQuestions()
+    if (chapterId) {
+      loadAllQuestions()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterId])
 
   // Load all questions and attempt stats
   const loadAllQuestions = async () => {
     try {
+      setError(null)
       // For Chapter Mode (learning mode), fetch with learningMode=true to get correct answers
       const response = await fetch(`/api/chapters/${chapterId}/questions?learningMode=true`)
       const data = await response.json()
 
-      if (response.ok && data.questions) {
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to load questions')
+      }
+
+      if (data.questions && Array.isArray(data.questions)) {
         const questionsMap: Record<string, FullQuestion> = {}
         data.questions.forEach((q: FullQuestion) => {
           questionsMap[q.id] = q
         })
         setAllQuestions(questionsMap)
         
-        // Load attempt stats for all questions
+        // Load attempt stats for all questions (non-blocking)
         const statsPromises = data.questions.map(async (q: FullQuestion) => {
           try {
             const statsResponse = await fetch(`/api/questions/${q.id}/attempt-stats`)
@@ -101,7 +109,7 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
         })
         setAttemptStats(statsMap)
         
-        // Load flag statuses
+        // Load flag statuses (non-blocking)
         const flagStatuses = await Promise.all(
           data.questions.map(async (q: FullQuestion) => {
             try {
@@ -119,9 +127,12 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
           if (isFlagged) flaggedSet.add(id)
         })
         setFlaggedQuestions(flaggedSet)
+      } else {
+        throw new Error('Invalid questions data format')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading questions:', error)
+      setError(error.message || 'Failed to load questions')
     } finally {
       setLoading(false)
       setQuestionsLoaded(true)
@@ -265,8 +276,38 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
 
   const questions = Object.values(allQuestions).sort((a, b) => a.questionNumber - b.questionNumber)
 
-  if (questions.length === 0) {
-    return null
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl p-6 mb-6 border border-red-500/30">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
+            <FiAlertCircle className="w-5 h-5 text-red-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Chapter Mode</h3>
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show empty state if no questions
+  if (questions.length === 0 && !loading) {
+    return (
+      <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl p-6 mb-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-slate-700/50 rounded-xl flex items-center justify-center">
+            <FiBook className="w-5 h-5 text-slate-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Chapter Mode</h3>
+            <p className="text-sm text-slate-400">No questions available for this chapter yet.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
