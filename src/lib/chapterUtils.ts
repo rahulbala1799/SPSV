@@ -77,6 +77,9 @@ export const CHAPTER_ID_MAP: Record<string, string> = {
   'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
   'chapter_routes': 'routes',
   'chapter_areas_and_roads': 'areas-and-roads',
+  'chapter_transport_infrastructure': 'transport-infrastructure',
+  'chapter_industrial_estates_business_parks': 'industrial-estates-business-parks',
+  'chapter_stadiums_sport_grounds_clubs': 'stadiums-sport-grounds-clubs',
 }
 
 /**
