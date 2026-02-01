@@ -18,6 +18,7 @@ import {
   FiStar
 } from 'react-icons/fi'
 import { BottomNav } from '@/components/dashboard/BottomNav'
+import { AchievementNotification } from '@/components/motivation'
 
 interface ProgressOverview {
   totalChapters: number
@@ -58,6 +59,8 @@ export default function StudentDashboard() {
   const [student, setStudent] = useState<StudentData | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [assignedTestsCount, setAssignedTestsCount] = useState(0)
+  const [achievements, setAchievements] = useState<any>(null)
+  const [newAchievements, setNewAchievements] = useState<any[]>([])
 
   const checkStudentAccess = async () => {
     try {
@@ -109,6 +112,31 @@ export default function StudentDashboard() {
         }
       } catch (error) {
         console.error('Error fetching assigned tests:', error)
+      }
+
+      // Fetch achievements
+      try {
+        const achievementsResponse = await fetch('/api/student/achievements')
+        if (achievementsResponse.ok) {
+          const achievementsData = await achievementsResponse.json()
+          setAchievements(achievementsData)
+          if (achievementsData.newAchievements && achievementsData.newAchievements.length > 0) {
+            setNewAchievements(achievementsData.newAchievements)
+          }
+        } else {
+          // If no achievements exist, trigger backfill
+          const backfillResponse = await fetch('/api/student/achievements/backfill', { method: 'POST' })
+          if (backfillResponse.ok) {
+            // Fetch again after backfill
+            const achievementsResponse2 = await fetch('/api/student/achievements')
+            if (achievementsResponse2.ok) {
+              const achievementsData = await achievementsResponse2.json()
+              setAchievements(achievementsData)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching achievements:', error)
       }
 
       setLoading(false)
@@ -291,7 +319,7 @@ export default function StudentDashboard() {
         {/* Quick Actions */}
         <div className="mb-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
             {/* Chapters */}
             <Link
               href="/dashboard/chapters"
@@ -351,16 +379,23 @@ export default function StudentDashboard() {
               <p className="text-xs text-gray-500">Track performance</p>
             </Link>
 
-            {/* Flagged */}
+            {/* Achievements */}
             <Link
-              href="/dashboard/flagged-questions"
-              className="group bg-white hover:bg-gradient-to-br hover:from-red-50 hover:to-orange-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1"
+              href="/dashboard/achievements"
+              className="group bg-white hover:bg-gradient-to-br hover:from-amber-50 hover:to-yellow-50 rounded-2xl shadow-lg hover:shadow-xl p-5 transition-all transform hover:-translate-y-1 relative"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
-                <FiFlag className="w-6 h-6 text-white" />
+              {newAchievements.length > 0 && (
+                <div className="absolute top-3 right-3 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {newAchievements.length}
+                </div>
+              )}
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <FiAward className="w-6 h-6 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 mb-1">Flagged</h4>
-              <p className="text-xs text-gray-500">Review questions</p>
+              <h4 className="font-bold text-gray-900 mb-1">Achievements</h4>
+              <p className="text-xs text-gray-500">
+                {achievements ? `${achievements.achievements.totalEarned} unlocked` : 'View rewards'}
+              </p>
             </Link>
           </div>
         </div>
@@ -424,6 +459,93 @@ export default function StudentDashboard() {
           </div>
         )}
 
+        {/* Achievements & Level Section */}
+        {achievements && (
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Your Achievements</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Level Progress Card */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Your Level</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-3xl font-bold text-gray-900">{achievements.points.level}</p>
+                      <p className="text-sm text-gray-500">{achievements.points.levelTitle}</p>
+                    </div>
+                  </div>
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <FiStar className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>{achievements.points.currentXP.toLocaleString()} XP</span>
+                    <span>{achievements.points.nextLevelXP.toLocaleString()} XP</span>
+                  </div>
+                  <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-emerald-500 to-cyan-500 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${achievements.points.progress}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-500">Total Points</p>
+                    <p className="text-lg font-bold text-gray-900">{achievements.points.total.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Day Streak</p>
+                    <p className="text-lg font-bold text-gray-900">🔥 {achievements.points.currentStreak}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trophies Preview */}
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl shadow-lg p-6 border border-amber-100">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Trophy Cabinet</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {achievements.achievements.trophies.length} / {achievements.achievements.totalAvailable - achievements.achievements.medals.length - achievements.achievements.badges.length}
+                    </p>
+                  </div>
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-3xl">🏆</span>
+                  </div>
+                </div>
+                {achievements.achievements.trophies.length > 0 ? (
+                  <div className="flex gap-2 mb-3">
+                    {achievements.achievements.trophies.slice(0, 3).map((trophy: any) => (
+                      <div
+                        key={trophy.id}
+                        className="w-16 h-20 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-md"
+                        title={trophy.name}
+                      >
+                        <span className="text-3xl">{trophy.icon}</span>
+                      </div>
+                    ))}
+                    {achievements.achievements.trophies.length > 3 && (
+                      <div className="w-16 h-20 bg-gray-200 rounded-xl flex items-center justify-center">
+                        <span className="text-sm font-bold text-gray-500">+{achievements.achievements.trophies.length - 3}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">Complete major milestones to earn trophies!</p>
+                )}
+                <Link
+                  href="/dashboard/achievements"
+                  className="text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors"
+                >
+                  View All Achievements →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Motivational Card */}
         <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl shadow-xl p-6 text-white mb-6">
           <div className="flex items-start gap-4">
@@ -449,6 +571,18 @@ export default function StudentDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Achievement Notifications */}
+      {newAchievements.map((achievement, index) => (
+        <AchievementNotification
+          key={achievement.code}
+          achievement={achievement}
+          onClose={() => {
+            setNewAchievements(prev => prev.filter(a => a.code !== achievement.code))
+          }}
+          autoCloseDelay={5000}
+        />
+      ))}
 
       {/* Bottom Navigation */}
       <BottomNav />
