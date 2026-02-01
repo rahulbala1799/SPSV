@@ -47,6 +47,11 @@ interface ChapterModeSectionProps {
 
 export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSectionProps) {
   const [loading, setLoading] = useState(true)
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('[ChapterMode] Component mounted with chapterId:', chapterId)
+  }, [chapterId])
   const [allQuestions, setAllQuestions] = useState<Record<string, FullQuestion>>({})
   const [questionsLoaded, setQuestionsLoaded] = useState(false)
   const [attemptStats, setAttemptStats] = useState<Record<string, AttemptStats>>({})
@@ -71,9 +76,11 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
   const loadAllQuestions = async () => {
     try {
       setError(null)
+      console.log('[ChapterMode] Loading questions for chapterId:', chapterId)
       // For Chapter Mode (learning mode), fetch with learningMode=true to get correct answers
       const response = await fetch(`/api/chapters/${chapterId}/questions?learningMode=true`)
       const data = await response.json()
+      console.log('[ChapterMode] Questions response:', { ok: response.ok, questionCount: data.questions?.length })
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to load questions')
@@ -266,9 +273,18 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl p-6 mb-6">
-        <div className="flex items-center justify-center py-8">
-          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+      <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl p-6 mb-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+            <FiBook className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Chapter Mode</h3>
+            <p className="text-sm text-slate-400">Loading questions...</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-4">
+          <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
         </div>
       </div>
     )
