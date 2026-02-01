@@ -74,21 +74,30 @@ export async function POST(request: NextRequest) {
     })
 
     // Auto-sync to QuestionBank if chapter is active
+    let syncResult = null
+    let syncError = null
     if (chapter.isActive) {
       try {
-        await syncSingleQuestion(question.id)
-        console.log(`✅ Auto-synced question to QuestionBank`)
-      } catch (syncError) {
-        console.error('Error syncing question:', syncError)
-        // Don't fail the request
+        syncResult = await syncSingleQuestion(question.id)
+        console.log(`✅ Auto-synced question to QuestionBank`, syncResult)
+      } catch (error: any) {
+        syncError = error.message || 'Unknown sync error'
+        console.error('Error syncing question:', error)
+        // Don't fail the request, but return sync status
       }
     }
 
     return NextResponse.json({
       success: true,
       question,
+      syncResult,
+      syncError,
       message: chapter.isActive
-        ? 'Question created and added to student tests'
+        ? syncResult?.skipped
+          ? `Question created but sync skipped: ${syncResult.reason || 'Unknown reason'}`
+          : syncError
+          ? `Question created but sync failed: ${syncError}. Please re-sync manually.`
+          : 'Question created and added to student tests'
         : 'Question created (will appear in tests when chapter is published)',
     })
   } catch (error: any) {

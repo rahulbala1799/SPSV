@@ -161,15 +161,49 @@ export default function ContentManagementPage() {
         body: JSON.stringify(questionData),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
         await fetchChapters()
         setEditingQuestion(null)
         setAddingQuestionTo(null)
+        
+        // Show sync status if there's an error or warning
+        if (data.syncError) {
+          alert(`⚠️ Question saved but sync failed: ${data.syncError}\n\nPlease use "Re-sync Chapter" to fix this.`)
+        } else if (data.syncResult?.skipped) {
+          alert(`⚠️ Question saved but sync skipped: ${data.syncResult.reason}\n\nPlease use "Re-sync Chapter" to fix this.`)
+        }
+      } else {
+        alert(data.error || 'Failed to save question')
       }
     } catch (error) {
       console.error('Error saving question:', error)
+      alert('Failed to save question')
     }
     setSaving(false)
+  }
+
+  const handleSyncChapter = async (chapterId: string) => {
+    if (!confirm('Re-sync all questions in this chapter to QuestionBank?')) return
+
+    try {
+      const response = await fetch(`/api/admin/content/chapters/${chapterId}/sync`, {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert(`✅ Sync complete!\nCreated: ${data.created || 0}\nUpdated: ${data.updated || 0}\nSkipped: ${data.skipped || 0}`)
+        await fetchChapters()
+      } else {
+        alert(data.error || 'Sync failed')
+      }
+    } catch (error) {
+      console.error('Error syncing chapter:', error)
+      alert('Failed to sync chapter')
+    }
   }
 
   const handleDeleteQuestion = async (questionId: string) => {
@@ -278,6 +312,15 @@ export default function ContentManagementPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {chapter.isActive && (
+                      <button
+                        onClick={() => handleSyncChapter(chapter.id)}
+                        className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-medium transition-all text-sm"
+                        title="Re-sync all questions to QuestionBank"
+                      >
+                        Re-sync
+                      </button>
+                    )}
                     <button
                       onClick={() => toggleChapterVisibility(chapter.id, chapter.isActive)}
                       className={`px-4 py-2 rounded-lg font-medium transition-all ${

@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Button } from './Button';
-import { FaBars, FaTimes } from 'react-icons/fa';
-// Auth removed - ready for fresh implementation
 import Link from 'next/link';
+import { FiMenu, FiX, FiPhone, FiMessageCircle, FiChevronDown, FiUser, FiArrowRight, FiBook, FiCalendar, FiHelpCircle, FiHome } from 'react-icons/fi';
 
 export interface HeaderProps {
   onEnrollClick?: () => void;
@@ -14,8 +12,42 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   // Auth removed - user state will be added when auth is reimplemented
   const user = null;
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -23,259 +55,313 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
+    setIsMoreOpen(false);
   };
 
   const handleEnroll = () => {
-    if (onEnrollClick) {
-      onEnrollClick();
-    } else {
-      scrollToSection('enrollment');
-    }
+    const event = new CustomEvent('openEnrollmentFromHeader');
+    window.dispatchEvent(event);
     setIsMenuOpen(false);
+    setIsMoreOpen(false);
   };
 
-  const handleContact = () => {
-    if (onContactClick) {
-      onContactClick();
-    } else {
-      scrollToSection('contact');
-    }
-    setIsMenuOpen(false);
-  };
+  const navLinks = [
+    { href: '/', label: 'Home', icon: <FiHome className="w-4 h-4" /> },
+    { href: '/timetable', label: 'Timetable', icon: <FiCalendar className="w-4 h-4" /> },
+    { href: '/test-guide', label: 'Test Guide', icon: <FiHelpCircle className="w-4 h-4" /> },
+    { href: '/spsv-manual', label: 'Official Manual', icon: <FiBook className="w-4 h-4" /> },
+  ];
+
+  const moreLinks = [
+    { action: () => scrollToSection('features'), label: 'Why Choose Us' },
+    { action: () => scrollToSection('testimonials'), label: 'Success Stories' },
+    { action: () => scrollToSection('contact'), label: 'Contact' },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
-          {/* Logo */}
-          <div className="flex items-center flex-shrink-0">
-            <Image
-              src="/logo.png"
-              alt="SPSV Mastery Class Dublin Logo"
-              width={180}
-              height={180}
-              className="object-contain"
-              priority
-            />
-          </div>
+    <>
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled 
+            ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-gray-900/5 border-b border-gray-100' 
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <Image
+                  src="/logo.png"
+                  alt="SPSV Mastery Class Dublin - Taxi Driver Test Training"
+                  width={48}
+                  height={48}
+                  className="object-contain transition-transform duration-300 group-hover:scale-105"
+                  priority
+                />
+              </div>
+              <div className={`hidden sm:block transition-colors duration-300 ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
+                <div className="font-bold text-sm leading-tight">SPSV Mastery</div>
+                <div className="text-xs opacity-70">Taxi Test Training</div>
+              </div>
+            </Link>
 
-          {/* Desktop Navigation - Show only 3 items, rest in menu */}
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-            <a
-              href="/"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
-            >
-              Home
-            </a>
-            <a
-              href="/timetable"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
-            >
-              Timetable
-            </a>
-            <a
-              href="/test-guide"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
-            >
-              Test Guide
-            </a>
-            <a
-              href="/spsv-manual"
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
-            >
-              Official Manual
-            </a>
-            {/* More menu button for desktop */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap flex items-center gap-1"
-            >
-              More
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-          </nav>
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    isScrolled 
+                      ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              {/* More Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsMoreOpen(!isMoreOpen)}
+                  onBlur={() => setTimeout(() => setIsMoreOpen(false), 200)}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-1 ${
+                    isScrolled 
+                      ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  More
+                  <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMoreOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* Dropdown Menu */}
+                {isMoreOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl shadow-gray-900/10 border border-gray-100 py-2 animate-fade-in">
+                    {moreLinks.map((link, i) => (
+                      <button
+                        key={i}
+                        onClick={link.action}
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                      >
+                        {link.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </nav>
 
-          {/* Desktop CTA Buttons */}
-          <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            {user ? (
-              <>
+            {/* Desktop CTA Buttons */}
+            <div className="hidden lg:flex items-center gap-3">
+              {user ? (
                 <Link
                   href="/dashboard"
-                  className="px-4 lg:px-6 py-2 lg:py-3 text-gray-700 hover:text-green-600 transition-colors font-medium whitespace-nowrap"
+                  className="px-5 py-2.5 rounded-lg font-semibold text-sm bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105"
                 >
                   Dashboard
                 </Link>
-                {/* Admin and sign out will be added when auth is reimplemented */}
-              </>
-            ) : (
-              <>
+              ) : (
+                <>
+                  {/* Contact Buttons */}
+                  <a
+                    href="tel:+353894034222"
+                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                      isScrolled 
+                        ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                    aria-label="Call us"
+                  >
+                    <FiPhone className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://wa.me/353894034222"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                      isScrolled 
+                        ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                    aria-label="WhatsApp"
+                  >
+                    <FiMessageCircle className="w-5 h-5" />
+                  </a>
+                  
+                  {/* Divider */}
+                  <div className={`w-px h-6 ${isScrolled ? 'bg-gray-200' : 'bg-white/20'}`} />
+                  
+                  {/* Sign In */}
+                  <Link
+                    href="/login"
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+                      isScrolled 
+                        ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    Sign In
+                  </Link>
+                  
+                  {/* Enroll CTA */}
+                  <button
+                    onClick={handleEnroll}
+                    className="group px-5 py-2.5 rounded-lg font-semibold text-sm bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105 flex items-center gap-2"
+                  >
+                    Enroll Now
+                    <FiArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`lg:hidden p-2 rounded-lg transition-all duration-200 ${
+                isScrolled 
+                  ? 'text-gray-700 hover:bg-gray-100' 
+                  : 'text-white hover:bg-white/10'
+              }`}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+          onClick={() => setIsMenuOpen(false)}
+        />
+        
+        {/* Mobile Menu Panel */}
+        <div 
+          className={`absolute top-0 right-0 h-full w-full max-w-sm bg-white shadow-2xl transition-transform duration-300 ease-out ${
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Mobile Menu Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-100">
+            <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt="SPSV Mastery"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <div>
+                <div className="font-bold text-gray-900 text-sm">SPSV Mastery</div>
+                <div className="text-xs text-gray-500">Taxi Test Training</div>
+              </div>
+            </Link>
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Mobile Menu Content */}
+          <div className="flex flex-col h-[calc(100%-80px)] overflow-y-auto">
+            {/* Navigation Links */}
+            <nav className="p-4 space-y-1">
+              {navLinks.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <span className="text-gray-400">{link.icon}</span>
+                  {link.label}
+                </Link>
+              ))}
+              
+              {/* Divider */}
+              <div className="!my-4 border-t border-gray-100" />
+              
+              {/* More Links */}
+              {moreLinks.map((link, index) => (
+                <button
+                  key={index}
+                  onClick={link.action}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* Mobile CTA Section */}
+            <div className="mt-auto p-4 border-t border-gray-100 bg-gray-50/50 space-y-3">
+              {/* Contact Row */}
+              <div className="flex gap-3">
                 <a
                   href="tel:+353894034222"
-                  className="px-4 lg:px-6 py-2 lg:py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-sm lg:text-base whitespace-nowrap"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  Call Us
+                  <FiPhone className="w-5 h-5" />
+                  Call
                 </a>
                 <a
                   href="https://wa.me/353894034222"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-all font-medium"
+                  onClick={() => setIsMenuOpen(false)}
                 >
+                  <FiMessageCircle className="w-5 h-5" />
                   WhatsApp
                 </a>
+              </div>
+              
+              {/* Sign In */}
+              {!user && (
                 <Link
                   href="/login"
-                  className="px-4 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base whitespace-nowrap"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium"
                 >
+                  <FiUser className="w-5 h-5" />
                   Sign In
                 </Link>
-                <Button
-                  variant="primary"
-                  size="medium"
-                  onClick={() => {
-                    // Dispatch event to open enrollment modal
-                    const event = new CustomEvent('openEnrollmentFromHeader');
-                    window.dispatchEvent(event);
-                  }}
-                  className="text-sm lg:text-base whitespace-nowrap"
-                >
-                  Enroll Now
-                </Button>
-              </>
-            )}
+              )}
+              
+              {/* Primary CTA */}
+              <button
+                onClick={handleEnroll}
+                className="w-full px-6 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2"
+              >
+                Enroll Now
+                <FiArrowRight className="w-5 h-5" />
+              </button>
+              
+              {/* Trust Badge */}
+              <p className="text-center text-xs text-gray-500 pt-2">
+                Dublin&apos;s Premier Taxi Test Training School
+              </p>
+            </div>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-700 hover:text-green-600 transition-colors p-2"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
         </div>
-
-        {/* Collapsible Menu - Mobile and Desktop */}
-        {isMenuOpen && (
-          <div className="border-t border-gray-200 py-4">
-            <nav className="flex flex-col gap-4">
-              {/* Show Home, Timetable, Test Guide only if on mobile (they're already visible on desktop) */}
-              <div className="md:hidden flex flex-col gap-4">
-                <a
-                  href="/"
-                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </a>
-                <a
-                  href="/timetable"
-                  className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Timetable
-                </a>
-              <a
-                href="/test-guide"
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Test Guide
-              </a>
-              <a
-                href="/spsv-manual"
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Official Manual
-              </a>
-              </div>
-              
-              {/* Additional menu items for both mobile and desktop */}
-              <button
-                onClick={() => {
-                  scrollToSection('features');
-                  setIsMenuOpen(false);
-                }}
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-              >
-                Why Choose Us
-              </button>
-              <button
-                onClick={() => {
-                  scrollToSection('testimonials');
-                  setIsMenuOpen(false);
-                }}
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-              >
-                Success Stories
-              </button>
-              <button
-                onClick={() => {
-                  scrollToSection('contact');
-                  setIsMenuOpen(false);
-                }}
-                className="text-left text-gray-700 hover:text-green-600 transition-colors font-medium py-2"
-              >
-                Contact
-              </button>
-              
-              {/* CTA buttons - only show on mobile */}
-              <div className="md:hidden flex flex-col gap-3 pt-2 border-t border-gray-200">
-                {user ? (
-                  <Link
-                    href="/dashboard"
-                    className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                ) : (
-                  <>
-                    <a
-                      href="tel:+353894034222"
-                      className="w-full px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-colors text-center"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Call: +353 89 403 4222
-                    </a>
-                    <a
-                      href="https://wa.me/353894034222"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      WhatsApp Us
-                    </a>
-                    <Link
-                      href="/login"
-                      className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Sign In
-                    </Link>
-                    <Button
-                      variant="primary"
-                      size="medium"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        const event = new CustomEvent('openEnrollmentFromHeader');
-                        window.dispatchEvent(event);
-                      }}
-                      className="w-full"
-                    >
-                      Enroll Now
-                    </Button>
-                  </>
-                )}
-              </div>
-            </nav>
-          </div>
-        )}
       </div>
-    </header>
+
+    </>
   );
 };
