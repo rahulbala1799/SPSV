@@ -21,6 +21,7 @@ export async function GET(
 
     const searchParams = request.nextUrl.searchParams
     const includeAnswers = searchParams.get('includeAnswers') === 'true'
+    const learningMode = searchParams.get('learningMode') === 'true' // For Chapter Mode - show correct answers
     const countParam = searchParams.get('count')
     const randomize = searchParams.get('random') === 'true'
     const strategy = searchParams.get('strategy') as 'mix' | 'new_only' | 'prioritize_new' | null
@@ -186,8 +187,18 @@ export async function GET(
         difficulty: q.difficulty
       }
 
-      // Only include correct answer and explanation if student has answered
-      if (includeAnswers && studentAnswers[q.id]) {
+      // Include correct answer and explanation if:
+      // 1. Learning mode is enabled (for Chapter Mode)
+      // 2. Or student has answered and includeAnswers is true
+      if (learningMode) {
+        // Learning mode - always show correct answer and explanation
+        questionData.correctAnswer = q.correctAnswer
+        questionData.explanation = q.explanation
+        if (studentAnswers[q.id]) {
+          questionData.studentAnswer = studentAnswers[q.id]
+        }
+      } else if (includeAnswers && studentAnswers[q.id]) {
+        // Quiz mode - only show if student has answered
         questionData.correctAnswer = q.correctAnswer
         questionData.explanation = q.explanation
         questionData.studentAnswer = studentAnswers[q.id]
