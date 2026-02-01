@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiBook, FiCheckCircle, FiLock, FiClock } from 'react-icons/fi'
+import { getChapterSlug, isIndustryChapter, CHAPTER_ID_MAP } from '@/lib/chapterUtils'
 
 interface Chapter {
   id: number | string
@@ -77,44 +78,13 @@ export default function ChaptersPage() {
       const data = await response.json()
 
       if (response.ok && data.chapterProgress) {
-        // Map chapter IDs to route IDs
-        const chapterIdMap: Record<string, string> = {
-          'chapter_industry_part1': 'industry-part1',
-          'chapter_industry_part2': 'industry-part2',
-          'chapter_industry_part3': 'industry-part3',
-          'chapter_industry_5': 'industry-5',
-          'chapter_industry_7': 'industry-7',
-          'chapter_industry_8': 'industry-8',
-          'chapter_southside_full': 'southside-full',
-          'chapter_dublin_one_way_streets': 'dublin-one-way-streets',
-          'chapter_southside_streets_2': 'southside-streets-2',
-          'chapter_northside_routes': 'northside-routes',
-          'chapter_churches_cemeteries': 'churches-cemeteries',
-          'chapter_embassies': 'embassies',
-          'chapter_tourist_attractions': 'tourist-attractions',
-          'chapter_hospitals': 'hospitals',
-          'chapter_schools_libraries_universities': 'schools-libraries-universities',
-          'chapter_dublin_roads_navigation': 'dublin-roads-navigation',
-          'chapter_routes': 'routes',
-          'chapter_areas_and_roads': 'areas-and-roads'
-        }
-
         // Convert API chapters to display format and separate by category
         const industry: Chapter[] = []
         const area: Chapter[] = []
 
-        // Industry Knowledge chapter IDs
-        const industryIds = [
-          'chapter_industry_part1',
-          'chapter_industry_part2',
-          'chapter_industry_part3',
-          'chapter_industry_5',
-          'chapter_industry_7',
-          'chapter_industry_8'
-        ]
-
         data.chapterProgress.forEach((cp: ChapterFromAPI) => {
-          const routeId = chapterIdMap[cp.chapterId] || cp.chapterId.replace('chapter_', '').replace(/_/g, '-')
+          // Use utility function to get slug (with fallback to auto-generation)
+          const routeId = getChapterSlug(cp.chapterId)
           const chapter: Chapter = {
             id: routeId,
             title: cp.chapterTitle,
@@ -128,8 +98,8 @@ export default function ChaptersPage() {
             hasStarted: cp.hasStarted
           }
 
-          // Separate by category based on chapter ID
-          if (industryIds.includes(cp.chapterId)) {
+          // Separate by category using utility function
+          if (isIndustryChapter(cp.chapterId)) {
             industry.push(chapter)
           } else {
             area.push(chapter)
@@ -139,20 +109,20 @@ export default function ChaptersPage() {
         // Sort by chapter number
         industry.sort((a, b) => {
           const aNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
-            chapterIdMap[cp.chapterId] === a.id
+            getChapterSlug(cp.chapterId) === a.id
           )?.chapterNumber || 0
           const bNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
-            chapterIdMap[cp.chapterId] === b.id
+            getChapterSlug(cp.chapterId) === b.id
           )?.chapterNumber || 0
           return aNum - bNum
         })
 
         area.sort((a, b) => {
           const aNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
-            chapterIdMap[cp.chapterId] === a.id
+            getChapterSlug(cp.chapterId) === a.id
           )?.chapterNumber || 0
           const bNum = data.chapterProgress.find((cp: ChapterFromAPI) => 
-            chapterIdMap[cp.chapterId] === b.id
+            getChapterSlug(cp.chapterId) === b.id
           )?.chapterNumber || 0
           return aNum - bNum
         })
@@ -298,12 +268,7 @@ export default function ChaptersPage() {
               }`}
               onClick={() => {
                 if (!chapter.locked) {
-                  // Navigate to chapter content
-                  if (chapter.id === 'southside-full') {
-                    router.push('/dashboard/chapters/southside-full')
-                  } else {
-                    router.push(`/dashboard/chapters/${chapter.id}`)
-                  }
+                  router.push(`/dashboard/chapters/${chapter.id}`)
                 }
               }}
             >
