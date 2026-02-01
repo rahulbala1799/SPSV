@@ -67,92 +67,92 @@ export default function Home() {
   const platformFeatures = [
     {
       icon: <FiFlag className="w-6 h-6" />,
-      title: 'Flag Difficult Questions',
-      description: 'Mark challenging questions for later review. Our system tracks which topics need more attention and brings them back at the right time.',
+      title: 'Flag Difficult Taxi Test Questions',
+      description: 'Mark challenging taxi exam questions for later review. Our system tracks which topics need more attention for your taxi driver test preparation.',
       color: 'from-red-500 to-orange-500',
     },
     {
       icon: <FiTrendingUp className="w-6 h-6" />,
-      title: 'Track Your Practice',
-      description: 'See exactly how many questions you&apos;ve answered, your accuracy rate, and which chapters you&apos;ve mastered. No guessing where you stand.',
+      title: 'Track Your Taxi Test Progress',
+      description: 'See exactly how many taxi exam questions you&apos;ve answered, your accuracy rate, and which chapters you&apos;ve mastered. Know when you&apos;re ready to pass.',
       color: 'from-emerald-500 to-teal-500',
     },
     {
       icon: <FiRefreshCw className="w-6 h-6" />,
-      title: 'Spaced Repetition',
-      description: 'Questions resurface at scientifically-optimized intervals. This proven learning method helps you remember what you&apos;ve studied for the actual exam.',
+      title: 'Smart Repetition for Taxi Exams',
+      description: 'Taxi test questions resurface at scientifically-optimized intervals. This proven method helps you remember everything for your SPSV taxi driver exam.',
       color: 'from-purple-500 to-indigo-500',
     },
     {
       icon: <FiUsers className="w-6 h-6" />,
-      title: 'Expert Classroom Instruction',
-      description: 'Learn directly from experienced instructors in our Dublin 15 classroom. Ask questions, get instant feedback, and learn from others&apos; experiences.',
+      title: 'Expert Taxi Test Tutors',
+      description: 'Learn from experienced taxi exam instructors in our Dublin 15 classroom. They know exactly what the SPSV taxi driver test requires.',
       color: 'from-blue-500 to-cyan-500',
     },
     {
       icon: <FiSmartphone className="w-6 h-6" />,
-      title: 'Practice On-The-Go',
-      description: 'Continue your learning outside the classroom. Practice on your phone during commutes, breaks, or whenever you have 5 minutes spare.',
+      title: 'Practice Taxi Questions Anywhere',
+      description: 'Continue your taxi driver test prep outside class. Practice on your phone during commutes, breaks, or whenever you have 5 minutes spare.',
       color: 'from-amber-500 to-orange-500',
     },
     {
       icon: <FiTarget className="w-6 h-6" />,
-      title: 'Exam-Style Mock Tests',
-      description: 'Practice with timed tests that mirror the real SPSV exam. Get comfortable with the format and timing before test day.',
+      title: 'SPSV Taxi Exam Mock Tests',
+      description: 'Practice with timed tests that mirror the real taxi driver exam. Get comfortable with the format and timing before your official taxi test day.',
       color: 'from-rose-500 to-pink-500',
     },
   ];
 
   const methodBenefits = [
-    { icon: <FiBook />, label: 'Structured Curriculum' },
-    { icon: <FiRefreshCw />, label: 'Proven Learning Methods' },
-    { icon: <FiTarget />, label: 'Progress Tracking' },
-    { icon: <FiUsers />, label: 'Expert Instructors' },
+    { icon: <FiBook />, label: 'Complete Taxi Exam Syllabus' },
+    { icon: <FiRefreshCw />, label: 'Proven Taxi Test Methods' },
+    { icon: <FiTarget />, label: 'Taxi Exam Progress Tracking' },
+    { icon: <FiUsers />, label: 'Expert Taxi Test Tutors' },
   ];
 
   const classroomBenefits = [
     {
       icon: '👨‍🏫',
-      title: 'Expert Instructors',
-      description: 'Our tutors have years of experience helping students pass. They know exactly what the exam requires.',
+      title: 'Expert Taxi Test Instructors',
+      description: 'Our tutors have years of experience helping students pass the taxi driver test. They know exactly what the SPSV exam requires.',
     },
     {
       icon: '🗣️',
-      title: 'Ask Questions Anytime',
-      description: 'Stuck on something? Get immediate answers in class. No waiting for email replies.',
+      title: 'Ask Taxi Exam Questions',
+      description: 'Stuck on a taxi test topic? Get immediate answers in class. No waiting for email replies.',
     },
     {
       icon: '👥',
-      title: 'Learn with Others',
-      description: 'Study alongside fellow students. Learn from their questions and share the journey.',
+      title: 'Learn with Fellow Taxi Students',
+      description: 'Study alongside others preparing for their taxi driver exam. Learn from their questions and share the journey.',
     },
     {
       icon: '📍',
-      title: 'Dublin 15 Location',
-      description: 'Conveniently located in Blanchardstown. Easy access for students across Dublin.',
+      title: 'Dublin 15 Taxi School',
+      description: 'Taxi test classes conveniently located in Blanchardstown. Easy access for taxi driver students across Dublin.',
     },
   ];
 
   const appBenefits = [
     {
       icon: '📱',
-      title: 'Practice Anytime',
-      description: 'The app is available 24/7. Practice during lunch breaks, on the bus, or before bed.',
+      title: 'Practice Taxi Questions 24/7',
+      description: 'The taxi test app is available anytime. Practice taxi exam questions during lunch breaks, on the bus, or before bed.',
     },
     {
       icon: '🚩',
-      title: 'Flag for Review',
-      description: 'Mark difficult questions and come back to them. The system remembers what you struggle with.',
+      title: 'Flag Difficult Taxi Questions',
+      description: 'Mark challenging taxi driver test questions and come back to them. The system remembers what you struggle with.',
     },
     {
       icon: '📊',
-      title: 'See Your Progress',
-      description: 'Know exactly where you stand. Track accuracy, completed chapters, and time spent studying.',
+      title: 'Track Taxi Exam Progress',
+      description: 'Know exactly where you stand for your taxi test. Track accuracy across Industry &amp; Area Knowledge chapters.',
     },
     {
       icon: '🔄',
-      title: 'Smart Repetition',
-      description: 'Questions you got wrong come back at optimal intervals so you actually remember them.',
+      title: 'Smart Taxi Test Review',
+      description: 'Taxi exam questions you got wrong come back at optimal intervals so you actually remember them on test day.',
     },
   ];
 
@@ -173,8 +173,8 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
             <div className="flex flex-wrap justify-center gap-6 md:gap-12">
               {methodBenefits.map((benefit, index) => (
-                <div 
-                  key={index} 
+              <div 
+                key={index}
                   className={`flex items-center gap-3 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
@@ -182,8 +182,8 @@ export default function Home() {
                     {benefit.icon}
                   </div>
                   <span className="font-semibold text-gray-800">{benefit.label}</span>
-                </div>
-              ))}
+              </div>
+            ))}
             </div>
           </div>
         </div>
@@ -195,14 +195,14 @@ export default function Home() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-4">
               <FiZap className="w-4 h-4" />
-              The Best of Both Worlds
-            </div>
+              Complete Taxi Driver Test Preparation
+              </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Classroom Learning{' '}
-              <span className="text-gradient">+ Digital Practice</span>
-            </h2>
+              Taxi Test Classes{' '}
+              <span className="text-gradient">+ Practice App</span>
+              </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We combine expert in-person instruction with a powerful practice app. Learn the material in class, then reinforce it through structured practice at your own pace.
+              We combine expert taxi driver test instruction with a powerful practice app. Learn the SPSV taxi exam material in class, then reinforce it through structured practice at your own pace.
             </p>
           </div>
 
@@ -216,7 +216,7 @@ export default function Home() {
                     <FiUsers className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold">In-Person Classes</h3>
+                    <h3 className="text-2xl font-bold">Taxi Test Classes</h3>
                     <p className="text-emerald-100">Dublin 15, Blanchardstown</p>
                   </div>
                 </div>
@@ -227,8 +227,8 @@ export default function Home() {
                       <div>
                         <h4 className="font-bold mb-1">{benefit.title}</h4>
                         <p className="text-emerald-100 text-sm">{benefit.description}</p>
-                      </div>
-                    </div>
+                  </div>
+                </div>
                   ))}
                 </div>
               </div>
@@ -243,8 +243,8 @@ export default function Home() {
                     <FiSmartphone className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold">Practice App</h3>
-                    <p className="text-blue-100">Available 24/7 on any device</p>
+                    <h3 className="text-2xl font-bold">Taxi Test Practice App</h3>
+                    <p className="text-blue-100">500+ taxi exam questions, 24/7</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -255,7 +255,7 @@ export default function Home() {
                         <h4 className="font-bold mb-1">{benefit.title}</h4>
                         <p className="text-blue-100 text-sm">{benefit.description}</p>
                       </div>
-                    </div>
+                </div>
                   ))}
                 </div>
               </div>
@@ -275,17 +275,17 @@ export default function Home() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-4">
               <FiTarget className="w-4 h-4" />
-              Study Smarter, Not Harder
+              Pass Your Taxi Driver Test First Time
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Features That Help You{' '}
-              <span className="text-gradient">Actually Learn</span>
+              <span className="text-gradient">Pass The Taxi Exam</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our platform is built around proven learning methods. Every feature is designed to help you remember what you study and pass the exam.
+              Our taxi test platform is built around proven learning methods. Every feature is designed to help you remember what you study and pass your SPSV taxi driver exam.
             </p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {platformFeatures.map((feature, index) => (
               <div
@@ -319,23 +319,23 @@ export default function Home() {
             <div className="text-white">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-sm font-semibold mb-6">
                 <FiFlag className="w-4 h-4" />
-                Smart Review System
+                Taxi Test Smart Review
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Never Forget a{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
-                  Difficult Question
+                  Difficult Taxi Question
                 </span>
               </h2>
               <p className="text-xl text-gray-300 mb-8">
-                When you come across a tricky question, flag it with one tap. Our system keeps track of all your flagged questions so you can review them before the exam.
+                When you come across a tricky taxi test question, flag it with one tap. Our system keeps track of all your flagged questions so you can review them before your SPSV taxi driver exam.
               </p>
               <ul className="space-y-4 mb-8">
                 {[
-                  'Flag any question with one tap while practicing',
-                  'Review all flagged questions in a dedicated section',
-                  'Track which topics give you the most trouble',
-                  'Clear flags once you&apos;ve mastered the question',
+                  'Flag any taxi test question with one tap',
+                  'Review all flagged taxi exam questions before test day',
+                  'Track which taxi topics give you the most trouble',
+                  'Clear flags once you&apos;ve mastered the taxi question',
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -377,31 +377,31 @@ export default function Home() {
             <div className="order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-6">
                 <FiTrendingUp className="w-4 h-4" />
-                Know Where You Stand
+                Know When You&apos;re Ready for Your Taxi Test
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Track Every Step of Your{' '}
-                <span className="text-gradient">Learning Journey</span>
-              </h2>
+                Track Your{' '}
+                <span className="text-gradient">Taxi Exam Progress</span>
+            </h2>
               <p className="text-xl text-gray-600 mb-8">
-                No more guessing if you&apos;re ready. Our dashboard shows you exactly how many questions you&apos;ve practiced, your accuracy across topics, and which chapters need more work.
-              </p>
+                No more guessing if you&apos;re ready for your taxi driver test. Our dashboard shows you exactly how many taxi exam questions you&apos;ve practiced, your accuracy across topics, and which chapters need more work.
+            </p>
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-white p-4 rounded-xl shadow-md">
                   <div className="text-3xl font-bold text-emerald-600">18</div>
-                  <div className="text-sm text-gray-500">Chapters to Master</div>
-                </div>
+                  <div className="text-sm text-gray-500">Taxi Test Chapters</div>
+          </div>
                 <div className="bg-white p-4 rounded-xl shadow-md">
                   <div className="text-3xl font-bold text-blue-600">500+</div>
-                  <div className="text-sm text-gray-500">Practice Questions</div>
+                  <div className="text-sm text-gray-500">Taxi Exam Questions</div>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-md">
                   <div className="text-3xl font-bold text-purple-600">100%</div>
-                  <div className="text-sm text-gray-500">Syllabus Covered</div>
+                  <div className="text-sm text-gray-500">SPSV Syllabus Covered</div>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-md">
                   <div className="text-3xl font-bold text-orange-600">24/7</div>
-                  <div className="text-sm text-gray-500">Practice Access</div>
+                  <div className="text-sm text-gray-500">Taxi Practice Access</div>
                 </div>
               </div>
               <button
@@ -425,26 +425,26 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-6">
                 <FiRefreshCw className="w-4 h-4" />
-                Practice Makes Perfect
-              </div>
+                Taxi Test Practice Makes Perfect
+          </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Reinforce What You Learn{' '}
-                <span className="text-gradient">In Class</span>
-              </h2>
+                Reinforce Your{' '}
+                <span className="text-gradient">Taxi Exam Knowledge</span>
+            </h2>
               <p className="text-xl text-gray-600 mb-8">
-                After each classroom session, use the app to practice what you&apos;ve learned. The questions match what&apos;s covered in class, so you reinforce the material while it&apos;s fresh.
+                After each taxi test class, use the app to practice what you&apos;ve learned. The taxi exam questions match what&apos;s covered in class, so you reinforce the material while it&apos;s fresh.
               </p>
               <div className="space-y-4 mb-8">
                 {[
-                  { icon: '📚', text: 'Questions organized by chapter, matching classroom lessons' },
-                  { icon: '💡', text: 'Instant explanations for every answer' },
-                  { icon: '⏱️', text: 'Timed mock tests to simulate exam conditions' },
-                  { icon: '📈', text: 'See your improvement over time' },
+                  { icon: '📚', text: 'Taxi questions organized by chapter, matching classroom lessons' },
+                  { icon: '💡', text: 'Instant explanations for every taxi exam answer' },
+                  { icon: '⏱️', text: 'Timed taxi mock tests to simulate real exam conditions' },
+                  { icon: '📈', text: 'See your taxi test improvement over time' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                     <span className="text-2xl">{item.icon}</span>
                     <span className="text-gray-700">{item.text}</span>
-                  </div>
+          </div>
                 ))}
               </div>
             </div>
@@ -462,30 +462,30 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-6">
                 <FiBook className="w-4 h-4" />
-                Complete Preparation
+                Complete Taxi Driver Test Preparation
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Everything You Need to Know
+                Everything for Your Taxi Exam
               </h2>
               <p className="text-xl text-gray-600 mb-8">
-                Our curriculum covers the complete SPSV exam syllabus. Every topic, every regulation, every route you need to know.
+                Our taxi test curriculum covers the complete SPSV taxi driver exam syllabus. Every topic, every regulation, every Dublin route you need to know to pass.
               </p>
               <div className="space-y-6">
                 {[
                   {
                     icon: '📋',
-                    title: 'Industry Knowledge',
-                    desc: 'Regulations, licensing, fares, customer service, safety protocols.',
+                    title: 'Taxi Industry Knowledge',
+                    desc: 'Taxi regulations, licensing, fares, customer service, safety protocols for your taxi driver test.',
                   },
                   {
                     icon: '🗺️',
                     title: 'Dublin Area Knowledge',
-                    desc: 'Routes, landmarks, one-way streets, efficient navigation.',
+                    desc: 'Taxi routes, landmarks, one-way streets, efficient navigation for the Area Knowledge taxi exam.',
                   },
                   {
                     icon: '🎓',
-                    title: 'Test-Taking Strategies',
-                    desc: 'Time management, question analysis, proven techniques.',
+                    title: 'Taxi Test Strategies',
+                    desc: 'Time management, taxi exam question analysis, proven techniques to pass first time.',
                   },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4 items-start group">
@@ -502,7 +502,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="bg-gradient-to-br from-emerald-600 to-cyan-600 rounded-3xl p-8 text-white">
-                <h3 className="text-2xl font-bold mb-6">Pass Requirements</h3>
+                <h3 className="text-2xl font-bold mb-6">Taxi Driver Test Pass Requirements</h3>
                 <div className="space-y-4">
                   <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                     <div className="text-5xl font-bold text-emerald-200 mb-2">75%</div>
@@ -512,12 +512,12 @@ export default function Home() {
                     <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                       <div className="text-2xl font-bold text-emerald-200">€90</div>
                       <div className="text-sm text-emerald-100">Official test fee</div>
-                    </div>
+                </div>
                     <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                       <div className="text-2xl font-bold text-emerald-200">2</div>
                       <div className="text-sm text-emerald-100">Sections to pass</div>
-                    </div>
-                  </div>
+                </div>
+                </div>
                 </div>
               </div>
               {/* Decorative Elements */}
@@ -537,16 +537,16 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm font-semibold mb-6">
             <FiCalendar className="w-4 h-4" />
-            Classes Available Now
+            Taxi Test Classes Available Now
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Start Your{' '}
+            Ready to Pass Your{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-              SPSV Journey?
+              Taxi Driver Test?
             </span>
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join our next class in Dublin 15 and get full access to the practice platform. The combination of expert instruction and structured practice is the fastest way to pass.
+            Join our next taxi test class in Dublin 15 and get full access to the taxi exam practice app. Expert taxi driver instruction + structured practice = pass your SPSV taxi test first time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button
@@ -554,34 +554,34 @@ export default function Home() {
               className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105"
             >
               <span className="flex items-center justify-center gap-2">
-                Enquire About Classes
+                Enquire About Taxi Test Classes
                 <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </button>
-            <a
-              href="https://wa.me/353894034222"
-              target="_blank"
-              rel="noopener noreferrer"
+                <a 
+                  href="https://wa.me/353894034222" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
               className="px-8 py-4 border-2 border-white/30 hover:border-emerald-500/50 rounded-xl font-semibold text-white hover:bg-emerald-500/10 transition-all text-lg"
-            >
+                >
               <span className="flex items-center justify-center gap-2">
                 <FiMessageCircle className="w-5 h-5" />
                 Chat on WhatsApp
               </span>
-            </a>
-          </div>
+                </a>
+              </div>
           <div className="flex flex-wrap justify-center gap-6 text-gray-400">
             <span className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-400" />
-              Expert instructors
+              Expert taxi test tutors
             </span>
             <span className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-400" />
-              Full app access included
+              Taxi exam app included
             </span>
             <span className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-400" />
-              Dublin 15 location
+              Dublin 15 taxi school
             </span>
           </div>
         </div>
@@ -593,20 +593,20 @@ export default function Home() {
           <div className="text-center mb-12">
             <Image
               src="/logo.png"
-              alt="SPSV Mastery Class Dublin"
+              alt="Taxi Driver Test Training Dublin - SPSV Mastery Class"
               width={100}
               height={100}
               className="object-contain mx-auto mb-4 brightness-0 invert"
             />
-            <h2 className="text-3xl font-bold mb-2">SPSV Mastery Class Dublin</h2>
-            <p className="text-gray-400">Classroom instruction + digital practice for SPSV success</p>
+            <h2 className="text-3xl font-bold mb-2">Taxi Driver Test Classes Dublin</h2>
+            <p className="text-gray-400">Expert taxi test training + practice app for SPSV taxi exam success</p>
           </div>
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">📍</span>
               </div>
-              <h3 className="font-bold mb-2">Visit Us</h3>
+              <h3 className="font-bold mb-2">Taxi School Location</h3>
               <p className="text-gray-400 text-sm">
                 Dublin 15, Blanchardstown
               </p>
@@ -651,7 +651,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-            © {new Date().getFullYear()} SPSV Mastery Class Dublin. All rights reserved.
+            © {new Date().getFullYear()} SPSV Mastery Class Dublin - Taxi Driver Test Training. All rights reserved.
           </div>
         </div>
       </section>

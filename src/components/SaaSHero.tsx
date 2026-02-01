@@ -17,14 +17,14 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
   }, [])
 
   const benefits = [
-    'Expert Classroom Instruction',
+    'Expert Taxi Test Tutors',
+    'Industry & Area Knowledge',
     'Practice App Included',
-    'Flag & Review Difficult Questions',
-    'Track Your Progress'
+    'Dublin 15 Classes'
   ]
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden" aria-label="Taxi Driver Test Training Dublin">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950">
         {/* Gradient Orbs */}
@@ -65,25 +65,26 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
           {/* Trust Badge */}
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm mb-6 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <FiCheck className="w-4 h-4 text-emerald-400" />
-            <span className="text-emerald-300 text-sm font-medium">Classroom + App Learning System</span>
+            <span className="text-emerald-300 text-sm font-medium">Dublin&apos;s #1 Taxi Driver Test Training</span>
           </div>
 
-          {/* Main Heading */}
+          {/* Main Heading - SEO Optimized */}
           <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Master Your{' '}
+            Pass Your{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400 animate-gradient">
-              SPSV Test
+              Taxi Driver Test
             </span>
             <br />
             <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-300">
-              With Smart Learning
+              First Time, Guaranteed
             </span>
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle - SEO Optimized */}
           <p className={`text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-8 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Expert classroom instruction in Dublin 15 combined with a powerful practice app. 
-            Flag difficult questions, track your progress, and prepare with proven learning methods.
+            Expert <strong className="text-gray-300">SPSV taxi exam</strong> preparation in Dublin 15. 
+            In-person classes cover <strong className="text-gray-300">Industry Knowledge</strong> &amp; <strong className="text-gray-300">Area Knowledge</strong>, 
+            plus a practice app with 500+ questions to help you pass your <strong className="text-gray-300">taxi test</strong>.
           </p>
 
           {/* CTA Buttons */}
@@ -93,7 +94,7 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
               className="group relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
             >
               <span className="flex items-center justify-center gap-2">
-                Start Free Trial
+                Book Taxi Test Classes
                 <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity -z-10" />
@@ -104,7 +105,7 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
             >
               <span className="flex items-center justify-center gap-2">
                 <FiPlay className="w-5 h-5 text-emerald-400" />
-                See How It Works
+                See How We Help You Pass
               </span>
             </button>
           </div>
