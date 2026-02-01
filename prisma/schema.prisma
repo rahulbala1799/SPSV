@@ -60,10 +60,10 @@ enum TimedQuestionCategory {
 }
 
 enum TestAssignmentStatus {
-  DRAFT      // Test is being created, not yet published
-  ACTIVE     // Test is live and available to students
-  COMPLETED  // All assigned students have completed
-  ARCHIVED   // Test is no longer active
+  DRAFT // Test is being created, not yet published
+  ACTIVE // Test is live and available to students
+  COMPLETED // All assigned students have completed
+  ARCHIVED // Test is no longer active
 }
 
 enum StudentTestStatus {
@@ -81,17 +81,31 @@ enum FlaggedFrom {
   ASSIGNED_TEST
 }
 
+enum AchievementType {
+  MEDAL
+  TROPHY
+  BADGE
+}
+
+enum MedalTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
 // User model for authentication
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String   @id @default(cuid())
+  email         String   @unique
   name          String?
-  password      String    // Hashed password
-  role          Role      @default(STUDENT)
-  emailVerified Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  password      String // Hashed password
+  role          Role     @default(STUDENT)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
   // Relation to student profile if user is a student
   studentProfile Student?
   testSessions   TestSession[]
@@ -102,35 +116,38 @@ model User {
 
 // Student model with additional student-specific information
 model Student {
-  id              String    @id @default(cuid())
-  userId          String    @unique
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // Student details
-  phoneNumber     String?
-  dateOfBirth     DateTime?
-  address         String?
+  phoneNumber      String?
+  dateOfBirth      DateTime?
+  address          String?
   emergencyContact String?
-  enrollmentDate  DateTime  @default(now())
-  status          String    @default("active") // active, suspended, completed
-  
+  enrollmentDate   DateTime  @default(now())
+  status           String    @default("active") // active, suspended, completed
+
   // Course progress
-  progressData    Json?     // Store test progress, quiz scores, etc.
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  progressData Json? // Store test progress, quiz scores, etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  answers         Answer[]
-  chapterProgress ChapterProgress[]
-  untimedTestAttempts UntimedTestAttempt[]
-  activities      StudentActivity[]
-  questionAttempts QuestionAttempt[]
-  timedTestAttempts TimedTestAttemptTracking[]
-  dailyActivities  DailyActivity[]
-  assignedTests   AssignedTestStudent[]
+  answers              Answer[]
+  chapterProgress      ChapterProgress[]
+  untimedTestAttempts  UntimedTestAttempt[]
+  activities           StudentActivity[]
+  questionAttempts     QuestionAttempt[]
+  timedTestAttempts    TimedTestAttemptTracking[]
+  dailyActivities      DailyActivity[]
+  assignedTests        AssignedTestStudent[]
   assignedTestAttempts AssignedTestAttempt[]
-  flaggedQuestions FlaggedQuestion[]
+  flaggedQuestions     FlaggedQuestion[]
+  studentAchievements  StudentAchievement[]
+  studentPoints        StudentPoints?
+  pointsHistory        PointsHistory[]
 
   @@map("students")
 }
@@ -145,49 +162,49 @@ enum ChapterType {
 
 // Chapter model for organizing course content
 model Chapter {
-  id            String    @id @default(cuid())
+  id            String            @id @default(cuid())
   title         String
   description   String?
-  chapterNumber Int       // e.g., 1, 2, 3...
-  type          ChapterType @default(MCQ)
+  chapterNumber Int // e.g., 1, 2, 3...
+  type          ChapterType       @default(MCQ)
   category      QuestionCategory? // Category for untimed test filtering
-  duration      Int?      // Estimated minutes
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  questions     Question[]
-  progress      ChapterProgress[]
-  
+  duration      Int? // Estimated minutes
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  questions Question[]
+  progress  ChapterProgress[]
+
   @@map("chapters")
 }
 
 // Question model for storing MCQ questions
 model Question {
-  id            String    @id @default(cuid())
-  chapterId     String
-  chapter       Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  
-  questionText  String    // The actual question
-  questionNumber Int      // Order within chapter (1, 2, 3...)
-  category      QuestionCategory? // Inherited from chapter, for untimed tests
-  
-  options       Json      // Array of option objects: [{ id: "A", text: "Option A" }, ...]
-  correctAnswer String    // The ID of correct option (e.g., "A", "B", "C", "D")
-  explanation   String?   // Optional explanation for the answer
-  
-  points        Int       @default(1) // Points for correct answer
-  difficulty    String    @default("medium") // easy, medium, hard
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  answers       Answer[]
-  testQuestions TestQuestion[]
+  id        String  @id @default(cuid())
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  questionText   String // The actual question
+  questionNumber Int // Order within chapter (1, 2, 3...)
+  category       QuestionCategory? // Inherited from chapter, for untimed tests
+
+  options       Json // Array of option objects: [{ id: "A", text: "Option A" }, ...]
+  correctAnswer String // The ID of correct option (e.g., "A", "B", "C", "D")
+  explanation   String? // Optional explanation for the answer
+
+  points     Int    @default(1) // Points for correct answer
+  difficulty String @default("medium") // easy, medium, hard
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  answers               Answer[]
+  testQuestions         TestQuestion[]
   assignedTestQuestions AssignedTestQuestion[]
   assignedTestAnswers   AssignedTestAnswer[]
-  flaggedQuestions FlaggedQuestion[]
-  
+  flaggedQuestions      FlaggedQuestion[]
+
   @@unique([chapterId, questionNumber])
   @@index([category])
   @@map("questions")
@@ -195,43 +212,43 @@ model Question {
 
 // Track student answers and progress
 model Answer {
-  id            String    @id @default(cuid())
-  studentId     String
-  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  questionId    String
-  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
-  selectedAnswer String    // The option ID the student selected
-  isCorrect     Boolean
-  pointsEarned  Int       @default(0)
-  
-  answeredAt    DateTime  @default(now())
-  
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  selectedAnswer String // The option ID the student selected
+  isCorrect      Boolean
+  pointsEarned   Int     @default(0)
+
+  answeredAt DateTime @default(now())
+
   @@unique([studentId, questionId]) // One answer per student per question
   @@map("answers")
 }
 
 // Track chapter completion progress
 model ChapterProgress {
-  id              String    @id @default(cuid())
-  studentId       String
-  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  chapterId       String
-  chapter         Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  
-  isCompleted     Boolean   @default(false)
-  progressStatus  ProgressStatus @default(NOT_STARTED)
-  progressPercent Int       @default(0)
-  score           Int?      // Percentage score
-  totalQuestions  Int
-  correctAnswers  Int       @default(0)
-  timeSpentSeconds Int      @default(0)
-  startedAt       DateTime?
-  completedAt     DateTime?
-  
-  lastAccessed    DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  isCompleted      Boolean        @default(false)
+  progressStatus   ProgressStatus @default(NOT_STARTED)
+  progressPercent  Int            @default(0)
+  score            Int? // Percentage score
+  totalQuestions   Int
+  correctAnswers   Int            @default(0)
+  timeSpentSeconds Int            @default(0)
+  startedAt        DateTime?
+  completedAt      DateTime?
+
+  lastAccessed DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
   @@unique([studentId, chapterId]) // One progress record per student per chapter
   @@index([studentId])
   @@index([chapterId])
@@ -240,26 +257,26 @@ model ChapterProgress {
 
 // Untimed test attempts
 model UntimedTestAttempt {
-  id              String      @id @default(cuid())
-  studentId       String
-  student         Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  category        QuestionCategory // INDUSTRY_KNOWLEDGE or AREA_KNOWLEDGE
-  questionCount   Int         // Number of questions (5, 10, 15, etc.)
-  state           TestState   @default(CREATED)
-  
-  score           Int?        // Percentage score (0-100)
-  correctAnswers  Int         @default(0)
-  totalAnswered   Int         @default(0)
-  
-  createdAt       DateTime    @default(now())
-  startedAt       DateTime?   // When first question was answered
-  completedAt     DateTime?   // When test was completed
-  lastQuestionAt  DateTime?   // Last question answered timestamp
-  expiresAt       DateTime?   // Expiration for CREATED state (24h)
-  
-  testQuestions   TestQuestion[]
-  
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  category      QuestionCategory // INDUSTRY_KNOWLEDGE or AREA_KNOWLEDGE
+  questionCount Int // Number of questions (5, 10, 15, etc.)
+  state         TestState        @default(CREATED)
+
+  score          Int? // Percentage score (0-100)
+  correctAnswers Int  @default(0)
+  totalAnswered  Int  @default(0)
+
+  createdAt      DateTime  @default(now())
+  startedAt      DateTime? // When first question was answered
+  completedAt    DateTime? // When test was completed
+  lastQuestionAt DateTime? // Last question answered timestamp
+  expiresAt      DateTime? // Expiration for CREATED state (24h)
+
+  testQuestions TestQuestion[]
+
   @@index([studentId, state])
   @@index([studentId, createdAt])
   @@index([expiresAt])
@@ -268,18 +285,18 @@ model UntimedTestAttempt {
 
 // Individual questions in a test attempt
 model TestQuestion {
-  id              String             @id @default(cuid())
-  testAttemptId   String
-  testAttempt     UntimedTestAttempt @relation(fields: [testAttemptId], references: [id], onDelete: Cascade)
-  questionId      String
-  question        Question           @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
-  questionOrder   Int                // Position in test (1, 2, 3...)
-  selectedAnswer  String?            // Student's answer (A, B, C, D)
-  isCorrect       Boolean?           // Whether answer was correct
-  answeredAt      DateTime?          // When question was answered
-  idempotencyKey  String?            // UUID v4 for idempotent submissions
-  
+  id            String             @id @default(cuid())
+  testAttemptId String
+  testAttempt   UntimedTestAttempt @relation(fields: [testAttemptId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question           @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  questionOrder  Int // Position in test (1, 2, 3...)
+  selectedAnswer String? // Student's answer (A, B, C, D)
+  isCorrect      Boolean? // Whether answer was correct
+  answeredAt     DateTime? // When question was answered
+  idempotencyKey String? // UUID v4 for idempotent submissions
+
   @@unique([testAttemptId, questionOrder])
   @@unique([testAttemptId, questionId])
   @@index([idempotencyKey])
@@ -288,25 +305,25 @@ model TestQuestion {
 
 // Question Bank - Master repository of all available questions for timed tests
 model QuestionBank {
-  id            String              @id @default(cuid())
-  sourceQuestionId String?          // Link to original Question for fast sync
-  questionText  String
-  optionA       String
-  optionB       String
-  optionC       String
-  optionD       String
-  correctAnswer String
-  explanation   String?
-  category      TimedQuestionCategory
-  isActive      Boolean             @default(true)
-  timesUsed     Int                 @default(0)
-  timesCorrect  Int                 @default(0)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  
-  testQuestions TimedTestQuestion[]
+  id               String                @id @default(cuid())
+  sourceQuestionId String? // Link to original Question for fast sync
+  questionText     String
+  optionA          String
+  optionB          String
+  optionC          String
+  optionD          String
+  correctAnswer    String
+  explanation      String?
+  category         TimedQuestionCategory
+  isActive         Boolean               @default(true)
+  timesUsed        Int                   @default(0)
+  timesCorrect     Int                   @default(0)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  testQuestions    TimedTestQuestion[]
   flaggedQuestions FlaggedQuestion[]
-  
+
   @@index([category])
   @@index([category, isActive])
   @@index([sourceQuestionId])
@@ -315,31 +332,31 @@ model QuestionBank {
 
 // Test Session - Track user test attempts for timed tests
 model TestSession {
-  id                String            @id @default(cuid())
-  userId            String
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  testType          TestType
-  status            TestSessionStatus @default(IN_PROGRESS)
-  totalQuestions    Int
-  industryQuestions Int               @default(0)
-  areaQuestions     Int               @default(0)
-  timeAllotted      Int               // in seconds
-  timeRemaining     Int               // in seconds
-  score             Int?
-  scorePercentage   Decimal?
-  industryScore     Int               @default(0)
-  areaScore         Int               @default(0)
+  id                 String            @id @default(cuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testType           TestType
+  status             TestSessionStatus @default(IN_PROGRESS)
+  totalQuestions     Int
+  industryQuestions  Int               @default(0)
+  areaQuestions      Int               @default(0)
+  timeAllotted       Int // in seconds
+  timeRemaining      Int // in seconds
+  score              Int?
+  scorePercentage    Decimal?
+  industryScore      Int               @default(0)
+  areaScore          Int               @default(0)
   industryPercentage Decimal?
-  areaPercentage    Decimal?
-  startedAt         DateTime          @default(now())
-  pausedAt          DateTime?         // When test was paused
-  completedAt       DateTime?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  
-  questions         TimedTestQuestion[]
-  answers           TimedTestAnswer[]
-  
+  areaPercentage     Decimal?
+  startedAt          DateTime          @default(now())
+  pausedAt           DateTime? // When test was paused
+  completedAt        DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  questions TimedTestQuestion[]
+  answers   TimedTestAnswer[]
+
   @@index([userId])
   @@index([userId, status])
   @@index([userId, completedAt])
@@ -349,24 +366,24 @@ model TestSession {
 
 // Test Question - Questions used in a specific test session (snapshot)
 model TimedTestQuestion {
-  id            String              @id @default(cuid())
-  sessionId     String
-  session       TestSession         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  id             String                @id @default(cuid())
+  sessionId      String
+  session        TestSession           @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   questionBankId String
-  questionBank  QuestionBank        @relation(fields: [questionBankId], references: [id], onDelete: Restrict)
-  orderNumber   Int
-  questionText  String
-  optionA       String
-  optionB       String
-  optionC       String
-  optionD       String
-  correctAnswer String
-  explanation   String?
-  category      TimedQuestionCategory
-  createdAt     DateTime            @default(now())
-  
-  answer        TimedTestAnswer?
-  
+  questionBank   QuestionBank          @relation(fields: [questionBankId], references: [id], onDelete: Restrict)
+  orderNumber    Int
+  questionText   String
+  optionA        String
+  optionB        String
+  optionC        String
+  optionD        String
+  correctAnswer  String
+  explanation    String?
+  category       TimedQuestionCategory
+  createdAt      DateTime              @default(now())
+
+  answer TimedTestAnswer?
+
   @@index([sessionId])
   @@index([sessionId, orderNumber])
   @@map("timed_test_questions")
@@ -374,18 +391,18 @@ model TimedTestQuestion {
 
 // Test Answer - User's answers during timed test
 model TimedTestAnswer {
-  id            String            @id @default(cuid())
-  sessionId     String
-  session       TestSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  questionId    String            @unique
-  question      TimedTestQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id             String            @id @default(cuid())
+  sessionId      String
+  session        TestSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId     String            @unique
+  question       TimedTestQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   selectedAnswer String?
-  isCorrect     Boolean?
-  timeSpent     Int               @default(0) // in seconds
-  answeredAt    DateTime?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  
+  isCorrect      Boolean?
+  timeSpent      Int               @default(0) // in seconds
+  answeredAt     DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
   @@index([sessionId])
   @@index([sessionId, questionId])
   @@map("test_answers")
@@ -395,14 +412,14 @@ model TimedTestAnswer {
 
 // Track all student activities for analytics
 model StudentActivity {
-  id            String       @id @default(cuid())
-  studentId     String
-  student       Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  activityType  ActivityType
-  timestamp     DateTime     @default(now())
-  duration      Int?         // Duration in seconds (for sessions)
-  metadata      Json?        // Additional context (chapter_id, question_id, test_id, etc.)
-  
+  id           String       @id @default(cuid())
+  studentId    String
+  student      Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  activityType ActivityType
+  timestamp    DateTime     @default(now())
+  duration     Int? // Duration in seconds (for sessions)
+  metadata     Json? // Additional context (chapter_id, question_id, test_id, etc.)
+
   @@index([studentId, timestamp])
   @@index([activityType, timestamp])
   @@map("student_activities")
@@ -421,8 +438,8 @@ model QuestionAttempt {
   isCorrect        Boolean
   timeSpentSeconds Int?
   attemptNumber    Int      @default(1) // How many times they've tried this question
-  testType         String?  // 'timed', 'untimed', 'practice', 'chapter'
-  
+  testType         String? // 'timed', 'untimed', 'practice', 'chapter'
+
   @@index([studentId, questionId])
   @@index([studentId, attemptedAt])
   @@index([questionId])
@@ -432,24 +449,24 @@ model QuestionAttempt {
 
 // Track timed test attempts for analytics (separate from TestSession for flexibility)
 model TimedTestAttemptTracking {
-  id                String   @id @default(cuid())
-  studentId         String
-  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  testSessionId     String   // Reference to TestSession
-  testType          String   // "FULL_TIMED", "MOCK"
-  attemptNumber     Int      @default(1)
-  startedAt         DateTime @default(now())
-  completedAt       DateTime?
-  durationSeconds   Int?
-  score             Int      @default(0)
-  maxScore          Int
-  percentage        Float    @default(0)
-  questionsTotal    Int
-  questionsCorrect  Int      @default(0)
-  industryCorrect   Int      @default(0)
-  areaCorrect       Int      @default(0)
-  status            String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ABANDONED
-  
+  id               String    @id @default(cuid())
+  studentId        String
+  student          Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  testSessionId    String // Reference to TestSession
+  testType         String // "FULL_TIMED", "MOCK"
+  attemptNumber    Int       @default(1)
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  durationSeconds  Int?
+  score            Int       @default(0)
+  maxScore         Int
+  percentage       Float     @default(0)
+  questionsTotal   Int
+  questionsCorrect Int       @default(0)
+  industryCorrect  Int       @default(0)
+  areaCorrect      Int       @default(0)
+  status           String    @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ABANDONED
+
   @@index([studentId, testSessionId])
   @@index([studentId, completedAt])
   @@index([studentId, testType])
@@ -458,19 +475,19 @@ model TimedTestAttemptTracking {
 
 // Daily aggregated stats (for performance optimization)
 model DailyActivity {
-  id                   String   @id @default(cuid())
-  studentId            String
-  student              Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  date                 DateTime @db.Date
-  timeSpentSeconds     Int      @default(0)
-  questionsAttempted   Int      @default(0)
-  questionsCorrect     Int      @default(0)
-  chaptersAccessed     Json     @default("[]") // Array of chapter IDs
-  testsAttempted       Json     @default("[]") // Array of test IDs
-  loginCount           Int      @default(0)
-  firstLoginAt         DateTime?
-  lastLogoutAt         DateTime?
-  
+  id                 String    @id @default(cuid())
+  studentId          String
+  student            Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date               DateTime  @db.Date
+  timeSpentSeconds   Int       @default(0)
+  questionsAttempted Int       @default(0)
+  questionsCorrect   Int       @default(0)
+  chaptersAccessed   Json      @default("[]") // Array of chapter IDs
+  testsAttempted     Json      @default("[]") // Array of test IDs
+  loginCount         Int       @default(0)
+  firstLoginAt       DateTime?
+  lastLogoutAt       DateTime?
+
   @@unique([studentId, date])
   @@index([studentId, date])
   @@map("daily_activities")
@@ -480,27 +497,27 @@ model DailyActivity {
 
 // Admin-created custom MCQ tests that can be assigned to students
 model AssignedMCQTest {
-  id              String    @id @default(cuid())
-  title           String    // Test name/title
-  description     String?   // Optional test description
-  
+  id          String  @id @default(cuid())
+  title       String // Test name/title
+  description String? // Optional test description
+
   // Test Configuration
-  questionCount   Int       // Number of questions in test
-  isTimed         Boolean   @default(false)
-  timeLimitMinutes Int?     // Only if isTimed is true
-  
+  questionCount    Int // Number of questions in test
+  isTimed          Boolean @default(false)
+  timeLimitMinutes Int? // Only if isTimed is true
+
   // Test Status
-  status          TestAssignmentStatus @default(ACTIVE)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  dueDate         DateTime? // Optional deadline
-  
+  status    TestAssignmentStatus @default(ACTIVE)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  dueDate   DateTime? // Optional deadline
+
   // Relations
-  createdBy       String    // Admin user ID
-  testQuestions   AssignedTestQuestion[]
+  createdBy          String // Admin user ID
+  testQuestions      AssignedTestQuestion[]
   studentAssignments AssignedTestStudent[]
-  testAttempts    AssignedTestAttempt[]
-  
+  testAttempts       AssignedTestAttempt[]
+
   @@index([status])
   @@index([createdAt])
   @@map("assigned_mcq_tests")
@@ -508,16 +525,16 @@ model AssignedMCQTest {
 
 // Questions in an assigned MCQ test
 model AssignedTestQuestion {
-  id              String            @id @default(cuid())
-  testId          String
-  test            AssignedMCQTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
-  questionId      String
-  question        Question          @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  
-  questionOrder   Int               // Order in which question appears (1, 2, 3...)
-  
-  createdAt       DateTime          @default(now())
-  
+  id         String          @id @default(cuid())
+  testId     String
+  test       AssignedMCQTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  questionOrder Int // Order in which question appears (1, 2, 3...)
+
+  createdAt DateTime @default(now())
+
   @@unique([testId, questionOrder])
   @@unique([testId, questionId])
   @@index([testId])
@@ -526,29 +543,29 @@ model AssignedTestQuestion {
 
 // Assignment of tests to students
 model AssignedTestStudent {
-  id              String            @id @default(cuid())
-  testId          String
-  test            AssignedMCQTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
-  studentId       String
-  student         Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
+  id        String          @id @default(cuid())
+  testId    String
+  test      AssignedMCQTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
   // Assignment tracking
-  assignedAt      DateTime          @default(now())
-  notifiedAt      DateTime?         // When student was notified
-  
+  assignedAt DateTime  @default(now())
+  notifiedAt DateTime? // When student was notified
+
   // Current/Latest attempt tracking
-  status          StudentTestStatus @default(NOT_STARTED)
-  startedAt       DateTime?
-  completedAt     DateTime?
-  score           Int?              // Latest percentage score (0-100)
-  correctAnswers  Int?              // Latest number of correct answers
-  
+  status         StudentTestStatus @default(NOT_STARTED)
+  startedAt      DateTime?
+  completedAt    DateTime?
+  score          Int? // Latest percentage score (0-100)
+  correctAnswers Int? // Latest number of correct answers
+
   // Multi-attempt tracking
-  totalAttempts   Int               @default(0)    // Total number of attempts
-  bestScore       Int?              // Best score across all attempts
-  firstScore      Int?              // Score from first attempt
-  improvement     Int?              // Improvement from first to best (bestScore - firstScore)
-  
+  totalAttempts Int  @default(0) // Total number of attempts
+  bestScore     Int? // Best score across all attempts
+  firstScore    Int? // Score from first attempt
+  improvement   Int? // Improvement from first to best (bestScore - firstScore)
+
   @@unique([testId, studentId])
   @@index([studentId, status])
   @@index([testId, status])
@@ -557,34 +574,34 @@ model AssignedTestStudent {
 
 // Student attempts at assigned MCQ tests
 model AssignedTestAttempt {
-  id              String                  @id @default(cuid())
-  testId          String
-  test            AssignedMCQTest         @relation(fields: [testId], references: [id], onDelete: Cascade)
-  studentId       String
-  student         Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
+  id        String          @id @default(cuid())
+  testId    String
+  test      AssignedMCQTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
   // Attempt tracking
-  attemptNumber   Int                     @default(1) // 1st, 2nd, 3rd attempt, etc.
-  
+  attemptNumber Int @default(1) // 1st, 2nd, 3rd attempt, etc.
+
   // Attempt details
-  startedAt       DateTime                @default(now())
-  pausedAt        DateTime?               // When test was paused (for timed tests)
-  completedAt     DateTime?
-  timeSpentSeconds Int?                  // Total time spent (for timed tests)
-  
+  startedAt        DateTime  @default(now())
+  pausedAt         DateTime? // When test was paused (for timed tests)
+  completedAt      DateTime?
+  timeSpentSeconds Int? // Total time spent (for timed tests)
+
   // Results
-  score           Int?                    // Percentage score (0-100)
-  correctAnswers  Int                     @default(0)
+  score           Int? // Percentage score (0-100)
+  correctAnswers  Int      @default(0)
   totalQuestions  Int
-  percentageScore Decimal?                // Decimal for precision
-  
+  percentageScore Decimal? // Decimal for precision
+
   // Improvement tracking
-  improvementFromPrevious Int?            // Score improvement from previous attempt
-  
+  improvementFromPrevious Int? // Score improvement from previous attempt
+
   // Answers
-  answers         AssignedTestAnswer[]
-  
-  @@unique([testId, studentId, attemptNumber])  // Only one attempt per number
+  answers AssignedTestAnswer[]
+
+  @@unique([testId, studentId, attemptNumber]) // Only one attempt per number
   @@index([testId, studentId])
   @@index([studentId, completedAt])
   @@map("assigned_test_attempts")
@@ -592,16 +609,16 @@ model AssignedTestAttempt {
 
 // Answers for assigned MCQ tests
 model AssignedTestAnswer {
-  id              String              @id @default(cuid())
-  attemptId       String
-  attempt         AssignedTestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  questionId      String
-  question        Question            @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  
-  selectedAnswer  String?             // The option ID selected (A, B, C, D)
-  isCorrect       Boolean?
-  answeredAt      DateTime?
-  
+  id         String              @id @default(cuid())
+  attemptId  String
+  attempt    AssignedTestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question            @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  selectedAnswer String? // The option ID selected (A, B, C, D)
+  isCorrect      Boolean?
+  answeredAt     DateTime?
+
   @@unique([attemptId, questionId])
   @@index([attemptId])
   @@map("assigned_test_answers")
@@ -609,31 +626,120 @@ model AssignedTestAnswer {
 
 // Flagged Questions - Track questions flagged by students
 model FlaggedQuestion {
-  id            String    @id @default(cuid())
-  studentId     String
-  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
   // Support both Question and QuestionBank
-  questionId    String?   // For Question model (chapters, untimed, assigned tests)
-  question      Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
-  questionBankId String?  // For QuestionBank model (timed tests)
-  questionBank  QuestionBank? @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
-  
+  questionId String? // For Question model (chapters, untimed, assigned tests)
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  questionBankId String? // For QuestionBank model (timed tests)
+  questionBank   QuestionBank? @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
+
   // Track where the question was flagged from
-  flaggedFrom   FlaggedFrom @default(CHAPTER)
-  
+  flaggedFrom FlaggedFrom @default(CHAPTER)
+
   // Metadata
-  flaggedAt     DateTime  @default(now())
-  unflaggedAt   DateTime? // When unflagging occurred (if applicable)
-  isActive      Boolean   @default(true) // false when unflagged
-  
+  flaggedAt   DateTime  @default(now())
+  unflaggedAt DateTime? // When unflagging occurred (if applicable)
+  isActive    Boolean   @default(true) // false when unflagged
+
   // Notes: Only one of questionId or questionBankId should be set
   // Unique constraints are handled via partial indexes in migration SQL
   // (Prisma doesn't support partial unique indexes directly)
-  
+
   @@index([studentId, isActive])
   @@index([questionId])
   @@index([questionBankId])
   @@map("flagged_questions")
+}
+
+// ===== MOTIVATION & ACHIEVEMENTS SYSTEM =====
+
+// Achievement definitions - what achievements exist
+model Achievement {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  name        String
+  description String
+  type        AchievementType
+  tier        MedalTier?
+  icon        String
+  pointsValue Int             @default(0)
+  category    String
+  requirement Json // { type: string, count: number, extra?: object }
+  isActive    Boolean         @default(true)
+  sortOrder   Int             @default(0)
+  createdAt   DateTime        @default(now())
+
+  studentAchievements StudentAchievement[]
+
+  @@index([category])
+  @@index([type])
+  @@map("achievements")
+}
+
+// Track which achievements students have earned
+model StudentAchievement {
+  id            String      @id @default(cuid())
+  studentId     String
+  student       Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  earnedAt        DateTime  @default(now())
+  notifiedAt      DateTime?
+  isNew           Boolean   @default(true)
+  currentProgress Int       @default(0)
+  targetProgress  Int       @default(1)
+
+  @@unique([studentId, achievementId])
+  @@index([studentId])
+  @@index([achievementId])
+  @@map("student_achievements")
+}
+
+// Track student points and level progression
+model StudentPoints {
+  id        String  @id @default(cuid())
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  totalPoints    Int       @default(0)
+  currentLevel   Int       @default(1)
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate DateTime?
+
+  weeklyPoints   Int       @default(0)
+  monthlyPoints  Int       @default(0)
+  weekStartDate  DateTime?
+  monthStartDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pointsHistory PointsHistory[]
+
+  @@map("student_points")
+}
+
+// History of all points earned (for analytics)
+model PointsHistory {
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  points     Int
+  reason     String
+  sourceType String? // 'achievement', 'question_answered', 'chapter_completed', etc.
+  sourceId   String? // ID of the source (achievement ID, question ID, etc.)
+
+  createdAt       DateTime       @default(now())
+  studentPoints   StudentPoints? @relation(fields: [studentPointsId], references: [id])
+  studentPointsId String?
+
+  @@index([studentId, createdAt])
+  @@map("points_history")
 }
