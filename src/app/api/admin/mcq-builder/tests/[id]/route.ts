@@ -4,7 +4,7 @@ import { requireAdmin } from '@/lib/auth'
 
 /**
  * GET /api/admin/mcq-builder/tests/[id]
- * Get detailed test information
+ * Get detailed test information with multi-attempt support
  */
 export async function GET(
   request: NextRequest,
@@ -47,6 +47,28 @@ export async function GET(
               }
             }
           }
+        },
+        // Include all attempts for detailed analytics
+        testAttempts: {
+          include: {
+            student: {
+              include: {
+                user: {
+                  select: {
+                    name: true,
+                    email: true
+                  }
+                }
+              }
+            }
+          },
+          where: {
+            completedAt: { not: null }
+          },
+          orderBy: [
+            { studentId: 'asc' },
+            { attemptNumber: 'asc' }
+          ]
         }
       }
     })
@@ -73,29 +95,80 @@ export async function GET(
       chapter: tq.question.chapter
     }))
 
-    // Format students
-    const students = test.studentAssignments.map(sa => ({
-      id: sa.student.id,
-      name: sa.student.user.name,
-      email: sa.student.user.email,
-      status: sa.status,
-      assignedAt: sa.assignedAt,
-      startedAt: sa.startedAt,
-      completedAt: sa.completedAt,
-      score: sa.score,
-      correctAnswers: sa.correctAnswers
-    }))
+    // Group attempts by student
+    const attemptsByStudent = new Map<string, typeof test.testAttempts>()
+    test.testAttempts.forEach(attempt => {
+      const existing = attemptsByStudent.get(attempt.studentId) || []
+      existing.push(attempt)
+      attemptsByStudent.set(attempt.studentId, existing)
+    })
 
-    // Calculate statistics
+    // Format students with multi-attempt data
+    const students = test.studentAssignments.map(sa => {
+      const studentAttempts = attemptsByStudent.get(sa.student.id) || []
+      
+      return {
+        id: sa.student.id,
+        name: sa.student.user.name,
+        email: sa.student.user.email,
+        status: sa.status,
+        assignedAt: sa.assignedAt,
+        startedAt: sa.startedAt,
+        completedAt: sa.completedAt,
+        // Latest score
+        score: sa.score,
+        correctAnswers: sa.correctAnswers,
+        // Multi-attempt data
+        totalAttempts: sa.totalAttempts || studentAttempts.length,
+        bestScore: sa.bestScore,
+        firstScore: sa.firstScore,
+        improvement: sa.improvement,
+        // All attempts for this student
+        attempts: studentAttempts.map(a => ({
+          attemptNumber: a.attemptNumber,
+          score: a.score,
+          correctAnswers: a.correctAnswers,
+          totalQuestions: a.totalQuestions,
+          completedAt: a.completedAt,
+          timeSpentSeconds: a.timeSpentSeconds,
+          improvementFromPrevious: a.improvementFromPrevious
+        }))
+      }
+    })
+
+    // Calculate statistics with multi-attempt data
     const completedStudents = students.filter(s => s.status === 'COMPLETED')
+    const studentsWithMultipleAttempts = completedStudents.filter(s => (s.totalAttempts || 0) > 1)
+    const studentsWithImprovement = completedStudents.filter(s => s.improvement && s.improvement > 0)
+    
+    // Calculate best scores average (more meaningful than latest)
+    const averageBestScore = completedStudents.length > 0
+      ? completedStudents.reduce((sum, s) => sum + (s.bestScore || s.score || 0), 0) / completedStudents.length
+      : null
+
+    // Calculate latest scores average
+    const averageLatestScore = completedStudents.length > 0
+      ? completedStudents.reduce((sum, s) => sum + (s.score || 0), 0) / completedStudents.length
+      : null
+
+    // Calculate average improvement for students who improved
+    const averageImprovement = studentsWithImprovement.length > 0
+      ? studentsWithImprovement.reduce((sum, s) => sum + (s.improvement || 0), 0) / studentsWithImprovement.length
+      : null
+
     const statistics = {
       totalAssigned: students.length,
       completed: completedStudents.length,
       inProgress: students.filter(s => s.status === 'IN_PROGRESS').length,
       notStarted: students.filter(s => s.status === 'NOT_STARTED').length,
-      averageScore: completedStudents.length > 0
-        ? completedStudents.reduce((sum, s) => sum + (s.score || 0), 0) / completedStudents.length
-        : null
+      // Legacy (latest score average)
+      averageScore: averageLatestScore,
+      // Multi-attempt statistics
+      averageBestScore,
+      studentsWithMultipleAttempts: studentsWithMultipleAttempts.length,
+      studentsWithImprovement: studentsWithImprovement.length,
+      averageImprovement,
+      totalAttempts: test.testAttempts.length
     }
 
     return NextResponse.json({

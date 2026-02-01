@@ -536,12 +536,18 @@ model AssignedTestStudent {
   assignedAt      DateTime          @default(now())
   notifiedAt      DateTime?         // When student was notified
   
-  // Attempt tracking
+  // Current/Latest attempt tracking
   status          StudentTestStatus @default(NOT_STARTED)
   startedAt       DateTime?
   completedAt     DateTime?
-  score           Int?              // Percentage score (0-100)
-  correctAnswers  Int?              // Number of correct answers
+  score           Int?              // Latest percentage score (0-100)
+  correctAnswers  Int?              // Latest number of correct answers
+  
+  // Multi-attempt tracking
+  totalAttempts   Int               @default(0)    // Total number of attempts
+  bestScore       Int?              // Best score across all attempts
+  firstScore      Int?              // Score from first attempt
+  improvement     Int?              // Improvement from first to best (bestScore - firstScore)
   
   @@unique([testId, studentId])
   @@index([studentId, status])
@@ -557,6 +563,9 @@ model AssignedTestAttempt {
   studentId       String
   student         Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
   
+  // Attempt tracking
+  attemptNumber   Int                     @default(1) // 1st, 2nd, 3rd attempt, etc.
+  
   // Attempt details
   startedAt       DateTime                @default(now())
   pausedAt        DateTime?               // When test was paused (for timed tests)
@@ -569,9 +578,13 @@ model AssignedTestAttempt {
   totalQuestions  Int
   percentageScore Decimal?                // Decimal for precision
   
+  // Improvement tracking
+  improvementFromPrevious Int?            // Score improvement from previous attempt
+  
   // Answers
   answers         AssignedTestAnswer[]
   
+  @@unique([testId, studentId, attemptNumber])  // Only one attempt per number
   @@index([testId, studentId])
   @@index([studentId, completedAt])
   @@map("assigned_test_attempts")

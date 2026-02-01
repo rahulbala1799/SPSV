@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 /**
  * POST /api/student/assigned-tests/[id]/start
  * Start an assigned test (creates attempt)
+ * Now supports multiple attempts - students can retake completed tests
  */
 export async function POST(
   request: NextRequest,
@@ -56,13 +57,43 @@ export async function POST(
       )
     }
 
-    // Check if already completed
-    if (assignment.status === 'COMPLETED') {
-      return NextResponse.json(
-        { error: 'Test already completed' },
-        { status: 400 }
-      )
+    // Check if there's an in-progress attempt (resume instead of start new)
+    const existingInProgressAttempt = await prisma.assignedTestAttempt.findFirst({
+      where: {
+        testId: params.id,
+        studentId,
+        completedAt: null
+      },
+      orderBy: {
+        attemptNumber: 'desc'
+      }
+    })
+
+    if (existingInProgressAttempt) {
+      return NextResponse.json({
+        success: true,
+        attempt: {
+          id: existingInProgressAttempt.id,
+          testId: existingInProgressAttempt.testId,
+          startedAt: existingInProgressAttempt.startedAt,
+          attemptNumber: existingInProgressAttempt.attemptNumber,
+          isResume: true
+        }
+      })
     }
+
+    // Get the latest attempt number for this student+test
+    const latestAttempt = await prisma.assignedTestAttempt.findFirst({
+      where: {
+        testId: params.id,
+        studentId
+      },
+      orderBy: {
+        attemptNumber: 'desc'
+      }
+    })
+
+    const nextAttemptNumber = (latestAttempt?.attemptNumber || 0) + 1
 
     // Create attempt and update assignment in transaction
     const attempt = await prisma.$transaction(async (tx) => {
@@ -72,11 +103,12 @@ export async function POST(
           testId: params.id,
           studentId,
           totalQuestions: assignment.test.questionCount,
-          startedAt: new Date()
+          startedAt: new Date(),
+          attemptNumber: nextAttemptNumber
         }
       })
 
-      // Update assignment status
+      // Update assignment status (back to IN_PROGRESS for retakes)
       await tx.assignedTestStudent.update({
         where: {
           testId_studentId: {
@@ -86,7 +118,7 @@ export async function POST(
         },
         data: {
           status: 'IN_PROGRESS',
-          startedAt: new Date()
+          startedAt: nextAttemptNumber === 1 ? new Date() : assignment.startedAt // Keep original start for first attempt
         }
       })
 
@@ -98,7 +130,9 @@ export async function POST(
       attempt: {
         id: attempt.id,
         testId: attempt.testId,
-        startedAt: attempt.startedAt
+        startedAt: attempt.startedAt,
+        attemptNumber: attempt.attemptNumber,
+        isResume: false
       }
     })
   } catch (error: any) {

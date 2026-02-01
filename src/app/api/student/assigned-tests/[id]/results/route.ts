@@ -4,7 +4,8 @@ import { cookies } from 'next/headers'
 
 /**
  * GET /api/student/assigned-tests/[id]/results
- * Get test results after completion
+ * Get test results after completion (with all attempts)
+ * ?attempt=<number> to get specific attempt (default: latest)
  */
 export async function GET(
   request: NextRequest,
@@ -21,6 +22,9 @@ export async function GET(
       )
     }
 
+    const { searchParams } = new URL(request.url)
+    const requestedAttempt = searchParams.get('attempt')
+
     // Get user and student profile
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -36,11 +40,63 @@ export async function GET(
 
     const studentId = user.studentProfile.id
 
-    // Get completed attempt
+    // Get the assignment to see total attempts and best/first scores
+    const assignment = await prisma.assignedTestStudent.findUnique({
+      where: {
+        testId_studentId: {
+          testId: params.id,
+          studentId
+        }
+      }
+    })
+
+    if (!assignment) {
+      return NextResponse.json(
+        { error: 'Test not assigned to you' },
+        { status: 404 }
+      )
+    }
+
+    // Get ALL completed attempts for this test
+    const allAttempts = await prisma.assignedTestAttempt.findMany({
+      where: {
+        testId: params.id,
+        studentId,
+        completedAt: { not: null }
+      },
+      orderBy: {
+        attemptNumber: 'desc'
+      },
+      select: {
+        id: true,
+        attemptNumber: true,
+        score: true,
+        correctAnswers: true,
+        totalQuestions: true,
+        startedAt: true,
+        completedAt: true,
+        timeSpentSeconds: true,
+        improvementFromPrevious: true
+      }
+    })
+
+    if (allAttempts.length === 0) {
+      return NextResponse.json(
+        { error: 'No completed attempts found' },
+        { status: 404 }
+      )
+    }
+
+    // Get specific attempt or latest
+    const targetAttemptNumber = requestedAttempt 
+      ? parseInt(requestedAttempt, 10) 
+      : allAttempts[0].attemptNumber
+
     const attempt = await prisma.assignedTestAttempt.findFirst({
       where: {
         testId: params.id,
-        studentId
+        studentId,
+        attemptNumber: targetAttemptNumber
       },
       include: {
         test: true,
@@ -54,7 +110,7 @@ export async function GET(
 
     if (!attempt) {
       return NextResponse.json(
-        { error: 'Test attempt not found' },
+        { error: 'Attempt not found' },
         { status: 404 }
       )
     }
@@ -78,20 +134,44 @@ export async function GET(
       answeredAt: answer.answeredAt
     }))
 
+    // Format all attempts summary
+    const attemptsSummary = allAttempts.map(a => ({
+      attemptNumber: a.attemptNumber,
+      score: a.score,
+      correctAnswers: a.correctAnswers,
+      totalQuestions: a.totalQuestions,
+      completedAt: a.completedAt,
+      timeSpentSeconds: a.timeSpentSeconds,
+      improvementFromPrevious: a.improvementFromPrevious
+    }))
+
     return NextResponse.json({
       success: true,
+      // Current selected attempt
       attempt: {
         id: attempt.id,
         testTitle: attempt.test.title,
+        attemptNumber: attempt.attemptNumber,
         score: attempt.score,
         correctAnswers: attempt.correctAnswers,
         totalQuestions: attempt.totalQuestions,
         percentageScore: Number(attempt.percentageScore),
         startedAt: attempt.startedAt,
         completedAt: attempt.completedAt,
-        timeSpentSeconds: attempt.timeSpentSeconds
+        timeSpentSeconds: attempt.timeSpentSeconds,
+        improvementFromPrevious: attempt.improvementFromPrevious
       },
-      answers
+      answers,
+      // All attempts summary for the UI
+      allAttempts: attemptsSummary,
+      // Overall stats
+      stats: {
+        totalAttempts: assignment.totalAttempts || allAttempts.length,
+        bestScore: assignment.bestScore,
+        firstScore: assignment.firstScore,
+        improvement: assignment.improvement,
+        latestScore: assignment.score
+      }
     })
   } catch (error: any) {
     console.error('Error fetching results:', error)

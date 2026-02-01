@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 
 /**
  * GET /api/student/assigned-tests
- * Get all tests assigned to the current student
+ * Get all tests assigned to the current student (with multi-attempt support)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       ]
     })
 
-    // Format response
+    // Format response with multi-attempt data
     const tests = assignments.map(assignment => ({
       id: assignment.test.id,
       title: assignment.test.title,
@@ -73,8 +73,16 @@ export async function GET(request: NextRequest) {
       status: assignment.status,
       startedAt: assignment.startedAt,
       completedAt: assignment.completedAt,
+      // Latest attempt score
       score: assignment.score,
-      correctAnswers: assignment.correctAnswers
+      correctAnswers: assignment.correctAnswers,
+      // Multi-attempt data
+      totalAttempts: assignment.totalAttempts || 0,
+      bestScore: assignment.bestScore,
+      firstScore: assignment.firstScore,
+      improvement: assignment.improvement,
+      // Can retake if completed
+      canRetake: assignment.status === 'COMPLETED'
     }))
 
     return NextResponse.json({
