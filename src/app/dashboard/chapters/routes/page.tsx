@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook, FiBarChart2 } from 'react-icons/fi'
 import { QuestionSelectionModal } from '@/components/chapters/QuestionSelectionModal'
-import { ChapterModeSection } from '@/components/chapters/ChapterModeSection'
+import { ChapterModeButton } from '@/components/chapters/ChapterModeButton'
 
 export default function SouthsideFullChapterPage() {
   const router = useRouter()
@@ -192,11 +192,8 @@ export default function SouthsideFullChapterPage() {
               )}
             </div>
 
-            {/* Chapter Mode Section */}
-            <ChapterModeSection 
-              chapterId="chapter_routes"
-              chapterTitle={chapter.title}
-            />
+            {/* Chapter Mode Button */}
+            <ChapterModeButton chapterSlug="routes" />
 
             {/* Question Count Selector - Always shown */}
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { FiArrowLeft, FiPlay, FiCheckCircle, FiClock, FiBook, FiBarChart2 } from 'react-icons/fi'
 import { QuestionSelectionModal } from '@/components/chapters/QuestionSelectionModal'
 
+import { ChapterModeButton } from '@/components/chapters/ChapterModeButton'
 const CHAPTER_ID = 'chapter_industry_7'
 const CHAPTER_PATH = 'industry-7'
 
@@ -151,6 +152,13 @@ export default function IndustryChapter7Page() {
               <p className="text-sm text-gray-600">Score</p>
             </div>
           </div>
+
+          {/* Chapter Mode Button */}
+
+
+          <ChapterModeButton chapterSlug="industry-7" />
+
+
 
           {/* Question Count Selector - Always Visible */}
           <div className="mb-6">

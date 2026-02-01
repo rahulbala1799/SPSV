@@ -40,7 +40,7 @@ export function slugToChapterId(slug: string): string {
 /**
  * Get chapter route path
  */
-export function getChapterRoute(chapterId: string, path: 'main' | 'quiz' | 'results' | 'analytics' = 'main'): string {
+export function getChapterRoute(chapterId: string, path: 'main' | 'quiz' | 'results' | 'analytics' | 'chapter-mode' = 'main'): string {
   const slug = chapterIdToSlug(chapterId)
   
   const routes = {
@@ -48,6 +48,7 @@ export function getChapterRoute(chapterId: string, path: 'main' | 'quiz' | 'resu
     quiz: `/dashboard/chapters/${slug}/quiz`,
     results: `/dashboard/chapters/${slug}/results`,
     analytics: `/dashboard/chapters/${slug}/analytics`,
+    'chapter-mode': `/dashboard/chapters/${slug}/chapter-mode`,
   }
   
   return routes[path]
