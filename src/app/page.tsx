@@ -17,7 +17,6 @@ import {
   FiUsers,
   FiFlag,
   FiRefreshCw,
-  FiMessageCircle,
   FiCalendar
 } from 'react-icons/fi';
 import { Header } from '@/components/Header';
@@ -86,7 +85,7 @@ export default function Home() {
     {
       icon: <FiUsers className="w-6 h-6" />,
       title: 'Expert Taxi Test Tutors',
-      description: 'Learn from experienced taxi exam instructors in our Dublin 15 classroom. They know exactly what the SPSV taxi driver test requires.',
+      description: 'Learn from experienced taxi exam instructors in our Dublin classroom. They know exactly what the SPSV taxi driver test requires.',
       color: 'from-blue-500 to-cyan-500',
     },
     {
@@ -128,8 +127,8 @@ export default function Home() {
     },
     {
       icon: '📍',
-      title: 'Dublin 15 Taxi School',
-      description: 'Taxi test classes conveniently located in Blanchardstown. Easy access for taxi driver students across Dublin.',
+      title: 'Dublin Taxi School',
+      description: 'Taxi test classes conveniently located in Dublin. Easy access for taxi driver students.',
     },
   ];
 
@@ -217,7 +216,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">Taxi Test Classes</h3>
-                    <p className="text-emerald-100">Dublin 15, Blanchardstown</p>
+                    <p className="text-emerald-100">Dublin</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -546,7 +545,7 @@ export default function Home() {
             </span>
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join our next taxi test class in Dublin 15 and get full access to the taxi exam practice app. Expert taxi driver instruction + structured practice = pass your SPSV taxi test first time.
+            Join our next taxi test class in Dublin and get full access to the taxi exam practice app. Expert taxi driver instruction + structured practice = pass your SPSV taxi test first time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button
@@ -558,17 +557,6 @@ export default function Home() {
                 <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
             </button>
-                <a 
-                  href="https://wa.me/353894034222" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-              className="px-8 py-4 border-2 border-white/30 hover:border-emerald-500/50 rounded-xl font-semibold text-white hover:bg-emerald-500/10 transition-all text-lg"
-                >
-              <span className="flex items-center justify-center gap-2">
-                <FiMessageCircle className="w-5 h-5" />
-                Chat on WhatsApp
-              </span>
-                </a>
               </div>
           <div className="flex flex-wrap justify-center gap-6 text-gray-400">
             <span className="flex items-center gap-2">
@@ -581,7 +569,7 @@ export default function Home() {
             </span>
             <span className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-400" />
-              Dublin 15 taxi school
+              Dublin taxi school
             </span>
           </div>
         </div>
@@ -601,41 +589,14 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-2">Taxi Driver Test Classes Dublin</h2>
             <p className="text-gray-400">Expert taxi test training + practice app for SPSV taxi exam success</p>
           </div>
-          <div className="grid md:grid-cols-4 gap-8 text-center">
+          <div className="grid md:grid-cols-2 gap-8 text-center max-w-2xl mx-auto">
             <div>
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">📍</span>
               </div>
               <h3 className="font-bold mb-2">Taxi School Location</h3>
               <p className="text-gray-400 text-sm">
-                Dublin 15, Blanchardstown
-              </p>
-            </div>
-            <div>
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📞</span>
-              </div>
-              <h3 className="font-bold mb-2">Call Us</h3>
-              <p className="text-gray-400 text-sm">
-                <a href="tel:+353894034222" className="hover:text-emerald-400 transition-colors">
-                  +353 89 403 4222
-                </a>
-              </p>
-            </div>
-            <div>
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💬</span>
-              </div>
-              <h3 className="font-bold mb-2">WhatsApp</h3>
-              <p className="text-gray-400 text-sm">
-                <a 
-                  href="https://wa.me/353894034222" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-emerald-400 transition-colors"
-                >
-                  Quick Response
-                </a>
+                Dublin
               </p>
             </div>
             <div>

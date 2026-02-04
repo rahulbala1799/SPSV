@@ -361,23 +361,12 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
           <div className="bg-gray-50 p-4 sm:p-6 border-t border-gray-200">
             <div className="mb-3 sm:mb-4 text-center">
               <p className="text-xs sm:text-sm text-gray-600 mb-2">Contact us to enroll:</p>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center">
-                <a
-                  href="tel:+353894034222"
-                  className="text-base sm:text-lg font-bold text-green-600 hover:text-green-700 transition-colors"
-                >
-                  +353 89 403 4222
-                </a>
-                <span className="hidden sm:inline text-gray-400">|</span>
-                <a
-                  href="https://wa.me/353894034222"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs sm:text-sm text-green-600 hover:text-green-700 transition-colors underline"
-                >
-                  WhatsApp Us
-                </a>
-              </div>
+              <a
+                href="mailto:info@spsvmastery.ie"
+                className="text-base sm:text-lg font-bold text-green-600 hover:text-green-700 transition-colors"
+              >
+                info@spsvmastery.ie
+              </a>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
               <button
@@ -386,12 +375,6 @@ export const TimetableModal: React.FC<TimetableModalProps> = ({ isOpen, onClose,
               >
                 Close
               </button>
-              <a
-                href="tel:+353894034222"
-                className="px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-center text-sm sm:text-base"
-              >
-                Call to Enroll
-              </a>
             </div>
           </div>
         </div>

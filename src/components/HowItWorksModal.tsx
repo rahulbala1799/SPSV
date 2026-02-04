@@ -140,7 +140,7 @@ export function HowItWorksModal({ isOpen, onClose, onEnroll }: HowItWorksModalPr
                 </div>
                 <div>
                   <h3 className="text-xl font-bold">Classroom Sessions</h3>
-                  <p className="text-emerald-100">Dublin 15, Blanchardstown</p>
+                  <p className="text-emerald-100">Dublin</p>
                 </div>
               </div>
               <div className="space-y-4">
@@ -486,7 +486,7 @@ export function HowItWorksModal({ isOpen, onClose, onEnroll }: HowItWorksModalPr
               <h4 className="font-bold text-gray-800 mb-4">What You Get:</h4>
               <div className="space-y-3 text-left">
                 {[
-                  'In-person classes in Dublin 15',
+                  'In-person classes in Dublin',
                   'Full access to the practice app',
                   '500+ practice questions',
                   'Timed mock tests',

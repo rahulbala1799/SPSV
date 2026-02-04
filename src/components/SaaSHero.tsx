@@ -20,7 +20,7 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
     'Expert Taxi Test Tutors',
     'Industry & Area Knowledge',
     'Practice App Included',
-    'Dublin 15 Classes'
+    'Dublin Classes'
   ]
 
   return (
@@ -82,7 +82,7 @@ export function SaaSHero({ onGetStarted, onWatchDemo }: SaaSHeroProps) {
 
           {/* Subtitle - SEO Optimized */}
           <p className={`text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-8 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Expert <strong className="text-gray-300">SPSV taxi exam</strong> preparation in Dublin 15. 
+            Expert <strong className="text-gray-300">SPSV taxi exam</strong> preparation in Dublin. 
             In-person classes cover <strong className="text-gray-300">Industry Knowledge</strong> &amp; <strong className="text-gray-300">Area Knowledge</strong>, 
             plus a practice app with 500+ questions to help you pass your <strong className="text-gray-300">taxi test</strong>.
           </p>

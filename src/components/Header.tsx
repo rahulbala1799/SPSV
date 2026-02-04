@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMenu, FiX, FiPhone, FiMessageCircle, FiChevronDown, FiUser, FiArrowRight, FiBook, FiCalendar, FiHelpCircle, FiHome } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiUser, FiArrowRight, FiBook, FiCalendar, FiHelpCircle, FiHome } from 'react-icons/fi';
 
 export interface HeaderProps {
   onEnrollClick?: () => void;
@@ -166,35 +166,6 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 </Link>
               ) : (
                 <>
-                  {/* Contact Buttons */}
-                  <a
-                    href="tel:+353894034222"
-                    className={`p-2.5 rounded-lg transition-all duration-200 ${
-                      isScrolled 
-                        ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                    aria-label="Call us"
-                  >
-                    <FiPhone className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="https://wa.me/353894034222"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-2.5 rounded-lg transition-all duration-200 ${
-                      isScrolled 
-                        ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50' 
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                    aria-label="WhatsApp"
-                  >
-                    <FiMessageCircle className="w-5 h-5" />
-                  </a>
-                  
-                  {/* Divider */}
-                  <div className={`w-px h-6 ${isScrolled ? 'bg-gray-200' : 'bg-white/20'}`} />
-                  
                   {/* Sign In */}
                   <Link
                     href="/login"
@@ -310,28 +281,6 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
 
             {/* Mobile CTA Section */}
             <div className="mt-auto p-4 border-t border-gray-100 bg-gray-50/50 space-y-3">
-              {/* Contact Row */}
-              <div className="flex gap-3">
-                <a
-                  href="tel:+353894034222"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <FiPhone className="w-5 h-5" />
-                  Call
-                </a>
-                <a
-                  href="https://wa.me/353894034222"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-all font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <FiMessageCircle className="w-5 h-5" />
-                  WhatsApp
-                </a>
-              </div>
-              
               {/* Sign In */}
               {!user && (
                 <Link

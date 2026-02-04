@@ -8,7 +8,6 @@ import {
   FiCheck, 
   FiUser, 
   FiMail, 
-  FiPhone,
   FiCalendar,
   FiUsers,
   FiSmartphone,
@@ -31,7 +30,6 @@ interface FormData {
   enrollmentType: EnrollmentType;
   fullName: string;
   email: string;
-  phone: string;
   hasAppliedForTest: boolean;
   testDate: string;
   preferredSchedule: 'morning' | 'afternoon' | 'flexible';
@@ -47,7 +45,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
     enrollmentType: null,
     fullName: '',
     email: '',
-    phone: '',
     hasAppliedForTest: false,
     testDate: '',
     preferredSchedule: 'flexible',
@@ -65,7 +62,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
         enrollmentType: null,
         fullName: '',
         email: '',
-        phone: '',
         hasAppliedForTest: false,
         testDate: '',
         preferredSchedule: 'flexible',
@@ -94,8 +90,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
         return formData.enrollmentType !== null;
       case 1:
         return formData.fullName.trim() !== '' && 
-               formData.email.trim() !== '' && 
-               formData.phone.trim() !== '';
+               formData.email.trim() !== '';
       case 2:
         return true; // Optional fields
       case 3:
@@ -129,19 +124,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
     setIsSubmitted(true);
   };
 
-  const formatWhatsAppMessage = () => {
-    const message = `Hi! I'd like to enroll in the ${formData.enrollmentType === 'classroom' ? 'Classroom + App' : 'App Only'} plan.
-
-Name: ${formData.fullName}
-Email: ${formData.email}
-Phone: ${formData.phone}
-${formData.hasAppliedForTest ? `Test Date: ${formData.testDate}` : 'Not yet applied for test'}
-Preferred Schedule: ${formData.preferredSchedule}
-${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
-    
-    return encodeURIComponent(message);
-  };
-
   const renderStepContent = () => {
     if (isSubmitted) {
   return (
@@ -151,25 +133,10 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-3">Enrollment Request Sent!</h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Thank you for your interest! We&apos;ll contact you within 24 hours to confirm your enrollment and discuss next steps.
+            Thank you for your interest! We&apos;ll contact you by email within 24 hours to confirm your enrollment and discuss next steps.
           </p>
-          
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 max-w-md mx-auto">
-            <p className="text-sm text-emerald-800">
-              <strong>Want faster response?</strong> Message us directly on WhatsApp for immediate assistance.
-            </p>
-            </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              href={`https://wa.me/353894034222?text=${formatWhatsAppMessage()}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              <span>💬</span>
-              Chat on WhatsApp
-            </a>
             <button
               onClick={onClose}
               className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all"
@@ -222,7 +189,7 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
                       {[
                         { icon: <FiUsers className="w-4 h-4" />, text: 'In-person classes' },
                         { icon: <FiSmartphone className="w-4 h-4" />, text: 'Full app access' },
-                        { icon: <FiMapPin className="w-4 h-4" />, text: 'Dublin 15 location' },
+                        { icon: <FiMapPin className="w-4 h-4" />, text: 'Dublin location' },
                         { icon: <FiBook className="w-4 h-4" />, text: '500+ questions' },
                       ].map((item, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
@@ -294,7 +261,7 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
                 <div className="flex items-start gap-3">
                   <span className="text-xl">📍</span>
                   <div>
-                    <p className="font-semibold text-emerald-800">Classes held in Dublin 15, Blanchardstown</p>
+                    <p className="font-semibold text-emerald-800">Classes held in Dublin</p>
                     <p className="text-sm text-emerald-700">Small batch sizes (max 6 students) for personalized attention</p>
                   </div>
                 </div>
@@ -345,25 +312,6 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="your.email@example.com"
-                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-0 outline-none transition-colors text-gray-900"
-                  />
-                </div>
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <FiPhone className="w-5 h-5" />
-                  </div>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="+353 89 XXX XXXX"
                     className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-0 outline-none transition-colors text-gray-900"
                   />
                 </div>
@@ -545,14 +493,6 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                  <FiPhone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-xs text-gray-500">Phone</p>
-                    <p className="font-semibold text-gray-900">{formData.phone}</p>
-                  </div>
-                </div>
-
                 {formData.enrollmentType === 'classroom' && (
                   <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
                     <FiClock className="w-5 h-5 text-gray-400" />
@@ -585,17 +525,17 @@ ${formData.additionalNotes ? `Notes: ${formData.additionalNotes}` : ''}`;
               <ul className="space-y-2 text-sm text-amber-700">
                 <li className="flex items-start gap-2">
                   <FiCheck className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  We&apos;ll contact you within 24 hours to confirm your enrollment
+                  We&apos;ll contact you by email within 24 hours to confirm your enrollment
                 </li>
                 <li className="flex items-start gap-2">
                   <FiCheck className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   {formData.enrollmentType === 'classroom' 
-                    ? 'We\'ll discuss available class dates and batch timings'
+                    ? 'We\'ll email you available class dates and batch timings'
                     : 'We\'ll send you app login credentials'}
                 </li>
                 <li className="flex items-start gap-2">
                   <FiCheck className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  Payment details will be shared during the call
+                  Payment details will be shared via email
                 </li>
               </ul>
             </div>

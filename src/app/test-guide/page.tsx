@@ -6,7 +6,7 @@ import { Header } from '@/components/Header';
 import { 
   FiPhone, FiCreditCard, FiFileText, FiCheck, FiBook, FiMapPin, 
   FiClock, FiDollarSign, FiCalendar, FiAward, FiAlertCircle,
-  FiArrowRight, FiDownload, FiUser, FiMessageCircle
+  FiArrowRight, FiUser, FiMessageCircle
 } from 'react-icons/fi';
 
 export default function TestGuidePage() {
@@ -275,13 +275,11 @@ export default function TestGuidePage() {
 
             <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                 <a
-                  href="https://www.nationaltransport.ie/wp-content/uploads/2022/12/SPSV-Official-Manual-Edition-7.6.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/spsv-manual"
                 className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
                 >
-                <FiDownload className="w-5 h-5" />
-                Download Official SPSV Manual (PDF)
+                <FiBook className="w-5 h-5" />
+                View Official SPSV Manual
                 <FiArrowRight className="w-4 h-4" />
                 </a>
             </div>
@@ -455,11 +453,10 @@ export default function TestGuidePage() {
               <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
-                href="tel:+353894034222"
+                href="mailto:info@spsvmastery.ie"
               className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-3"
               >
-              <FiPhone className="w-5 h-5" />
-                Call: +353 89 403 4222
+                Email Us
               </a>
           </div>
         </div>

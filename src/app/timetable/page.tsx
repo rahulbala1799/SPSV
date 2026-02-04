@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { TimetableModal } from '@/components/TimetableModal';
-import { FiClock, FiCalendar, FiMapPin, FiCheck, FiUsers, FiArrowRight, FiPhone, FiMessageCircle, FiStar } from 'react-icons/fi';
+import { FiClock, FiCalendar, FiMapPin, FiCheck, FiUsers, FiArrowRight, FiStar } from 'react-icons/fi';
 
 interface TimeSlot {
   id: string;
@@ -175,7 +175,7 @@ export default function TimetablePage() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-0.5">Location</p>
-                        <p className="text-lg font-bold text-gray-900">Dublin 15, Blanchardstown</p>
+                        <p className="text-lg font-bold text-gray-900">Dublin</p>
                       </div>
                     </div>
                   </div>
@@ -281,20 +281,10 @@ export default function TimetablePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+353894034222"
+              href="mailto:info@spsvmastery.ie"
               className="group px-8 py-4 bg-white rounded-xl font-bold text-gray-900 hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
             >
-              <FiPhone className="w-5 h-5 text-emerald-600" />
-              Call: +353 89 403 4222
-            </a>
-            <a
-              href="https://wa.me/353894034222"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-3"
-            >
-              <FiMessageCircle className="w-5 h-5" />
-              WhatsApp Us
+              Email Us
             </a>
           </div>
         </div>

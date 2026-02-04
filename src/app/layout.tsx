@@ -89,18 +89,15 @@ const jsonLd = {
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Blanchardstown',
-    addressRegion: 'Dublin 15',
+    addressRegion: 'Dublin',
     addressCountry: 'IE',
   },
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+353-89-403-4222',
+    email: 'info@spsvmastery.ie',
     contactType: 'customer service',
     availableLanguage: 'English',
   },
-  sameAs: [
-    'https://wa.me/353894034222',
-  ],
   offers: {
     '@type': 'Offer',
     name: 'Taxi Driver Test Preparation Course',
