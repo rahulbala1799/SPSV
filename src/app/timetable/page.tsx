@@ -30,7 +30,7 @@ export default function TimetablePage() {
       ? currentYear + 1 
       : currentYear;
     
-    const enrollmentDate = new Date(enrollmentYear, 1, 1);
+    const enrollmentDate = new Date(enrollmentYear, 1, 10);
     const endDate = new Date(enrollmentDate);
     endDate.setDate(endDate.getDate() + 15);
     

@@ -49,15 +49,6 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
     };
   }, [isMenuOpen]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMenuOpen(false);
-    setIsMoreOpen(false);
-  };
-
   const handleEnroll = () => {
     const event = new CustomEvent('openEnrollmentFromHeader');
     window.dispatchEvent(event);
@@ -73,9 +64,9 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
   ];
 
   const moreLinks = [
-    { action: () => scrollToSection('features'), label: 'Why Choose Us' },
-    { action: () => scrollToSection('testimonials'), label: 'Success Stories' },
-    { action: () => scrollToSection('contact'), label: 'Contact' },
+    { href: '/#features', label: 'Why Choose Us' },
+    { href: '/success-stories', label: 'Success Stories' },
+    { href: '/#contact', label: 'Contact' },
   ];
 
   return (
@@ -142,13 +133,14 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 {isMoreOpen && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl shadow-gray-900/10 border border-gray-100 py-2 animate-fade-in">
                     {moreLinks.map((link, i) => (
-                      <button
+                      <Link
                         key={i}
-                        onClick={link.action}
-                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        href={link.href}
+                        onClick={() => { setIsMoreOpen(false); }}
+                        className="block px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
                       >
                         {link.label}
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -269,13 +261,14 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
               
               {/* More Links */}
               {moreLinks.map((link, index) => (
-                <button
+                <Link
                   key={index}
-                  onClick={link.action}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
                 >
                   {link.label}
-                </button>
+                </Link>
               ))}
             </nav>
 

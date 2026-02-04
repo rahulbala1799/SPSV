@@ -268,8 +268,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Platform Features Grid */}
-      <section className="py-20 px-4 bg-gray-50">
+      {/* Platform Features Grid - Why Choose Us */}
+      <section id="features" className="py-20 px-4 bg-gray-50 scroll-mt-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-4">
@@ -281,7 +281,7 @@ export default function Home() {
               <span className="text-gradient">Pass The Taxi Exam</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our taxi test platform is built around proven learning methods. Every feature is designed to help you remember what you study and pass your SPSV taxi driver exam.
+              Our taxi test platform is built around proven learning methods. In-class teaching with thorough coverage of the materials, daily mock tests, and weekly study sessions prepare you for the real NTA exam. Every feature is designed to help you remember what you study and pass your SPSV taxi driver exam.
             </p>
           </div>
           
@@ -576,7 +576,7 @@ export default function Home() {
       </section>
 
       {/* Contact & Location */}
-      <section className="py-16 px-4 bg-gray-900 text-white">
+      <section id="contact" className="py-16 px-4 bg-gray-900 text-white scroll-mt-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <Image
