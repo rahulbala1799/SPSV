@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { FiArrowLeft, FiCheck, FiX, FiClock, FiCheckCircle } from 'react-icons/fi'
 import { FaRegFlag, FaFlag } from 'react-icons/fa'
 import { v4 as uuidv4 } from 'uuid'
+import { getShuffledOptions } from '@/lib/quizUtils'
 
 interface Question {
   id: string
@@ -370,9 +371,9 @@ export default function TakeTestPage() {
             </h2>
           </div>
 
-          {/* Options */}
+          {/* Options - shuffled per question, positional labels (A=1st, B=2nd, …) */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option: { id: string; text: string }) => (
+            {getShuffledOptions(currentQuestion.options, `${testAttempt.id}-${currentQuestion.id}`).map((option: { id: string; text: string }, idx: number) => (
               <button
                 key={option.id}
                 onClick={() => setSelectedAnswer(option.id)}
@@ -391,7 +392,7 @@ export default function TakeTestPage() {
                         : 'bg-gray-100 text-gray-700'
                     }`}
                   >
-                    {option.id}
+                    {String.fromCharCode(65 + idx)}
                   </div>
                   <p className="text-gray-900 pt-1">{option.text}</p>
                 </div>

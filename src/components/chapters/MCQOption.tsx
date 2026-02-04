@@ -8,6 +8,8 @@ interface MCQOptionProps {
     id: string
     text: string
   }
+  /** When options are shuffled, show position (e.g. "A", "1") instead of option.id to avoid "C" as first option */
+  positionLabel?: string
   isSelected: boolean
   isCorrect: boolean | null // null = not answered yet, true/false = answer submitted
   isCorrectAnswer: boolean // Whether this is the correct answer
@@ -17,12 +19,14 @@ interface MCQOptionProps {
 
 export function MCQOption({
   option,
+  positionLabel,
   isSelected,
   isCorrect,
   isCorrectAnswer,
   onClick,
   disabled = false
 }: MCQOptionProps) {
+  const displayLabel = positionLabel ?? option.id
   const getOptionStyles = () => {
     if (disabled && isCorrectAnswer) {
       // Show correct answer in green
@@ -72,7 +76,7 @@ export function MCQOption({
             }
           `}
         >
-          {option.id}
+          {displayLabel}
         </div>
         <span className="font-medium">{option.text}</span>
       </div>

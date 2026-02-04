@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi'
@@ -31,6 +31,7 @@ function QuizContent() {
   const [submitting, setSubmitting] = useState(false)
   const [progress, setProgress] = useState<any>(null)
   const [questionCount, setQuestionCount] = useState<number | 'all'>('all')
+  const quizSessionIdRef = useRef<string | null>(null)
 
   const checkAccessAndLoad = async () => {
     try {
@@ -78,9 +79,9 @@ function QuizContent() {
 
       if (response.ok) {
         setQuestions(data.questions)
-        
-        // Start fresh - don't pre-populate previous answers
-        // Each practice session is independent
+        if (data.questions?.length && !quizSessionIdRef.current) {
+          quizSessionIdRef.current = crypto.randomUUID?.() ?? `quiz-${Date.now()}`
+        }
         setAnsweredQuestions({})
         setSelectedAnswers({})
       }
@@ -242,6 +243,7 @@ function QuizContent() {
         {currentQuestion && (
           <MCQQuestion
             question={currentQuestion}
+            shuffleSeed={quizSessionIdRef.current ? `${quizSessionIdRef.current}-${currentQuestion.id}` : undefined}
             selectedAnswer={selectedAnswers[currentQuestion.id] || null}
             isAnswered={answeredQuestions[currentQuestion.id] || false}
             isCorrect={currentQuestion.studentAnswer?.isCorrect || null}

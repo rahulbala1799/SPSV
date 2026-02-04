@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { FiArrowLeft, FiClock } from 'react-icons/fi'
 import { FaRegFlag, FaFlag } from 'react-icons/fa'
 import Timer from '@/components/timed-tests/Timer'
+import { shuffleTimedOptionsWithSeed } from '@/lib/quizUtils'
 
 interface Question {
   id: string
@@ -422,13 +423,14 @@ export default function TestSessionPage() {
               </h2>
             </div>
 
-            {/* Options */}
+            {/* Options - shuffled per question, positional labels (A=1st, B=2nd, …); submit by stored letter */}
             <div className="space-y-3 mb-6">
-              {['A', 'B', 'C', 'D'].map(option => {
-                const isSelected = answers[currentQuestion.id] === option
+              {shuffleTimedOptionsWithSeed(currentQuestion.options, `${session.id}-${currentQuestion.id}`).map((opt, idx) => {
+                const isSelected = answers[currentQuestion.id] === opt.letter
+                const positionLabel = String.fromCharCode(65 + idx)
                 return (
                   <label
-                    key={option}
+                    key={opt.letter}
                     className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
                       isSelected
                         ? 'border-green-500 bg-green-50'
@@ -438,13 +440,13 @@ export default function TestSessionPage() {
                     <input
                       type="radio"
                       name={`question-${currentQuestion.id}`}
-                      value={option}
+                      value={opt.letter}
                       checked={isSelected}
-                      onChange={() => handleAnswerSelect(option)}
+                      onChange={() => handleAnswerSelect(opt.letter)}
                       className="w-5 h-5 mr-4"
                     />
                     <span className="text-gray-900">
-                      <strong className="font-semibold">{option}.</strong> {currentQuestion.options[option as keyof typeof currentQuestion.options]}
+                      <strong className="font-semibold">{positionLabel}.</strong> {opt.text}
                     </span>
                   </label>
                 )

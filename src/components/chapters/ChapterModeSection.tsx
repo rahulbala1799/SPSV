@@ -6,6 +6,7 @@ import {
   FiZap, FiAward, FiBook
 } from 'react-icons/fi'
 import { FaFlag, FaRegFlag } from 'react-icons/fa'
+import { getShuffledOptions, getOrCreateChapterSessionId } from '@/lib/quizUtils'
 
 interface QuestionOption {
   id: string
@@ -64,6 +65,7 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
   const [flagging, setFlagging] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const expandedRef = useRef<HTMLDivElement>(null)
+  const chapterSessionId = typeof window !== 'undefined' ? getOrCreateChapterSessionId(chapterId) : chapterId
 
   useEffect(() => {
     if (chapterId) {
@@ -515,23 +517,27 @@ export function ChapterModeSection({ chapterId, chapterTitle }: ChapterModeSecti
                       )}
                     </div>
 
-                    {/* Correct Answer Indicator (Learning Mode) */}
-                    {question.correctAnswer && !answered && (
+                    {/* Correct Answer Indicator (Learning Mode) - use shuffled order for positional letter */}
+                    {question.correctAnswer && !answered && (() => {
+                      const shuffledForCorrect = getShuffledOptions(question.options, `${chapterSessionId}-${question.id}`)
+                      const correctIdx = shuffledForCorrect.findIndex((o: QuestionOption) => o.id === question.correctAnswer)
+                      const correctOption = question.options.find((o: QuestionOption) => o.id === question.correctAnswer)
+                      const positionalLetter = correctIdx >= 0 ? String.fromCharCode(65 + correctIdx) : question.correctAnswer
+                      return (
                       <div className="mb-4 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
                         <p className="text-xs font-bold text-emerald-400 mb-1 flex items-center gap-1">
                           <FiCheckCircle className="w-3 h-3" /> Correct Answer
                         </p>
                         <p className="text-sm text-emerald-200">
-                          {String.fromCharCode(65 + question.options.findIndex((o: QuestionOption) => o.id === question.correctAnswer))}: {
-                            question.options.find((o: QuestionOption) => o.id === question.correctAnswer)?.text
-                          }
+                          {positionalLetter}: {correctOption?.text}
                         </p>
                       </div>
-                    )}
+                      )
+                    })()}
 
-                    {/* Options */}
+                    {/* Options - shuffled per question, positional labels (A=1st, B=2nd, …) */}
                     <div className="space-y-2 mb-4">
-                      {question.options.map((option, idx) => {
+                      {getShuffledOptions(question.options, `${chapterSessionId}-${question.id}`).map((option, idx) => {
                         const isSelected = selectedAnswer === option.id
                         const isCorrectAnswer = question.correctAnswer === option.id // Show correct answer in learning mode
                         const isWrongSelection = answered && isSelected && !answerResult?.isCorrect

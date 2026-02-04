@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { shuffleOptionsWithSeed, getOrCreateChapterSessionId } from '@/lib/quizUtils';
 
 export interface Question {
   id: string;
@@ -24,6 +25,7 @@ export const ChapterQuestions: React.FC<ChapterQuestionsProps> = ({
 }) => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const chapterSessionId = typeof window !== 'undefined' ? getOrCreateChapterSessionId(chapterId) : chapterId;
 
   // Load saved answers from localStorage
   useEffect(() => {
@@ -127,10 +129,11 @@ export const ChapterQuestions: React.FC<ChapterQuestionsProps> = ({
             </div>
 
             <div className="space-y-3 ml-8">
-              {question.options.map((option) => {
+              {shuffleOptionsWithSeed(question.options, `${chapterSessionId}-${question.id}`).map((option, idx) => {
                 const isSelected = userAnswer === option.id;
                 const isCorrectOption = option.id === question.correctAnswer;
                 const showCorrect = submitted && isCorrectOption;
+                const positionLabel = String.fromCharCode(65 + idx);
 
                 return (
                   <label
@@ -154,6 +157,7 @@ export const ChapterQuestions: React.FC<ChapterQuestionsProps> = ({
                       disabled={submitted}
                       className="w-5 h-5 text-green-600"
                     />
+                    <span className="font-semibold text-gray-700 mr-2">{positionLabel}.</span>
                     <span className="flex-1 text-gray-900">{option.label}</span>
                     {showCorrect && (
                       <FaCheckCircle className="text-green-600 text-xl" />

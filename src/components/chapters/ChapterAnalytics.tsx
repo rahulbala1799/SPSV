@@ -9,6 +9,7 @@ import {
   FiZap, FiAward
 } from 'react-icons/fi'
 import { FaFlag, FaRegFlag } from 'react-icons/fa'
+import { getShuffledOptions, getOrCreateChapterSessionId } from '@/lib/quizUtils'
 
 interface QuestionOption {
   id: string
@@ -86,6 +87,7 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set())
   const [flagging, setFlagging] = useState(false)
   const expandedRef = useRef<HTMLDivElement>(null)
+  const chapterSessionId = typeof window !== 'undefined' ? getOrCreateChapterSessionId(chapterId) : chapterId
 
   useEffect(() => {
     checkAccessAndLoad()
@@ -527,9 +529,9 @@ export function ChapterAnalytics({ chapterId, chapterSlug, chapterTitle }: Chapt
                         )}
                       </div>
 
-                      {/* Options */}
+                      {/* Options - shuffled per question, positional labels (A=1st, B=2nd, …) */}
                       <div className="space-y-2 mb-4">
-                        {fullQuestion.options.map((option, idx) => {
+                        {getShuffledOptions(fullQuestion.options, `${chapterSessionId}-${fullQuestion.id}`).map((option, idx) => {
                           const isSelected = selectedAnswer === option.id
                           const isCorrectAnswer = answered && answerResult?.correctAnswer === option.id
                           const isWrongSelection = answered && isSelected && !answerResult?.isCorrect

@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { MCQOption } from './MCQOption'
 import { FaFlag, FaRegFlag } from 'react-icons/fa'
+import { getShuffledOptions } from '@/lib/quizUtils'
 
 interface Option {
   id: string
@@ -19,6 +20,8 @@ interface MCQQuestionProps {
     explanation?: string
     points: number
   }
+  /** Seed for option shuffle (e.g. quizSessionId + question.id). When set, options are shuffled and shown with positional labels A/B/C/D. */
+  shuffleSeed?: string
   selectedAnswer: string | null
   isAnswered: boolean
   isCorrect: boolean | null
@@ -30,6 +33,7 @@ interface MCQQuestionProps {
 
 export function MCQQuestion({
   question,
+  shuffleSeed,
   selectedAnswer,
   isAnswered,
   isCorrect,
@@ -38,6 +42,10 @@ export function MCQQuestion({
   submitting = false,
   showFlagOption = false
 }: MCQQuestionProps) {
+  const displayOptions = useMemo(
+    () => (shuffleSeed ? getShuffledOptions(question.options, shuffleSeed) : question.options),
+    [question.options, question.id, shuffleSeed]
+  )
   const [isFlagged, setIsFlagged] = useState(false)
   const [flagging, setFlagging] = useState(false)
   const [flagStatusLoaded, setFlagStatusLoaded] = useState(false)
@@ -146,12 +154,13 @@ export function MCQQuestion({
         </h2>
       </div>
 
-      {/* Options */}
+      {/* Options - shuffled when shuffleSeed set, positional labels (A=1st, B=2nd, …) */}
       <div className="space-y-3 mb-6">
-        {question.options.map((option) => (
+        {displayOptions.map((option, idx) => (
           <MCQOption
             key={option.id}
             option={option}
+            positionLabel={shuffleSeed ? String.fromCharCode(65 + idx) : undefined}
             isSelected={selectedAnswer === option.id}
             isCorrect={isCorrect}
             isCorrectAnswer={isAnswered && question.correctAnswer === option.id}

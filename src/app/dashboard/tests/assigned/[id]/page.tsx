@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiClock, FiCheck, FiChevronLeft, FiChevronRight, FiList } from 'react-icons/fi'
 import { FaRegFlag, FaFlag } from 'react-icons/fa'
+import { getShuffledOptions } from '@/lib/quizUtils'
 
 interface Question {
   id: string
@@ -483,10 +484,11 @@ export default function TakeAssignedTestPage() {
               {currentQuestion.questionText}
             </h2>
 
-            {/* Options */}
+            {/* Options - shuffled per question, positional labels (A=1st, B=2nd, …) */}
             <div className="space-y-3">
-              {currentQuestion.options.map((option: any) => {
+              {getShuffledOptions(currentQuestion.options, attemptId ? `${attemptId}-${currentQuestion.id}` : currentQuestion.id).map((option: { id: string; text: string }, idx: number) => {
                 const isSelected = selectedAnswerForCurrent === option.id
+                const positionLabel = String.fromCharCode(65 + idx)
 
                 return (
                   <label
@@ -506,7 +508,7 @@ export default function TakeAssignedTestPage() {
                       className="mt-1"
                     />
                     <div className="flex-1">
-                      <span className="font-semibold text-gray-700 mr-2">{option.id}.</span>
+                      <span className="font-semibold text-gray-700 mr-2">{positionLabel}.</span>
                       <span className="text-gray-900">{option.text}</span>
                     </div>
                   </label>
