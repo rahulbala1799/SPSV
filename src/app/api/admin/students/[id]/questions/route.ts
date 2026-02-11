@@ -189,19 +189,23 @@ export async function GET(
 
     const difficulty = {
       easy: easyQuestions.slice(0, 5).map(q => ({
-        questionText: q.questionText.substring(0, 100) + (q.questionText.length > 100 ? '...' : ''),
+        questionId: q.questionId,
+        questionText: q.questionText,
         chapter: q.chapter,
         category: q.category,
         attempts: q.attempts
       })),
       medium: mediumQuestions.slice(0, 5).map(q => ({
-        questionText: q.questionText.substring(0, 100) + (q.questionText.length > 100 ? '...' : ''),
+        questionId: q.questionId,
+        questionText: q.questionText,
         chapter: q.chapter,
         category: q.category,
         attempts: q.attempts
       })),
-      hard: hardQuestions.slice(0, 5).map(q => ({
-        questionText: q.questionText.substring(0, 100) + (q.questionText.length > 100 ? '...' : ''),
+      // Return ALL hard questions (no slice) with questionId for MCQ generation
+      hard: hardQuestions.map(q => ({
+        questionId: q.questionId,
+        questionText: q.questionText,
         chapter: q.chapter,
         category: q.category,
         attempts: q.attempts

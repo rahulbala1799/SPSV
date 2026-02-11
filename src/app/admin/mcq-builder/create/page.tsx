@@ -81,10 +81,47 @@ export default function CreateTestPage() {
       setCurrentUser(data.user)
       // Fetch questions and students
       await Promise.all([fetchQuestions(), fetchStudents()])
+      
+      // Check for preset data from student hard questions
+      loadPresetData()
+      
       setLoading(false)
     } catch (error) {
       console.error('Error:', error)
       router.push('/login')
+    }
+  }
+
+  const loadPresetData = () => {
+    try {
+      const presetQuestionIds = sessionStorage.getItem('mcqCreatePresetQuestionIds')
+      const presetStudentId = sessionStorage.getItem('mcqCreatePresetStudentId')
+      const presetQuestionCount = sessionStorage.getItem('mcqCreatePresetQuestionCount')
+
+      if (presetQuestionIds) {
+        const questionIds = JSON.parse(presetQuestionIds)
+        setSelectedQuestions(questionIds)
+        
+        if (presetQuestionCount) {
+          setQuestionCount(parseInt(presetQuestionCount))
+        }
+        
+        // Auto-suggest a title based on the preset
+        setTitle('Hard Questions Practice Test')
+        setDescription('Practice test generated from student\'s hard questions')
+        
+        // Clear sessionStorage after reading (one-time use)
+        sessionStorage.removeItem('mcqCreatePresetQuestionIds')
+        sessionStorage.removeItem('mcqCreatePresetQuestionCount')
+      }
+
+      if (presetStudentId) {
+        setSelectedStudents([presetStudentId])
+        // Clear after reading
+        sessionStorage.removeItem('mcqCreatePresetStudentId')
+      }
+    } catch (error) {
+      console.error('Error loading preset data:', error)
     }
   }
 
@@ -404,6 +441,22 @@ export default function CreateTestPage() {
           {/* Step 2: Select Questions */}
           {step === 2 && (
             <div className="space-y-4">
+              {/* Pre-loaded questions notice */}
+              {selectedQuestions.length > 0 && selectedQuestions.length === questionCount && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <FiClipboard className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-blue-900">Pre-selected Questions</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        {selectedQuestions.length} questions have been pre-selected from student's hard questions.
+                        You can adjust the selection below if needed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
@@ -489,6 +542,21 @@ export default function CreateTestPage() {
           {/* Step 3: Assign Students */}
           {step === 3 && (
             <div className="space-y-4">
+              {/* Pre-selected student notice */}
+              {selectedStudents.length === 1 && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <FiClipboard className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-blue-900">Pre-selected Student</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        A student has been pre-selected for this test. You can add more students or change the selection below.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">
                   Selected: {selectedStudents.length} students
