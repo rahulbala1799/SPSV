@@ -124,41 +124,13 @@ function ResultsContent() {
       </header>
 
       <main className="px-4 py-6 max-w-4xl mx-auto pb-24">
-        <div className={`bg-white rounded-2xl shadow-lg p-8 mb-6 text-center ${
-          isPassed ? 'border-2 border-green-500' : 'border-2 border-orange-500'
-        }`}>
-          <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-4 ${
-            isPassed ? 'bg-green-100' : 'bg-orange-100'
-          }`}>
-            {isPassed ? (
-              <FiAward className="w-12 h-12 text-green-600" />
-            ) : (
-              <FiX className="w-12 h-12 text-orange-600" />
-            )}
-          </div>
-          
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            {score}%
-          </h2>
-          
-          <p className={`text-lg font-semibold mb-4 ${
-            isPassed ? 'text-green-600' : 'text-orange-600'
-          }`}>
-            {isPassed ? 'Congratulations! You passed!' : 'Keep practicing!'}
-          </p>
-          
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
-            <div>
-              <span className="font-semibold text-gray-900">{correctCount}</span> correct
-            </div>
-            <div>
-              <span className="font-semibold text-gray-900">{totalQuestions - correctCount}</span> incorrect
-            </div>
-            <div>
-              <span className="font-semibold text-gray-900">{totalQuestions}</span> total
-            </div>
-          </div>
-        </div>
+        <ChapterResultsScoreCard
+          aggregateScore={aggregateScore}
+          aggregateCorrect={correctCount}
+          aggregateTotal={totalQuestions}
+          sessionCorrect={sessionCorrect != null ? parseInt(sessionCorrect, 10) : null}
+          sessionTotal={sessionTotal != null ? parseInt(sessionTotal, 10) : null}
+        />
 
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-4">Question Review</h3>

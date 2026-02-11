@@ -44,7 +44,7 @@ export function MCQQuestion({
 }: MCQQuestionProps) {
   const displayOptions = useMemo(
     () => (shuffleSeed ? getShuffledOptions(question.options, shuffleSeed) : question.options),
-    [question.options, question.id, shuffleSeed]
+    [question.options, shuffleSeed]
   )
   const [isFlagged, setIsFlagged] = useState(false)
   const [flagging, setFlagging] = useState(false)
