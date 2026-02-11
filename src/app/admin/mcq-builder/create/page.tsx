@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { FiChevronLeft, FiChevronRight, FiCheck, FiSearch } from 'react-icons/fi'
+import { FiChevronLeft, FiChevronRight, FiCheck, FiClipboard, FiSearch } from 'react-icons/fi'
 
 interface Question {
   id: string
@@ -449,7 +449,7 @@ export default function CreateTestPage() {
                     <div className="flex-1">
                       <h4 className="font-semibold text-blue-900">Pre-selected Questions</h4>
                       <p className="text-sm text-blue-700 mt-1">
-                        {selectedQuestions.length} questions have been pre-selected from student's hard questions.
+                        {selectedQuestions.length} questions have been pre-selected from the student&apos;s hard questions.
                         You can adjust the selection below if needed.
                       </p>
                     </div>
