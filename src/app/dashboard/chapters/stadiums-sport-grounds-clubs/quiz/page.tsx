@@ -184,7 +184,14 @@ function QuizContent() {
 
   const handleCompleteChapter = async () => {
     const count = questionCount === 'all' ? 'all' : questionCount.toString()
-    router.push(`/dashboard/chapters/${CHAPTER_PATH}/results?count=${count}`)
+    const sessionTotal = questions.length
+    const sessionCorrect = questions.filter((q) => q.studentAnswer?.isCorrect).length
+    const params = new URLSearchParams({ count: count.toString() })
+    if (sessionTotal > 0) {
+      params.set('sessionCorrect', sessionCorrect.toString())
+      params.set('sessionTotal', sessionTotal.toString())
+    }
+    router.push(`/dashboard/chapters/${CHAPTER_PATH}/results?${params.toString()}`)
   }
 
   if (loading) {

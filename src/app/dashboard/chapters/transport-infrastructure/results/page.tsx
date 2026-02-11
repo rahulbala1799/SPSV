@@ -3,8 +3,9 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowLeft, FiCheckCircle, FiX, FiAward, FiRotateCcw } from 'react-icons/fi'
+import { FiArrowLeft, FiCheckCircle, FiX, FiRotateCcw } from 'react-icons/fi'
 import { BottomNav } from '@/components/dashboard/BottomNav'
+import { ChapterResultsScoreCard } from '@/components/chapters/ChapterResultsScoreCard'
 
 const CHAPTER_ID = 'chapter_transport_infrastructure'
 const CHAPTER_PATH = 'transport-infrastructure'
@@ -97,10 +98,11 @@ function ResultsContent() {
     )
   }
 
-  const score = progress?.score || 0
-  const isPassed = score >= 80
+  const aggregateScore = progress?.score || 0
   const correctCount = progress?.correctAnswers || 0
   const totalQuestions = progress?.totalQuestions || questions.length
+  const sessionCorrect = searchParams.get('sessionCorrect')
+  const sessionTotal = searchParams.get('sessionTotal')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
