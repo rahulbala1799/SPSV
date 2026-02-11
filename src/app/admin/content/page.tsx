@@ -20,6 +20,7 @@ import {
 
 interface Question {
   id: string
+  chapterId?: string
   questionText: string
   questionNumber: number
   options: Array<{ id: string; text: string }>
@@ -452,7 +453,7 @@ export default function ContentManagementPage() {
         {(editingQuestion || addingQuestionTo) && (
           <QuestionModal
             question={editingQuestion}
-            chapterId={addingQuestionTo}
+            chapterId={addingQuestionTo ?? editingQuestion?.chapterId ?? null}
             onSave={handleSaveQuestion}
             onClose={() => {
               setEditingQuestion(null)
@@ -637,7 +638,8 @@ function QuestionModal({
     explanation: question?.explanation || '',
     difficulty: question?.difficulty || 'MEDIUM',
     points: question?.points || 10,
-    chapterId: chapterId || '',
+    // When editing, use question's chapterId; when adding, use the chapter we're adding to
+    chapterId: chapterId || question?.chapterId || '',
   })
 
   return (

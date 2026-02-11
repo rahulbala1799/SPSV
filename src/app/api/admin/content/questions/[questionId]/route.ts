@@ -26,10 +26,47 @@ export async function PATCH(
       return NextResponse.json({ error: 'Question not found' }, { status: 404 })
     }
 
-    // Update the question
+    // Whitelist only fields that are safe to update. Never pass chapterId from the body:
+    // when editing, the client may send chapterId as empty or from a different context,
+    // which would violate questions_chapterId_fkey.
+    const {
+      questionText,
+      options,
+      correctAnswer,
+      explanation,
+      difficulty,
+      points,
+      category,
+    } = body
+
+    const updateData: Record<string, unknown> = {}
+    if (questionText !== undefined) updateData.questionText = questionText
+    if (options !== undefined) {
+      if (!Array.isArray(options) || options.length !== 4) {
+        return NextResponse.json(
+          { error: 'Options must be an array of 4 items' },
+          { status: 400 }
+        )
+      }
+      updateData.options = options
+    }
+    if (correctAnswer !== undefined) {
+      if (!['A', 'B', 'C', 'D'].includes(correctAnswer)) {
+        return NextResponse.json(
+          { error: 'Correct answer must be A, B, C, or D' },
+          { status: 400 }
+        )
+      }
+      updateData.correctAnswer = correctAnswer
+    }
+    if (explanation !== undefined) updateData.explanation = explanation
+    if (difficulty !== undefined) updateData.difficulty = difficulty
+    if (points !== undefined) updateData.points = points
+    if (category !== undefined) updateData.category = category
+
     const updatedQuestion = await prisma.question.update({
       where: { id: questionId },
-      data: body,
+      data: updateData,
     })
 
     // Auto-sync to QuestionBank if chapter is active

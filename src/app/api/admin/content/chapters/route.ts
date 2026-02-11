@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
       ...(includeQuestions && {
         questions: chapter.questions.map((q: any) => ({
           id: q.id,
+          chapterId: q.chapterId,
           questionText: q.questionText,
           questionNumber: q.questionNumber,
           options: q.options,
