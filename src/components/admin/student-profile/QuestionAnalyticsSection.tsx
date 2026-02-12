@@ -583,20 +583,24 @@ export function QuestionAnalyticsSection({ studentId }: Props) {
                   <FiChevronLeft className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-1">
-                  {Array.from(
-                    { length: Math.ceil(difficulty.hard.length / hardQuestionsPageSize) },
-                    (_, i) => i + 1
-                  )
-                    .filter(page => {
-                      const totalPages = Math.ceil(difficulty.hard.length / hardQuestionsPageSize)
-                      if (totalPages <= 7) return true
-                      if (page === 1 || page === totalPages) return true
-                      if (page >= hardQuestionsPage - 1 && page <= hardQuestionsPage + 1) return true
-                      if (page === hardQuestionsPage - 2 || page === hardQuestionsPage + 2) return '...'
-                      return false
-                    })
-                    .map((page, idx, arr) => {
-                      if (page === '...') {
+                  {(() => {
+                    const totalPages = Math.ceil(difficulty.hard.length / hardQuestionsPageSize)
+                    let pages: (number | 'ellipsis')[] = []
+                    if (totalPages <= 7) {
+                      pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+                    } else {
+                      const show = new Set<number>([1, totalPages])
+                      for (let i = Math.max(1, hardQuestionsPage - 1); i <= Math.min(totalPages, hardQuestionsPage + 1); i++) {
+                        show.add(i)
+                      }
+                      const sorted = Array.from(show).sort((a, b) => a - b)
+                      for (let i = 0; i < sorted.length; i++) {
+                        if (i > 0 && sorted[i]! - sorted[i - 1]! > 1) pages.push('ellipsis')
+                        pages.push(sorted[i]!)
+                      }
+                    }
+                    return pages.map((page, idx) => {
+                      if (page === 'ellipsis') {
                         return (
                           <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">
                             ...
@@ -606,7 +610,7 @@ export function QuestionAnalyticsSection({ studentId }: Props) {
                       return (
                         <button
                           key={page}
-                          onClick={() => setHardQuestionsPage(page as number)}
+                          onClick={() => setHardQuestionsPage(page)}
                           className={`px-3 py-1 rounded text-sm transition-colors ${
                             hardQuestionsPage === page
                               ? 'bg-red-600 text-white'
@@ -616,7 +620,8 @@ export function QuestionAnalyticsSection({ studentId }: Props) {
                           {page}
                         </button>
                       )
-                    })}
+                    })
+                  })()}
                 </div>
                 <button
                   onClick={() =>
