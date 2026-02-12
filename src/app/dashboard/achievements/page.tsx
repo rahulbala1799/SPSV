@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiArrowLeft, FiLock, FiCheck, FiAward } from 'react-icons/fi'
 import { MedalsDisplay, TrophyShowcase, LevelProgress } from '@/components/motivation'
+import { useAchievements } from '@/hooks/useAchievements'
 
 interface Achievement {
   id: string
@@ -43,52 +44,45 @@ interface AchievementsData {
 
 export default function AchievementsPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [data, setData] = useState<AchievementsData | null>(null)
+  const [accessChecked, setAccessChecked] = useState(false)
+  const { data, loading: achievementsLoading, mutate } = useAchievements()
   const [activeTab, setActiveTab] = useState<'all' | 'medals' | 'trophies' | 'badges'>('all')
 
   useEffect(() => {
-    const checkAccessAndLoad = async () => {
+    const checkAccess = async () => {
       try {
         const response = await fetch('/api/auth/me')
-        const data = await response.json()
+        const authData = await response.json()
 
-        if (!response.ok || !data.user) {
+        if (!response.ok || !authData.user) {
           router.push('/login')
           return
         }
 
-        if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
+        if (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN') {
           router.push('/admin')
           return
         }
 
-        // Fetch achievements
-        const achievementsResponse = await fetch('/api/student/achievements')
-        if (achievementsResponse.ok) {
-          const achievementsData = await achievementsResponse.json()
-          setData(achievementsData)
-        } else {
-          // Trigger backfill if needed
-          await fetch('/api/student/achievements/backfill', { method: 'POST' })
-          const achievementsResponse2 = await fetch('/api/student/achievements')
-          if (achievementsResponse2.ok) {
-            const achievementsData = await achievementsResponse2.json()
-            setData(achievementsData)
-          }
-        }
-
-        setLoading(false)
+        setAccessChecked(true)
       } catch (error) {
         console.error('Error:', error)
         router.push('/login')
       }
     }
 
-    checkAccessAndLoad()
+    checkAccess()
   }, [router])
 
-  if (loading) {
+  // Mark achievements as seen when user views this page (stops "new" badge from persisting)
+  useEffect(() => {
+    if (!accessChecked || !data?.newAchievements?.length) return
+    fetch('/api/student/achievements/seen', { method: 'POST' })
+      .then((res) => res.ok && mutate())
+      .catch(() => {})
+  }, [accessChecked, data?.newAchievements?.length, mutate])
+
+  if (!accessChecked || (achievementsLoading && !data)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
@@ -111,8 +105,8 @@ export default function AchievementsPage() {
     ? data.achievements.trophies
     : data.achievements.badges
 
-  const earnedCodes = new Set(data.achievements.all.map(a => a.code))
-  const lockedToShow = data.achievements.locked.filter(a => {
+  const earnedCodes = new Set(data.achievements.all.map((a: Achievement) => a.code))
+  const lockedToShow = data.achievements.locked.filter((a: Achievement) => {
     if (activeTab === 'medals') return a.type === 'MEDAL'
     if (activeTab === 'trophies') return a.type === 'TROPHY'
     if (activeTab === 'badges') return a.type === 'BADGE'
@@ -153,7 +147,7 @@ export default function AchievementsPage() {
         {data.achievements.trophies.length > 0 && (
           <div className="mb-6">
             <TrophyShowcase 
-              earnedTrophies={data.achievements.trophies.map(t => ({
+              earnedTrophies={data.achievements.trophies.map((t: Achievement) => ({
                 id: t.id,
                 code: t.code,
                 name: t.name,
@@ -163,7 +157,7 @@ export default function AchievementsPage() {
                 isNew: t.isNew,
                 pointsValue: t.pointsValue
               }))}
-              allTrophies={data.achievements.locked.filter(a => a.type === 'TROPHY').map(t => ({
+              allTrophies={data.achievements.locked.filter((a: Achievement) => a.type === 'TROPHY').map((t: Achievement) => ({
                 code: t.code,
                 name: t.name,
                 description: t.description,
@@ -222,18 +216,15 @@ export default function AchievementsPage() {
         {/* Achievements Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {/* Earned Achievements */}
-          {displayAchievements.map((achievement) => (
+          {displayAchievements.map((achievement: Achievement) => (
             <div
               key={achievement.id}
               className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100 hover:shadow-xl transition-all transform hover:-translate-y-1 relative"
             >
               {achievement.isNew && (
                 <div className="absolute -top-1 -right-1 z-10">
-                  <span className="flex h-5 w-5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-[10px] font-bold items-center justify-center">
-                      !
-                    </span>
+                  <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-[10px] font-bold items-center justify-center shadow-md">
+                    !
                   </span>
                 </div>
               )}
@@ -252,7 +243,7 @@ export default function AchievementsPage() {
           ))}
 
           {/* Locked Achievements */}
-          {lockedToShow.map((achievement) => (
+          {lockedToShow.map((achievement: Achievement) => (
             <div
               key={achievement.code}
               className="bg-gray-50 rounded-2xl shadow-lg p-4 border border-gray-200 opacity-60 relative"
