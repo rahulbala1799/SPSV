@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
+import { LeadDetailModal } from '@/components/admin/LeadDetailModal'
 import {
   FiSearch,
   FiFilter,
   FiMail,
   FiPhone,
-  FiChevronDown,
-  FiChevronUp,
+  FiExternalLink,
 } from 'react-icons/fi'
 
 interface Lead {
@@ -56,7 +56,7 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   const checkAdminAndFetch = async () => {
@@ -109,7 +109,10 @@ export default function LeadsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       })
-      if (res.ok) await fetchLeads()
+      if (res.ok) {
+        await fetchLeads()
+        setSelectedLead((prev) => (prev?.id === id ? { ...prev, status } : prev))
+      }
     } finally {
       setUpdatingId(null)
     }
@@ -212,60 +215,46 @@ export default function LeadsPage() {
                 </thead>
                 <tbody>
                   {leads.map((lead) => (
-                    <>
-                      <tr
-                        key={lead.id}
-                        className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors"
-                        onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
-                      >
-                        <td className="px-6 py-4 text-sm text-gray-600">{formatDate(lead.createdAt)}</td>
-                        <td className="px-6 py-4 font-medium text-gray-900">{lead.fullName}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{lead.email}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{lead.phone}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-lg border ${SOURCE_COLORS[lead.source] || 'bg-gray-100 text-gray-700'}`}>
-                            {lead.source.replace('-', ' ')}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <select
-                            value={lead.status}
-                            onChange={(e) => { e.stopPropagation(); updateStatus(lead.id, e.target.value); }}
-                            onClick={(e) => e.stopPropagation()}
-                            disabled={updatingId === lead.id}
-                            className={`text-xs font-medium rounded-lg border px-2 py-1 cursor-pointer ${STATUS_COLORS[lead.status] || 'bg-gray-100'}`}
-                          >
-                            <option value="new">New</option>
-                            <option value="contacted">Contacted</option>
-                            <option value="converted">Converted</option>
-                            <option value="closed">Closed</option>
-                          </select>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            <a href={`mailto:${lead.email}`} className="p-2 rounded-lg hover:bg-emerald-50 text-emerald-600" title="Email">
-                              <FiMail className="w-4 h-4" />
-                            </a>
-                            <a href={`tel:${lead.phone.replace(/\s/g, '')}`} className="p-2 rounded-lg hover:bg-emerald-50 text-emerald-600" title="Call">
-                              <FiPhone className="w-4 h-4" />
-                            </a>
-                            {expandedId === lead.id ? <FiChevronUp className="w-5 h-5 text-gray-400" /> : <FiChevronDown className="w-5 h-5 text-gray-400" />}
-                          </div>
-                        </td>
-                      </tr>
-                      {expandedId === lead.id && (
-                        <tr key={`${lead.id}-detail`} className="bg-gray-50/80">
-                          <td colSpan={7} className="px-6 py-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              {lead.daysFreeFrom && <p><span className="text-gray-500">Days free:</span> {formatDate(lead.daysFreeFrom)} – {lead.daysFreeTo ? formatDate(lead.daysFreeTo) : '—'}</p>}
-                              {lead.whichDays && <p><span className="text-gray-500">Which days:</span> {lead.whichDays}</p>}
-                              {lead.preferredTime && <p><span className="text-gray-500">Preferred time:</span> {lead.preferredTime}</p>}
-                              {lead.additionalNotes && <p className="md:col-span-2"><span className="text-gray-500">Notes:</span> {lead.additionalNotes}</p>}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
+                    <tr
+                      key={lead.id}
+                      className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      <td className="px-6 py-4 text-sm text-gray-600">{formatDate(lead.createdAt)}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900">{lead.fullName}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{lead.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{lead.phone}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-lg border ${SOURCE_COLORS[lead.source] || 'bg-gray-100 text-gray-700'}`}>
+                          {lead.source.replace('-', ' ')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <select
+                          value={lead.status}
+                          onChange={(e) => { e.stopPropagation(); updateStatus(lead.id, e.target.value); }}
+                          onClick={(e) => e.stopPropagation()}
+                          disabled={updatingId === lead.id}
+                          className={`text-xs font-medium rounded-lg border px-2 py-1 cursor-pointer ${STATUS_COLORS[lead.status] || 'bg-gray-100'}`}
+                        >
+                          <option value="new">New</option>
+                          <option value="contacted">Contacted</option>
+                          <option value="converted">Converted</option>
+                          <option value="closed">Closed</option>
+                        </select>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          <a href={`mailto:${lead.email}`} className="p-2 rounded-lg hover:bg-emerald-50 text-emerald-600" title="Email">
+                            <FiMail className="w-4 h-4" />
+                          </a>
+                          <a href={`tel:${lead.phone.replace(/\s/g, '')}`} className="p-2 rounded-lg hover:bg-emerald-50 text-emerald-600" title="Call">
+                            <FiPhone className="w-4 h-4" />
+                          </a>
+                          <FiExternalLink className="w-5 h-5 text-gray-400" title="View details" />
+                        </div>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -287,12 +276,10 @@ export default function LeadsPage() {
             leads.map((lead) => (
               <div
                 key={lead.id}
-                className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+                className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer active:bg-gray-50 transition-colors"
+                onClick={() => setSelectedLead(lead)}
               >
-                <div
-                  className="p-4 flex flex-col gap-2"
-                  onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
-                >
+                <div className="p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-semibold text-gray-900">{lead.fullName}</p>
@@ -305,7 +292,7 @@ export default function LeadsPage() {
                       <span className={`px-2 py-0.5 text-xs font-medium rounded-lg border ${STATUS_COLORS[lead.status] || 'bg-gray-100'}`}>
                         {lead.status}
                       </span>
-                      {expandedId === lead.id ? <FiChevronUp className="w-5 h-5" /> : <FiChevronDown className="w-5 h-5" />}
+                      <FiExternalLink className="w-5 h-5 text-gray-400" />
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">{formatDate(lead.createdAt)}</p>
@@ -330,19 +317,19 @@ export default function LeadsPage() {
                     <option value="closed">Closed</option>
                   </select>
                 </div>
-                {expandedId === lead.id && (
-                  <div className="px-4 pb-4 pt-0 border-t border-gray-100">
-                    <p className="text-sm text-gray-600"><span className="text-gray-500">Phone:</span> {lead.phone}</p>
-                    {lead.daysFreeFrom && <p className="text-sm text-gray-600"><span className="text-gray-500">Days free:</span> {formatDate(lead.daysFreeFrom)} – {lead.daysFreeTo ? formatDate(lead.daysFreeTo) : '—'}</p>}
-                    {lead.whichDays && <p className="text-sm text-gray-600"><span className="text-gray-500">Which days:</span> {lead.whichDays}</p>}
-                    {lead.preferredTime && <p className="text-sm text-gray-600"><span className="text-gray-500">Time:</span> {lead.preferredTime}</p>}
-                    {lead.additionalNotes && <p className="text-sm text-gray-600 mt-2"><span className="text-gray-500">Notes:</span> {lead.additionalNotes}</p>}
-                  </div>
-                )}
+                <p className="px-4 pb-4 pt-0 text-xs text-gray-500">Tap to view full details</p>
               </div>
             ))
           )}
         </div>
+
+        {/* Lead detail modal */}
+        <LeadDetailModal
+          lead={selectedLead}
+          onClose={() => setSelectedLead(null)}
+          onStatusChange={updateStatus}
+          updatingStatus={updatingId !== null}
+        />
       </div>
     </AdminLayout>
   )
