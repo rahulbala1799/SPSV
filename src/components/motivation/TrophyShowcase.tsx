@@ -29,11 +29,8 @@ function TrophyCard({ trophy, index }: { trophy: EarnedTrophy; index: number }) 
       {/* New badge */}
       {trophy.isNew && (
         <div className="absolute -top-2 -right-2 z-10">
-          <span className="flex h-6 w-6">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-6 w-6 bg-gradient-to-br from-yellow-400 to-amber-500 text-white text-xs font-bold items-center justify-center">
-              ✨
-            </span>
+          <span className="relative inline-flex rounded-full h-6 w-6 bg-gradient-to-br from-yellow-400 to-amber-500 text-white text-xs font-bold items-center justify-center shadow-md">
+            ✨
           </span>
         </div>
       )}

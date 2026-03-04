@@ -21,7 +21,6 @@ import {
 } from 'react-icons/fi';
 import { Header } from '@/components/Header';
 import { SaaSHero } from '@/components/SaaSHero';
-import { EnrollmentModal } from '@/components/EnrollmentModal';
 import { CoursesModal } from '@/components/CoursesModal';
 import { HowItWorksModal } from '@/components/HowItWorksModal';
 import { StudentDashboardDemo } from '@/components/demos/StudentDashboardDemo';
@@ -36,8 +35,11 @@ import {
   MiniProgressRing 
 } from '@/components/demos/FeatureShowcase';
 
+const openEnrollment = (source: 'enrollment' | 'timetable' | 'success-stories' | 'test-guide' | 'contact' = 'enrollment') => {
+  window.dispatchEvent(new CustomEvent('openEnrollment', { detail: { source } }));
+};
+
 export default function Home() {
-  const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
   const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -46,21 +48,10 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  // Listen for enrollment modal trigger from courses modal and header
-  React.useEffect(() => {
-    const handleOpenEnrollment = () => {
-      setIsCoursesModalOpen(false);
-      setIsEnrollmentModalOpen(true);
-    };
-    const handleOpenEnrollmentFromHeader = () => {
-      setIsEnrollmentModalOpen(true);
-    };
+  useEffect(() => {
+    const handleOpenEnrollment = () => setIsCoursesModalOpen(false);
     window.addEventListener('openEnrollment', handleOpenEnrollment);
-    window.addEventListener('openEnrollmentFromHeader', handleOpenEnrollmentFromHeader);
-    return () => {
-      window.removeEventListener('openEnrollment', handleOpenEnrollment);
-      window.removeEventListener('openEnrollmentFromHeader', handleOpenEnrollmentFromHeader);
-    };
+    return () => window.removeEventListener('openEnrollment', handleOpenEnrollment);
   }, []);
 
   const platformFeatures = [
@@ -162,7 +153,7 @@ export default function Home() {
       
       {/* SaaS Hero Section */}
       <SaaSHero
-        onGetStarted={() => setIsEnrollmentModalOpen(true)}
+        onGetStarted={() => openEnrollment('enrollment')}
         onWatchDemo={() => setIsHowItWorksModalOpen(true)}
       />
 
@@ -345,7 +336,7 @@ export default function Home() {
                 ))}
               </ul>
               <button
-                onClick={() => setIsEnrollmentModalOpen(true)}
+                onClick={() => openEnrollment('enrollment')}
                 className="group px-8 py-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-red-500/25 transition-all hover:scale-105"
               >
                 <span className="flex items-center gap-2">
@@ -549,7 +540,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button
-              onClick={() => setIsEnrollmentModalOpen(true)}
+              onClick={() => openEnrollment('enrollment')}
               className="group px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105"
             >
               <span className="flex items-center justify-center gap-2">
@@ -618,10 +609,6 @@ export default function Home() {
       </section>
 
       {/* Modals */}
-      <EnrollmentModal
-        isOpen={isEnrollmentModalOpen}
-        onClose={() => setIsEnrollmentModalOpen(false)}
-      />
       <CoursesModal
         isOpen={isCoursesModalOpen}
         onClose={() => setIsCoursesModalOpen(false)}
@@ -629,7 +616,7 @@ export default function Home() {
       <HowItWorksModal
         isOpen={isHowItWorksModalOpen}
         onClose={() => setIsHowItWorksModalOpen(false)}
-        onEnroll={() => setIsEnrollmentModalOpen(true)}
+        onEnroll={() => openEnrollment('enrollment')}
       />
     </main>
   );

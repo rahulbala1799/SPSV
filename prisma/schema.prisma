@@ -743,3 +743,39 @@ model PointsHistory {
   @@index([studentId, createdAt])
   @@map("points_history")
 }
+
+// ===== WEBSITE LEADS CRM =====
+
+model WebsiteLead {
+  id        String   @id @default(cuid())
+  source    String   // "enrollment" | "timetable" | "success-stories" | "test-guide" | "contact"
+
+  // Required
+  fullName  String
+  email     String
+  phone     String
+
+  // Optional – availability
+  daysFreeFrom   DateTime? // Date range start
+  daysFreeTo     DateTime? // Date range end
+  whichDays      String?   // e.g. "Mon, Wed, Fri"
+  preferredTime  String?   // e.g. "Morning", "Afternoon", "Flexible"
+
+  // Optional – enrollment-specific
+  enrollmentType    String?
+  preferredSchedule String?
+  hasAppliedForTest Boolean?
+  testDate          DateTime?
+  howDidYouHear     String?
+  additionalNotes   String?
+
+  status    String   @default("new") // new, contacted, converted, closed
+  createdAt DateTime @default(now())
+  notes     String?  // Admin notes (internal)
+
+  @@index([email])
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+  @@map("website_leads")
+}

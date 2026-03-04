@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fi'
 import { BottomNav } from '@/components/dashboard/BottomNav'
 import { AchievementNotification } from '@/components/motivation'
+import { useAchievements } from '@/hooks/useAchievements'
 
 interface ProgressOverview {
   totalChapters: number
@@ -59,8 +60,8 @@ export default function StudentDashboard() {
   const [student, setStudent] = useState<StudentData | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [assignedTestsCount, setAssignedTestsCount] = useState(0)
-  const [achievements, setAchievements] = useState<any>(null)
   const [newAchievements, setNewAchievements] = useState<any[]>([])
+  const { data: achievements, loading: achievementsLoading } = useAchievements()
 
   const checkStudentAccess = async () => {
     try {
@@ -114,31 +115,6 @@ export default function StudentDashboard() {
         console.error('Error fetching assigned tests:', error)
       }
 
-      // Fetch achievements
-      try {
-        const achievementsResponse = await fetch('/api/student/achievements')
-        if (achievementsResponse.ok) {
-          const achievementsData = await achievementsResponse.json()
-          setAchievements(achievementsData)
-          if (achievementsData.newAchievements && achievementsData.newAchievements.length > 0) {
-            setNewAchievements(achievementsData.newAchievements)
-          }
-        } else {
-          // If no achievements exist, trigger backfill
-          const backfillResponse = await fetch('/api/student/achievements/backfill', { method: 'POST' })
-          if (backfillResponse.ok) {
-            // Fetch again after backfill
-            const achievementsResponse2 = await fetch('/api/student/achievements')
-            if (achievementsResponse2.ok) {
-              const achievementsData = await achievementsResponse2.json()
-              setAchievements(achievementsData)
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching achievements:', error)
-      }
-
       setLoading(false)
     } catch (error) {
       console.error('Error checking access:', error)
@@ -151,6 +127,12 @@ export default function StudentDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (achievements?.newAchievements?.length) {
+      setNewAchievements(achievements.newAchievements)
+    }
+  }, [achievements?.newAchievements])
+
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
@@ -160,7 +142,7 @@ export default function StudentDashboard() {
     }
   }
 
-  if (loading) {
+  if (loading && !student) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">

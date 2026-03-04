@@ -8,6 +8,7 @@ import {
   FiCheck, 
   FiUser, 
   FiMail, 
+  FiPhone,
   FiCalendar,
   FiUsers,
   FiSmartphone,
@@ -22,6 +23,7 @@ import {
 interface EnrollmentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  source?: 'enrollment' | 'timetable' | 'success-stories' | 'test-guide' | 'contact';
 }
 
 type EnrollmentType = 'classroom' | 'app-only' | null;
@@ -30,26 +32,37 @@ interface FormData {
   enrollmentType: EnrollmentType;
   fullName: string;
   email: string;
+  phone: string;
   hasAppliedForTest: boolean;
   testDate: string;
   preferredSchedule: 'morning' | 'afternoon' | 'flexible';
   howDidYouHear: string;
   additionalNotes: string;
+  daysFreeFrom: string;
+  daysFreeTo: string;
+  whichDays: string;
+  preferredTime: string;
 }
 
-export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClose }) => {
+export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClose, source = 'enrollment' }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     enrollmentType: null,
     fullName: '',
     email: '',
+    phone: '',
     hasAppliedForTest: false,
     testDate: '',
     preferredSchedule: 'flexible',
     howDidYouHear: '',
     additionalNotes: '',
+    daysFreeFrom: '',
+    daysFreeTo: '',
+    whichDays: '',
+    preferredTime: '',
   });
 
   // Reset form when modal opens
@@ -58,15 +71,21 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
       setCurrentStep(0);
       setIsSubmitting(false);
       setIsSubmitted(false);
+      setSubmitError(null);
       setFormData({
         enrollmentType: null,
         fullName: '',
         email: '',
+        phone: '',
         hasAppliedForTest: false,
         testDate: '',
         preferredSchedule: 'flexible',
         howDidYouHear: '',
         additionalNotes: '',
+        daysFreeFrom: '',
+        daysFreeTo: '',
+        whichDays: '',
+        preferredTime: '',
       });
     }
   }, [isOpen]);
@@ -90,7 +109,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
         return formData.enrollmentType !== null;
       case 1:
         return formData.fullName.trim() !== '' && 
-               formData.email.trim() !== '';
+               formData.email.trim() !== '' &&
+               formData.phone.trim().length >= 8;
       case 2:
         return true; // Optional fields
       case 3:
@@ -114,14 +134,38 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    console.log('Enrollment submitted:', formData);
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source,
+          fullName: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          enrollmentType: formData.enrollmentType,
+          preferredSchedule: formData.preferredSchedule,
+          hasAppliedForTest: formData.hasAppliedForTest,
+          testDate: formData.testDate || null,
+          howDidYouHear: formData.howDidYouHear || null,
+          additionalNotes: formData.additionalNotes || null,
+          daysFreeFrom: formData.daysFreeFrom || null,
+          daysFreeTo: formData.daysFreeTo || null,
+          whichDays: formData.whichDays || null,
+          preferredTime: formData.preferredTime || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit');
+      }
+      setIsSubmitted(true);
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderStepContent = () => {
@@ -131,9 +175,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
           <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center animate-scale-in">
             <FiCheckCircle className="w-10 h-10 text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">Enrollment Request Sent!</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-3">Request Sent!</h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Thank you for your interest! We&apos;ll contact you by email within 24 hours to confirm your enrollment and discuss next steps.
+            Thank you for your interest! We&apos;ll contact you within 24 hours to confirm and discuss next steps.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -312,7 +356,26 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="your.email@example.com"
-                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-0 outline-none transition-colors text-gray-900"
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900"
+                  />
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    <FiPhone className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    placeholder="087 123 4567"
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900"
                   />
                 </div>
               </div>
@@ -423,6 +486,68 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
                 </div>
               )}
 
+              {/* Days free (optional) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Days Free – From (optional)
+                  </label>
+                  <div className="relative">
+                    <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="date"
+                      value={formData.daysFreeFrom}
+                      onChange={(e) => handleInputChange('daysFreeFrom', e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Days Free – To (optional)
+                  </label>
+                  <div className="relative">
+                    <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="date"
+                      value={formData.daysFreeTo}
+                      onChange={(e) => handleInputChange('daysFreeTo', e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Which Days? (optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.whichDays}
+                  onChange={(e) => handleInputChange('whichDays', e.target.value)}
+                  placeholder="e.g. Mon, Wed, Fri"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Preferred Time (optional)
+                </label>
+                <select
+                  value={formData.preferredTime}
+                  onChange={(e) => handleInputChange('preferredTime', e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900 bg-white"
+                >
+                  <option value="">Select</option>
+                  <option value="morning">Morning</option>
+                  <option value="afternoon">Afternoon</option>
+                  <option value="flexible">Flexible</option>
+                  <option value="evening">Evening</option>
+                </select>
+              </div>
+
               {/* Additional Notes */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -433,7 +558,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
                   onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
                   placeholder="Any questions or special requirements?"
                   rows={3}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-0 outline-none transition-colors text-gray-900 resize-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-colors text-gray-900 resize-none"
                 />
               </div>
             </div>
@@ -490,6 +615,14 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
                   <div>
                     <p className="text-xs text-gray-500">Email</p>
                     <p className="font-semibold text-gray-900">{formData.email}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
+                  <FiPhone className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Phone</p>
+                    <p className="font-semibold text-gray-900">{formData.phone}</p>
                   </div>
                 </div>
 
@@ -603,6 +736,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ isOpen, onClos
 
         {/* Content */}
         <div className="px-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+          {submitError && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              {submitError}
+            </div>
+          )}
           {renderStepContent()}
         </div>
 

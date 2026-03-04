@@ -13,7 +13,7 @@ import {
   FiMenu,
   FiX,
   FiBarChart2,
-  FiMessageSquare,
+  FiInbox,
 } from 'react-icons/fi'
 
 interface AdminLayoutProps {
@@ -28,6 +28,7 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: FiHome },
+    { name: 'Leads', href: '/admin/leads', icon: FiInbox },
     { name: 'Students', href: '/admin/students', icon: FiUsers },
     { name: 'Content', href: '/admin/content', icon: FiFileText },
     { name: 'MCQ Builder', href: '/admin/mcq-builder', icon: FiClipboard },

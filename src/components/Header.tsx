@@ -50,8 +50,13 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
   }, [isMenuOpen]);
 
   const handleEnroll = () => {
-    const event = new CustomEvent('openEnrollmentFromHeader');
-    window.dispatchEvent(event);
+    window.dispatchEvent(new CustomEvent('openEnrollmentFromHeader'));
+    setIsMenuOpen(false);
+    setIsMoreOpen(false);
+  };
+
+  const handleContact = () => {
+    window.dispatchEvent(new CustomEvent('openEnrollmentContact'));
     setIsMenuOpen(false);
     setIsMoreOpen(false);
   };
@@ -63,10 +68,10 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
     { href: '/spsv-manual', label: 'Official Manual', icon: <FiBook className="w-4 h-4" /> },
   ];
 
-  const moreLinks = [
+  const moreLinks: { href?: string; onClick?: () => void; label: string }[] = [
     { href: '/#features', label: 'Why Choose Us' },
     { href: '/success-stories', label: 'Success Stories' },
-    { href: '/#contact', label: 'Contact' },
+    { onClick: handleContact, label: 'Contact' },
   ];
 
   return (
@@ -133,14 +138,24 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
                 {isMoreOpen && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl shadow-gray-900/10 border border-gray-100 py-2 animate-fade-in">
                     {moreLinks.map((link, i) => (
-                      <Link
-                        key={i}
-                        href={link.href}
-                        onClick={() => { setIsMoreOpen(false); }}
-                        className="block px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-                      >
-                        {link.label}
-                      </Link>
+                      link.href ? (
+                        <Link
+                          key={i}
+                          href={link.href as string}
+                          onClick={() => { setIsMoreOpen(false); }}
+                          className="block px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <button
+                          key={i}
+                          onClick={() => { link.onClick?.(); }}
+                          className="block w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        >
+                          {link.label}
+                        </button>
+                      )
                     ))}
                   </div>
                 )}
@@ -260,16 +275,26 @@ export const Header: React.FC<HeaderProps> = ({ onEnrollClick, onContactClick })
               <div className="!my-4 border-t border-gray-100" />
               
               {/* More Links */}
-              {moreLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {moreLinks.map((link, index) =>
+                link.href ? (
+                  <Link
+                    key={index}
+                    href={link.href as string}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={index}
+                    onClick={() => { link.onClick?.(); setIsMenuOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium text-left"
+                  >
+                    {link.label}
+                  </button>
+                )
+              )}
             </nav>
 
             {/* Mobile CTA Section */}

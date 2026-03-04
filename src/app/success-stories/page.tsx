@@ -173,13 +173,13 @@ export default function SuccessStoriesPage() {
           <p className="text-xl text-gray-300 mb-8">
             Join SPSV Mastery and get the same expert training, practice app, and support that helped these students pass.
           </p>
-          <Link
-            href="/#contact"
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('openEnrollment', { detail: { source: 'success-stories' } }))}
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all hover:scale-105"
           >
             Enquire Now
             <FiArrowRight className="w-5 h-5" />
-          </Link>
+          </button>
         </div>
       </section>
     </main>

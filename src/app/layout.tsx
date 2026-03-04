@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { EnrollmentModalProvider } from '@/contexts/EnrollmentModalContext';
 
 export const metadata: Metadata = {
   title: 'Taxi Driver Test Dublin | SPSV Taxi Exam Classes & Training | Pass First Time',
@@ -121,7 +122,9 @@ export default function RootLayout({
       </head>
       <body>
         <ToastProvider>
-          {children}
+          <EnrollmentModalProvider>
+            {children}
+          </EnrollmentModalProvider>
         </ToastProvider>
       </body>
     </html>

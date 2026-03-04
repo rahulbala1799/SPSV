@@ -72,11 +72,8 @@ function MedalCard({ achievement, index }: { achievement: EarnedAchievement; ind
       {/* New badge */}
       {achievement.isNew && (
         <div className="absolute -top-1 -right-1 z-10">
-          <span className="flex h-5 w-5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-[10px] font-bold items-center justify-center">
-              !
-            </span>
+          <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-[10px] font-bold items-center justify-center shadow-md">
+            !
           </span>
         </div>
       )}

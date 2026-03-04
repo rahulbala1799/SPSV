@@ -280,12 +280,13 @@ export default function TimetablePage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="mailto:info@spsvmastery.ie"
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('openEnrollment', { detail: { source: 'timetable' } }))}
               className="group px-8 py-4 bg-white rounded-xl font-bold text-gray-900 hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
             >
-              Email Us
-            </a>
+              Enquire About Classes
+              <FiArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </section>
