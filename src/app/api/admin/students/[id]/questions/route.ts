@@ -56,7 +56,7 @@ export async function GET(
       orderBy: { answeredAt: 'desc' }
     })
 
-    // 3. Timed test answers
+    // 3. Timed test answers (include questionBank to resolve source Question ID)
     const timedTestAnswers = await prisma.timedTestAnswer.findMany({
       where: {
         session: {
@@ -66,7 +66,11 @@ export async function GET(
         isCorrect: { not: null }
       },
       include: {
-        question: true,
+        question: {
+          include: {
+            questionBank: true
+          }
+        },
         session: true
       },
       orderBy: { answeredAt: 'desc' }
@@ -127,8 +131,13 @@ export async function GET(
     })
 
     // Process timed test answers
+    // Use sourceQuestionId from QuestionBank so we return main Question IDs (required for MCQ builder)
+    // Skip timed questions without sourceQuestionId - they can't be added to MCQ tests
     timedTestAnswers.forEach(ta => {
-      const qId = ta.questionId
+      const sourceQuestionId = ta.question.questionBank?.sourceQuestionId
+      if (!sourceQuestionId) return // Question only in bank, not in main Question table - skip
+
+      const qId = sourceQuestionId
       const qText = ta.question.questionText
       if (!questionMap.has(qId)) {
         questionMap.set(qId, {
@@ -146,6 +155,19 @@ export async function GET(
       if (ta.isCorrect) data.correctAttempts++
       if (data.attempts === 1 && ta.isCorrect) data.firstTryCorrect = true
     })
+
+    // Enrich entries missing chapter (from timed tests) with Question data
+    const needChapter = Array.from(questionMap.values()).filter(q => !q.chapter)
+    if (needChapter.length > 0) {
+      const questions = await prisma.question.findMany({
+        where: { id: { in: needChapter.map(q => q.questionId) } },
+        include: { chapter: true }
+      })
+      questions.forEach(q => {
+        const entry = questionMap.get(q.id)
+        if (entry) entry.chapter = q.chapter.title
+      })
+    }
 
     const allQuestions = Array.from(questionMap.values())
 

@@ -94,19 +94,21 @@ export async function syncToQuestionBank(prisma: PrismaClient, chapterIds?: stri
         })
 
         if (existing) {
-          // Update if content has changed
+          // Update if content has changed OR if sourceQuestionId is missing (needed for MCQ builder)
           const hasChanges = 
             existing.optionA !== optionA ||
             existing.optionB !== optionB ||
             existing.optionC !== optionC ||
             existing.optionD !== optionD ||
             existing.correctAnswer !== question.correctAnswer ||
-            existing.explanation !== question.explanation
+            existing.explanation !== question.explanation ||
+            existing.sourceQuestionId !== question.id
 
           if (hasChanges) {
             await prisma.questionBank.update({
               where: { id: existing.id },
               data: {
+                sourceQuestionId: question.id,
                 optionA,
                 optionB,
                 optionC,
@@ -121,9 +123,10 @@ export async function syncToQuestionBank(prisma: PrismaClient, chapterIds?: stri
             skipped++
           }
         } else {
-          // Create new QuestionBank entry
+          // Create new QuestionBank entry with sourceQuestionId
           await prisma.questionBank.create({
             data: {
+              sourceQuestionId: question.id,
               questionText: question.questionText,
               optionA,
               optionB,
