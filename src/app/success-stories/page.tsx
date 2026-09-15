@@ -7,6 +7,11 @@ import { FiCheck, FiStar, FiArrowRight } from 'react-icons/fi';
 
 const successStories = [
   {
+    name: 'Aji Ajikumar',
+    content: "I am very happy to share my experience with SPSV Mastery Class by Stijoy Sir. I joined the course to prepare for my SPSV test, and I can honestly say that it was one of the best decisions I made. Stijoy Sir is a very knowledgeable, supportive and patient instructor. The classes were well organised, easy to understand and focused on the areas that really matter for the SPSV test. Whenever I had questions, he was always willing to explain everything clearly and make sure I understood it. With the guidance and preparation I received, I felt much more confident going into the exam. I am delighted to say that I passed my SPSV test on 4 September 2026. I would highly recommend SPSV Mastery Class to anyone preparing for the SPSV test. If you are serious about passing, I definitely recommend joining this course. Thank you, Stijoy Sir for your excellent guidance and support throughout my SPSV journey!",
+    rating: 5,
+  },
+  {
     name: 'Jomon C Ulahan',
     content: "I am writing this to express my sincere gratitude for the exceptional training and support you provided throughout our SPSV classes. Your deep knowledge of the subject, combined with your unique ability to make complex topics easy to understand, has been invaluable to us. Beyond the curriculum, your constant motivation and unwavering dedication truly inspired us to push our limits, especially during the challenging Week 4. Thank you for being more than just a trainer; you have been a true mentor and a constant source of encouragement. We feel much more confident approaching our NTA exams because of your guidance. We are truly grateful for all the effort you've invested in our success.",
     rating: 5,
